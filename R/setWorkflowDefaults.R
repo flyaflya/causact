@@ -39,3 +39,29 @@ setDirectedGraphTheme = function(dgrGraph) {
                                        value = "gray20",
                                        attr_type = "edge")
 }
+
+setWorkflowTheme = function(dgrGraph) {
+  dgrGraph %>%
+    DiagrammeR::add_global_graph_attrs(attr = "layout",
+                                       value = "dot",
+                                       attr_type = "graph") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "rankdir",
+                                       value = "LR",
+                                       attr_type = "graph") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "shape",
+                                       value = "plain",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "fixedsize",
+                                       value = "false",
+                                       attr_type = "node")  %>%
+    DiagrammeR::add_global_graph_attrs(attr = "margin",
+                                       value = "0.05,0.05",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "fillcolor",
+                                       value = "white",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "color",
+                                       value = "gray20",
+                                       attr_type = "edge")
+}
+
