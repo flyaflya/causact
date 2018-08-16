@@ -37,7 +37,14 @@ setDirectedGraphTheme = function(dgrGraph) {
                                        attr_type = "node")  %>%
     DiagrammeR::add_global_graph_attrs(attr = "color",
                                        value = "gray20",
-                                       attr_type = "edge")
+                                       attr_type = "edge")  %>%
+    DiagrammeR::add_global_graph_attrs(attr = "fontcolor",
+                                       value = "black",
+                                       attr_type = "edge") %>%
+    DiagrammeR::select_nodes(conditions = type == "obs") %>%
+    DiagrammeR::set_node_attrs_ws(node_attr = fillcolor, value = "cadetblue") %>%
+    DiagrammeR::clear_selection() %>%
+    DiagrammeR::set_node_attrs(node_attr = fontcolor, values = "black")
 }
 
 setWorkflowTheme = function(dgrGraph) {
