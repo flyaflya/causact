@@ -10,7 +10,8 @@
 #' @importFrom DiagrammeR add_global_graph_attrs
 #' @export
 setDirectedGraphTheme = function(dgrGraph) {
-  dgrGraph %>%
+  ## set global attributes
+  tempGR = dgrGraph %>%
     DiagrammeR::add_global_graph_attrs(attr = "layout",
                                        value = "dot",
                                        attr_type = "graph") %>%
@@ -43,10 +44,17 @@ setDirectedGraphTheme = function(dgrGraph) {
                                        attr_type = "node") %>%
     DiagrammeR::add_global_graph_attrs(attr = "fontcolor",
                                        value = "black",
-                                       attr_type = "edge") %>%
-    DiagrammeR::recode_node_attrs(node_attr_from = type,
-                                  "obs -> cadetblue",
-                                  node_attr_to = fillcolor)
+                                       attr_type = "edge")
+  ## update attributes for specific node types
+  n_nodes <- nrow(tempGR$nodes_df)
+  tempGR$nodes_df$fillcolor = rep("aliceblue", n_nodes)
+  tempGR$nodes_df$fillcolor[tempGR$nodes_df$type == "obs"] = "cadetblue"
+
+  ## correct for fontcolor bug
+  tempGR$nodes_df$fontcolor = "black"
+
+  ## return updated graph
+  return(tempGR)
 }
 
 setWorkflowTheme = function(dgrGraph) {
