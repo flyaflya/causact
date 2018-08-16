@@ -20,6 +20,6 @@ delivDF
 }
 \description{
 A dataset containing the line items, mostly parts, asssociated
-with 23,3339 shipments from a US-based warehouse.
+with 23,339 shipments from a US-based warehouse.
 }
 \keyword{datasets}
