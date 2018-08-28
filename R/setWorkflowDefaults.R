@@ -44,7 +44,14 @@ setDirectedGraphTheme = function(dgrGraph) {
                                        attr_type = "node") %>%
     DiagrammeR::add_global_graph_attrs(attr = "fontcolor",
                                        value = "black",
-                                       attr_type = "edge")
+                                       attr_type = "edge") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "labelloc",
+                                       value = "b",
+                                       attr_type = "graph") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "labeljust",
+                                       value = "r",
+                                       attr_type = "graph")
+
   ## update attributes for specific node types
   n_nodes <- nrow(tempGR$nodes_df)
   tempGR$nodes_df$fillcolor = rep("aliceblue", n_nodes)
