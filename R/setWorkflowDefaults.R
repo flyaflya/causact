@@ -18,6 +18,9 @@ setDirectedGraphTheme = function(dgrGraph) {
     DiagrammeR::add_global_graph_attrs(attr = "fillcolor",
                                        value = "AliceBlue",
                                        attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "style",
+                                       value = "filled",
+                                       attr_type = "node")%>%
     DiagrammeR::add_global_graph_attrs(attr = "shape",
                                        value = "ellipse",
                                        attr_type = "node") %>%
@@ -56,6 +59,7 @@ setDirectedGraphTheme = function(dgrGraph) {
   n_nodes <- nrow(tempGR$nodes_df)
   tempGR$nodes_df$fillcolor = rep("aliceblue", n_nodes)
   tempGR$nodes_df$fillcolor[tempGR$nodes_df$type == "obs"] = "cadetblue"
+  tempGR$nodes_df$fillcolor[tempGR$nodes_df$type == "censObs"] = "aliceblue;0.5:cadetblue"
 
   ## correct for fontcolor bug
   tempGR$nodes_df$fontcolor = "black"
