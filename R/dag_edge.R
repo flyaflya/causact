@@ -96,12 +96,11 @@
 #' # values were bound to the
 #' # newly created edge
 #' graph_2 %>% get_edge_df()
-#' @importFrom DiagrammeR add_edge
 #' @export
 dag_edge <- function(graph,
                      from,
                      to) {
-  graph = graph %>% add_edge(from,to)
+  graph = graph %>% DiagrammeR::add_edge(from,to)
     graph
   }
 

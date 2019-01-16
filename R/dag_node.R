@@ -44,17 +44,17 @@
 #' @importFrom dplyr select bind_cols as_tibble
 #' @export
 dag_node <- function(graph,
-                     type = NULL,
+                     description = as.character(NA),
                      label = NULL,
+                     type = NULL,
+                     distribution = greta::variable,
                      from = NULL,
                      to = NULL,
                      node_aes = NULL,
                      edge_aes = NULL,
                      node_data = NULL,
                      edge_data = NULL,
-                     description = as.character(NA),
-                     peripheries = 1,
-                     distribution = greta::variable) {
+                     peripheries = 1) {
   # update node_data with DAG specific graphing
   distribution = tail(as.character(substitute(distribution)), n=1)
   node_data = DiagrammeR::node_data(
@@ -146,7 +146,7 @@ dag_node <- function(graph,
   if (is.null(from) & is.null(to)) {
 
     new_node <-
-      create_node_df(
+      DiagrammeR::create_node_df(
         n = 1,
         label = as.character(label),
         type = as.character(type))
@@ -170,7 +170,7 @@ dag_node <- function(graph,
     }
 
     combined_nodes <-
-      combine_ndfs(graph$nodes_df, new_node)
+      DiagrammeR::combine_ndfs(graph$nodes_df, new_node)
 
     edges_in_graph_2 <- nrow(graph$edges_df)
 
@@ -214,7 +214,7 @@ dag_node <- function(graph,
     if (from_nodes_available) {
 
       new_node <-
-        create_node_df(
+        DiagrammeR::create_node_df(
           n = 1,
           label = as.character(label),
           type = as.character(type))
@@ -239,7 +239,7 @@ dag_node <- function(graph,
 
       # Combine the new nodes with those in the graph
       combined_nodes <-
-        combine_ndfs(graph$nodes_df, new_node)
+        DiagrammeR::combine_ndfs(graph$nodes_df, new_node)
 
       # Collect edge aesthetic attributes
       if (!is.null(edge_aes)) {
@@ -360,7 +360,7 @@ dag_node <- function(graph,
     }
 
     new_node <-
-      create_node_df(
+      DiagrammeR::create_node_df(
         n = 1,
         label = as.character(label),
         type = as.character(type))
@@ -384,7 +384,7 @@ dag_node <- function(graph,
     }
 
     combined_nodes <-
-      combine_ndfs(graph$nodes_df, new_node)
+      DiagrammeR::combine_ndfs(graph$nodes_df, new_node)
 
     # Collect edge aesthetic attributes
     if (!is.null(edge_aes)) {
@@ -517,7 +517,7 @@ dag_node <- function(graph,
     if (from_nodes_available & to_nodes_available) {
 
       new_node <-
-        create_node_df(
+        DiagrammeR::create_node_df(
           n = 1,
           label = as.character(label),
           type = as.character(type))
@@ -542,7 +542,7 @@ dag_node <- function(graph,
 
       # Combine the new nodes with those in the graph
       combined_nodes <-
-        combine_ndfs(graph$nodes_df, new_node)
+        DiagrammeR::combine_ndfs(graph$nodes_df, new_node)
 
       new_edges <-
         combine_edfs(

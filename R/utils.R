@@ -104,3 +104,5 @@ graph_object_valid <- function(graph) {
 
   return(TRUE)
 }
+
+

@@ -6,7 +6,7 @@
 #'   this rendering. Possible layouts include: \code{nicely}, \code{circle},
 #'   \code{tree}, \code{kk}, and \code{fr}.
 #' @param output a string specifying the output type; \code{graph} (the default)
-#'   renders the graph using the \code{\link{grViz}()} function and
+#'   renders the graph using the \code{\link{DiagrammeR::grViz}()} function and
 #'   \code{visNetwork} renders the graph using the \code{\link{visnetwork}()}
 #'   function.
 #' @param as_svg an option to render the graph as an SVG document.
@@ -129,9 +129,45 @@ dag_render <- function(graph,
   graph$nodes_df$fillcolor[graph$nodes_df$type == "obs"] = "cadetblue"
   graph$nodes_df$fillcolor[graph$nodes_df$type == "censObs"] = "aliceblue;0.5:cadetblue"
 
+
+  ##### Code to render plate notation subgraphs when
+  ##### there are either intersecting or nested subgraphs
+
+  ## is any node duplicated
+  duplicateFlag = anyDuplicated(graph$plate_nodes_df$nodeID)
+
+  while(duplicateFlag > 0){
+    duplicatedNodeID = graph$plate_nodes_df$nodeID[duplicateFlag]
+
+    ## get vector of indexID's for node
+    indices = graph$plate_nodes_df$indexID[graph$plate_nodes_df$nodeID == duplicatedNodeID]
+
+    ## make new combined plate
+    newIndex = max(graph$plate_index_df$indexID) + 1
+    newIndexLabel = paste(graph$plate_index_df$indexLabel[indices],collapse = "")
+    newIndexDescr = paste(graph$plate_index_df$indexDescription[indices],collapse = "_")
+    newIndexDispName = paste0(paste0(graph$plate_index_df$indexDescription[indices]," ",
+                                     graph$plate_index_df$indexLabel[indices], collapse = "\\r"),"\\r")
+    newRow = data.frame(indexID = newIndex,
+                        indexLabel = newIndexLabel,
+                        indexDescription = newIndexDescr,
+                        indexDisplayName = newIndexDispName,
+                        stringsAsFactors = FALSE)
+    graph$plate_index_df = dplyr::bind_rows(graph$plate_index_df,newRow)
+
+    ## make nodes point to new plate
+    graph$plate_nodes_df = graph$plate_nodes_df %>%
+      dplyr::filter(nodeID != duplicatedNodeID) %>%
+      dplyr::bind_rows(data.frame(indexID = newIndex, nodeID = duplicatedNodeID))
+
+    ## condition to break out.
+    duplicateFlag = anyDuplicated(graph$plate_nodes_df$nodeID)
+  }
+
+
   ## update attributes for plate notation
   plateDF = dplyr::left_join(graph$plate_nodes_df, graph$plate_index_df) %>%
-    dplyr::mutate(clusterName = paste0(indexDescription," ",indexLabel)) %>%
+    dplyr::mutate(clusterName = indexDisplayName) %>%
     select(nodeID, clusterName) %>% rename(id = nodeID)
   graph$nodes_df$cluster = dplyr::left_join(graph$nodes_df,plateDF) %>% .$clusterName
 
@@ -165,21 +201,21 @@ dag_render <- function(graph,
         add_global_graph_attrs(
           graph, "label", title, "graph")
 
-      graph <-
-        add_global_graph_attrs(
-          graph, "labelloc", "t", "graph")
+#      graph <-
+#        add_global_graph_attrs(
+#          graph, "labelloc", "t", "graph")
 
-      graph <-
-        add_global_graph_attrs(
-          graph, "labeljust", "c", "graph")
+#      graph <-
+#        add_global_graph_attrs(
+#          graph, "labeljust", "c", "graph")
+#
+#     graph <-
+#       add_global_graph_attrs(
+#         graph, "fontname", "Helvetica", "graph")
 
-      graph <-
-        add_global_graph_attrs(
-          graph, "fontname", "Helvetica", "graph")
-
-      graph <-
-        add_global_graph_attrs(
-          graph, "fontcolor", "gray30", "graph")
+#     graph <-
+#       add_global_graph_attrs(
+#         graph, "fontcolor", "gray30", "graph")
     }
 
     # If no fillcolor provided, use default; if no default available,
@@ -217,7 +253,7 @@ dag_render <- function(graph,
       graph$nodes_df <-
         graph$nodes_df %>%
         dplyr::left_join(
-          x11_hex() %>%
+          DiagrammeR::x11_hex() %>%
             dplyr::as_tibble() %>%
             dplyr::mutate(hex = toupper(hex)),
           by = c("fillcolor" = "x11_name")) %>%
@@ -314,8 +350,8 @@ dag_render <- function(graph,
     }
 
 
-    if (("image" %in% colnames(graph %>% get_node_df()) ||
-         "fa_icon" %in% colnames(graph %>% get_node_df()) ||
+    if (("image" %in% colnames(graph %>% DiagrammeR::get_node_df()) ||
+         "fa_icon" %in% colnames(graph %>% DiagrammeR::get_node_df()) ||
          as_svg) &
         requireNamespace("DiagrammeRsvg", quietly = TRUE)) {
 
@@ -333,12 +369,12 @@ dag_render <- function(graph,
       }
 
       # Generate DOT code
-      dot_code <- generate_dot(graph)
+      dot_code <- DiagrammeR::generate_dot(graph)
 
       # Get a vector of SVG lines
       svg_vec <-
         strsplit(DiagrammeRsvg::export_svg(
-          grViz(diagram = dot_code)), "\n") %>%
+          DiagrammeR::grViz(diagram = dot_code)), "\n") %>%
         unlist()
 
       # Get a tibble of SVG data
@@ -354,18 +390,18 @@ dag_render <- function(graph,
       # Modify <svg> attrs
       svg_vec[svg_line_no] <- svg_lines
 
-      if ("image" %in% colnames(graph %>% get_node_df())) {
+      if ("image" %in% colnames(graph %>% DiagrammeR::get_node_df())) {
 
         node_id_images <-
           graph %>%
-          get_node_df() %>%
+          DiagrammeR::get_node_df() %>%
           dplyr::select(id, image) %>%
           dplyr::filter(image != "") %>%
           dplyr::pull(id)
 
         filter_lines <-
           graph %>%
-          get_node_df() %>%
+          DiagrammeR::get_node_df() %>%
           dplyr::select(id, image) %>%
           dplyr::filter(image != "") %>%
           dplyr::mutate(filter_lines = as.character(glue::glue("<filter id=\"{id}\" x=\"0%\" y=\"0%\" width=\"100%\" height=\"100%\"><feImage xlink:href=\"{image}\"/></filter>"))) %>%
@@ -397,7 +433,7 @@ dag_render <- function(graph,
           paste0(svg_vec[svg_line_no + 1], "\n\n", filter_lines, "\n")
       }
 
-      if ("fa_icon" %in% colnames(graph %>% get_node_df())) {
+      if ("fa_icon" %in% colnames(graph %>% DiagrammeR::get_node_df())) {
 
         # Stop function if `DiagrammeRsvg` package is not available
         if (!("fontawesome" %in%
@@ -413,7 +449,7 @@ dag_render <- function(graph,
 
         node_id_fa <-
           graph %>%
-          get_node_df() %>%
+          DiagrammeR::get_node_df() %>%
           dplyr::select(id, fa_icon) %>%
           dplyr::filter(fa_icon != "") %>%
           dplyr::filter(!is.na(fa_icon)) %>%
@@ -478,11 +514,11 @@ dag_render <- function(graph,
     } else {
 
       # Generate DOT code
-      dot_code <- generate_dot(graph)
+      dot_code <- DiagrammeR::generate_dot(graph)
 
-      # Generate a `grViz` object
+      # Generate a `DiagrammeR::grViz` object
       grVizObject <-
-        grViz(
+        DiagrammeR::grViz(
           diagram = dot_code,
           width = width,
           height = height)

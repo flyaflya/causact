@@ -31,19 +31,7 @@
 #'
 #' # A graph can be created with
 #' # nodes and without having any edges;
-#' # this can be done in 2 steps:
-#' # 1. create a node data frame (ndf)
-#' #    using `create_node_df()`
-#' ndf <-
-#'   create_node_df(n = 4)
-#'
-#' # 2. create a new graph object with
-#' #    `dag_create()` and then pass
-#' #    in the ndf to `nodes_df`
-#' graph <-
-#'   dag_create(
-#'     nodes_df = ndf)
-#'
+
 #' # Get information on the graph's nodes
 #' graph %>%
 #'   get_node_info()
@@ -224,6 +212,7 @@ dag_create <- function(nodes_df = NULL,
       indexID = as.integer(NA),
       indexLabel = as.character(NA),
       indexDescription = as.character(NA),
+      indexDisplayName = as.character(NA),
       stringsAsFactors = FALSE)[-1, ]
 
   # Create an empty plate nodes data frame (`pdf`)

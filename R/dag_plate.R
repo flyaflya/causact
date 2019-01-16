@@ -55,6 +55,7 @@
 #' graph %>% get_node_df()
 #' @importFrom dplyr mutate
 #' @importFrom rlang enquo get_expr UQ
+
 #' @export
 dag_plate <- function(graph,
                       indexLabel,
@@ -71,7 +72,8 @@ dag_plate <- function(graph,
   graph$plate_index_df = dplyr::add_row(graph$plate_index_df,
                                         indexID = lastPlateIndex + 1,
                                         indexLabel = indexLabel,
-                                        indexDescription = description)
+                                        indexDescription = description,
+                                        indexDisplayName = paste0(description," ",indexLabel))
 
   ## update plate node df
   for (i in seq_along(nodeIDS)){
