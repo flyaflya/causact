@@ -76,7 +76,7 @@ dag_render <- function(graph,
                          height = NULL) {
 
   ## rename label for use in diagram
-  graph$nodes_df$label = paste0(graph$nodes_df$description,"\n",graph$nodes_df$label," ~ ",graph$nodes_df$distribution)
+  graph$nodes_df$label = paste0(graph$nodes_df$description,"\n",graph$nodes_df$label," ~ ",graph$nodes_df$fullDistLabel)
 
   ## set global attributes
   graph = graph %>%

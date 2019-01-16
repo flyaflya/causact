@@ -57,9 +57,18 @@ dag_node <- function(graph,
                      peripheries = 1) {
   # update node_data with DAG specific graphing
   distribution = tail(as.character(substitute(distribution)), n=1)
+  distString = paste0("greta::",distribution)
+  distExpr = parse(text = distString)
+  distArgs = formalArgs(eval(distExpr))
+  ##assume arguments before dim are required parameters
+  numParents = which(distArgs == "dim") - 1
+  fullDistLabel = paste0(distribution,"(",paste0(distArgs[1:numParents],collapse = ","),")")
+
+
   node_data = DiagrammeR::node_data(
     description = description,
-    distribution = distribution)
+    distribution = distribution,
+    fullDistLabel = fullDistLabel)
   node_aes = DiagrammeR::node_aes(
     peripheries = peripheries
   )

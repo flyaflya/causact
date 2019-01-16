@@ -193,6 +193,7 @@ dag_create <- function(nodes_df = NULL,
       label = as.character(NA),
       description = as.character(NA),
       distribution = as.character(NA),
+      fullDistLabel = as.character(NA),
       stringsAsFactors = FALSE)[-1, ]
 
   ## DF: `edges_df`
