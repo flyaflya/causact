@@ -45,9 +45,9 @@
 #' @export
 dag_node <- function(graph,
                      label = NULL,
-                     description = as.character(NA),
+                     description = "",
                      distr = greta::variable,
-                     type = NULL,
+                     type = c("latent","obs"),
                      formulaString = as.character(NA),
                      from = NULL,
                      to = NULL,

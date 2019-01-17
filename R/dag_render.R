@@ -68,6 +68,7 @@
 #' @importFrom glue glue
 #' @export
 dag_render <- function(graph,
+                         shortLabel = FALSE,
                          layout = NULL,
                          output = NULL,
                          as_svg = FALSE,
@@ -77,8 +78,14 @@ dag_render <- function(graph,
 
   ## rename label for use in diagram
   relation = ifelse(is.na(graph$nodes_df$formulaString), " ~ " , " = ") # equal or tilde
-  graph$nodes_df$label = paste0(graph$nodes_df$description,"\n",graph$nodes_df$label,relation,graph$nodes_df$fullDistLabel)
-
+  if(shortLabel){
+    graph$nodes_df$label = graph$nodes_df$label
+    } else {
+      graph$nodes_df$label = paste0(graph$nodes_df$description,
+                                    "\n",graph$nodes_df$label,
+                                    relation,
+                                    graph$nodes_df$fullDistLabel)
+    }
 
   ## set global attributes
   graph = graph %>%

@@ -45,7 +45,7 @@
 #' @export
 dag_prior <- function(graph,
                       parentArgName,
-                      description = NULL,
+                      description = "",
                       childLabel,
                       distr = greta::variable,
                       formulaString = as.character(NA),

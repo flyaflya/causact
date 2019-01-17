@@ -62,3 +62,12 @@ dag_create() %>%
   dag_prior(parentArgName = "AJ",description = "Adam",childLabel = "A", distr = greta::normal) %>%
   dag_prior("E","Erin","A") %>%
   dag_render()
+
+
+dag_create() %>%
+  dag_node("A","Aidan", formulaString = "x + y") %>%
+  dag_prior("AJ","Adam",childLabel = "A") %>%
+  dag_node("E","Erin") %>%
+  dag_edge("Erin","A") %>%
+  dag_render(shortLabel = TRUE)
+
