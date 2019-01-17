@@ -44,10 +44,11 @@
 #' @importFrom dplyr select bind_cols as_tibble
 #' @export
 dag_node <- function(graph,
-                     description = as.character(NA),
                      label = NULL,
+                     description = as.character(NA),
+                     distr = greta::variable,
                      type = NULL,
-                     distribution = greta::variable,
+                     formulaString = as.character(NA),
                      from = NULL,
                      to = NULL,
                      node_aes = NULL,
@@ -55,22 +56,39 @@ dag_node <- function(graph,
                      node_data = NULL,
                      edge_data = NULL,
                      peripheries = 1) {
+
   # update node_data with DAG specific graphing
-  distribution = tail(as.character(substitute(distribution)), n=1)
-  distString = paste0("greta::",distribution)
-  distExpr = parse(text = distString)
-  distArgs = formalArgs(eval(distExpr))
-  ##assume arguments before dim are required parameters
-  numParents = which(distArgs == "dim") - 1
-  fullDistLabel = paste0(distribution,"(",paste0(distArgs[1:numParents],collapse = ","),")")
+  distr = rlang::enexpr(distr)  ## take in argument as expression
+
+    # code for when distr is a greta object
+  if(!is.character(distr)){
+    distr = rlang::enexpr(distr)
+    distString = tail(as.character(distr), n=1)
+    distArgs = formalArgs(eval(distr))
+    ##assume arguments before dim are required parameters
+    numParents = which(distArgs == "dim") - 1
+    fullDistLabel = paste0(tail(as.character(distr), n=1),"(",paste0(distArgs[1:numParents],collapse = ","),")")
+  }
+  # code for when distr is a string
+  if(is.character(distr)){
+    distString = distr
+    fullDistLabel = distr
+  }
+
+  ##use formula string for label if available
+  ##distribution is ignored when formulaString is provided
+  if(!is.na(formulaString)){
+    fullDistLabel = formulaString
+  }
 
 
   node_data = DiagrammeR::node_data(
     description = description,
-    distribution = distribution,
-    fullDistLabel = fullDistLabel)
+    distr = distString,
+    fullDistLabel = fullDistLabel,
+    formulaString = formulaString)
   node_aes = DiagrammeR::node_aes(
-    peripheries = peripheries
+    peripheries = ifelse(!is.na(formulaString),2,1)
   )
 
   # Get the time of function start

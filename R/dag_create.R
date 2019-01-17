@@ -192,7 +192,8 @@ dag_create <- function(nodes_df = NULL,
       type = as.character(NA),
       label = as.character(NA),
       description = as.character(NA),
-      distribution = as.character(NA),
+      distr = as.character(NA),
+      formulaString = as.character(NA),
       fullDistLabel = as.character(NA),
       stringsAsFactors = FALSE)[-1, ]
 

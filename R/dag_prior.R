@@ -44,26 +44,30 @@
 #' @importFrom dplyr select bind_cols as_tibble
 #' @export
 dag_prior <- function(graph,
-                     childLabel,
-                     parentArgName,
-                     description = NULL,  ##this and below ignored right now
-                     label = NULL,
-                     type = "latent",
-                     distribution = greta::variable,
-                     from = NULL,
-                     to = NULL,
-                     node_aes = NULL,
-                     edge_aes = NULL,
-                     node_data = NULL,
-                     edge_data = NULL,
-                     peripheries = 1) {
+                      parentArgName,
+                      description = NULL,
+                      childLabel,
+                      distr = greta::variable,
+                      formulaString = as.character(NA),
+                      label = NULL,
+                      type = "latent",
+                      from = NULL,
+                      to = NULL,
+                      node_aes = NULL,
+                      edge_aes = NULL,
+                      node_data = NULL,
+                      edge_data = NULL,
+                      peripheries = 1) {
 
   ####
   ### get node ID from label
-  nodeID = graph$nodes_df$id[which(graph$nodes_df$label == childLabel)]
+  #nodeID = graph$nodes_df$id[which(graph$nodes_df$label == childLabel)]
 
   ### give name to new node
-  newNodeLabel = paste0(parentArgName,"_",childLabel)
+  newNodeLabel = parentArgName #paste0(parentArgName,"_",childLabel)
+
+  ### maintain function name for passing through to dag_node
+  distr = rlang::enexpr(distr)
 
   #### get number of parents
   #distribution = graph$nodes_df$distribution[nodeID]
@@ -78,7 +82,12 @@ dag_prior <- function(graph,
   #distribution = tail(as.character(substitute(distribution)), n=1)
 
   ### create node with edge to child
-  graph = graph %>% dag_node(graph = graph,description = description,label = newNodeLabel) %>% dag_edge(from = newNodeLabel, to = childLabel)
+  graph = graph %>%
+    dag_node(label = newNodeLabel,
+                             description = description,
+                             distr = rlang::UQ(distr),
+                             formulaString = formulaString) %>%
+    dag_edge(from = newNodeLabel, to = childLabel)
 
       return(graph)
     }

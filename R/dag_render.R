@@ -76,7 +76,9 @@ dag_render <- function(graph,
                          height = NULL) {
 
   ## rename label for use in diagram
-  graph$nodes_df$label = paste0(graph$nodes_df$description,"\n",graph$nodes_df$label," ~ ",graph$nodes_df$fullDistLabel)
+  relation = ifelse(is.na(graph$nodes_df$formulaString), " ~ " , " = ") # equal or tilde
+  graph$nodes_df$label = paste0(graph$nodes_df$description,"\n",graph$nodes_df$label,relation,graph$nodes_df$fullDistLabel)
+
 
   ## set global attributes
   graph = graph %>%
@@ -166,10 +168,13 @@ dag_render <- function(graph,
 
 
   ## update attributes for plate notation
-  plateDF = dplyr::left_join(graph$plate_nodes_df, graph$plate_index_df) %>%
-    dplyr::mutate(clusterName = indexDisplayName) %>%
-    select(nodeID, clusterName) %>% rename(id = nodeID)
-  graph$nodes_df$cluster = dplyr::left_join(graph$nodes_df,plateDF) %>% .$clusterName
+  if(nrow(graph$plate_nodes_df) > 0){
+    plateDF = dplyr::left_join(graph$plate_nodes_df, graph$plate_index_df) %>%
+      dplyr::mutate(clusterName = indexDisplayName) %>%
+      select(nodeID, clusterName) %>%
+      rename(id = nodeID)
+    graph$nodes_df$cluster = dplyr::left_join(graph$nodes_df,plateDF) %>% .$clusterName
+  }
 
   ## correct for fontcolor bug
   graph$nodes_df$fontcolor = "black"
