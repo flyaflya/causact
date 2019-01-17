@@ -66,8 +66,13 @@ dag_create() %>%
 
 dag_create() %>%
   dag_node("A","Aidan", formulaString = "x + y") %>%
-  dag_prior("AJ","Adam",childLabel = "A") %>%
+  dag_node("AJ","Adam", children = "A") %>%
   dag_node("E","Erin") %>%
   dag_edge("Erin","A") %>%
+#  dag_edge(from = "AJ", to = children) %>%
+  dag_render(shortLabel = FALSE)
+
+dag_create() %>%
+  dag_node("Square Footage") %>%
   dag_render(shortLabel = TRUE)
 

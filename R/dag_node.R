@@ -49,6 +49,7 @@ dag_node <- function(graph,
                      distr = greta::variable,
                      type = c("latent","obs"),
                      formulaString = as.character(NA),
+                     children = NULL,
                      from = NULL,
                      to = NULL,
                      node_aes = NULL,
@@ -221,6 +222,10 @@ dag_node <- function(graph,
       save_graph_as_rds(graph = graph)
     }
 
+    # Add child edge if desired
+    if (!is.null(children)){
+      graph = graph %>% dag_edge(from = "AJ", to = children)
+    }
     return(graph)
   }
 
