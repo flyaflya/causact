@@ -224,7 +224,7 @@ dag_node <- function(graph,
 
     # Add child edge if desired
     if (!is.null(children)){
-      graph = graph %>% dag_edge(from = "AJ", to = children)
+      graph = graph %>% dag_edge(from = label, to = children)
     }
     return(graph)
   }

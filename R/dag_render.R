@@ -80,7 +80,7 @@ dag_render <- function(graph,
   relation = ifelse(is.na(graph$nodes_df$formulaString), " ~ " , " = ") # equal or tilde
   ## short label only implements automatic word wrap
   if(shortLabel){
-    graph$nodes_df$label = paste(strwrap(graph$nodes_df$label, width = 12), collapse = "\n")
+    graph$nodes_df$label = sapply(strwrap(graph$nodes_df$label, width = 12, simplify = FALSE),paste, collapse = "\n")
     } else {
       graph$nodes_df$label = paste0(graph$nodes_df$description,
                                     "\n",graph$nodes_df$label,

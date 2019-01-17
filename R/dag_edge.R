@@ -105,7 +105,7 @@ dag_edge <- function(graph,
     from = graph$nodes_df$label[which(graph$nodes_df$description == from)]
   }
   if(!(to %in% graph$nodes_df$label)){
-    to = graph$nodes_df$label[which(graph$nodes_df$description == from)]
+    to = graph$nodes_df$label[which(graph$nodes_df$description == to)]
   }
 
   graph = graph %>% DiagrammeR::add_edge(from,to)

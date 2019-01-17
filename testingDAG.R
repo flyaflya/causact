@@ -73,6 +73,12 @@ dag_create() %>%
   dag_render(shortLabel = FALSE)
 
 dag_create() %>%
+  ### node definitions
   dag_node("Square Footage") %>%
-  dag_render(shortLabel = TRUE)
+  dag_node("Y","Sales Price") %>%
+  ### edge definitions
+  dag_edge("Square Footage","Sales Price") %>%
+  ### plate definitons
+  ### graph rendering
+  dag_render(shortLabel = FALSE)
 
