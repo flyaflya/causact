@@ -74,11 +74,23 @@ dag_create() %>%
 
 dag_create() %>%
   ### node definitions
-  dag_node("Square Footage") %>%
-  dag_node("Y","Sales Price") %>%
+  dag_node("X","Square Footage","", type = "obs") %>%
+  dag_node("Y","Sales Price",greta::student,type = "obs") %>%
+  dag_node("mean","Exp Sales Price",formulaString = "alpha + beta * x",children = "Y") %>%
+  dag_node("ALPHA","Intercept",greta::normal,children = "mean") %>%
+  dag_node("BETA","Price per SqFt",greta::normal, children = "mean") %>%
+  dag_node("SD","SD of Sales Price",children = "Y") %>%
+  dag_node("ZIP","Zip Code","",type = "obs", children = "mean") %>%
   ### edge definitions
-  dag_edge("Square Footage","Sales Price") %>%
+  dag_edge("Square Footage","mean") %>%
   ### plate definitons
+  dag_plate("i","Observation",nodeLabels = c("Y","mean","X","ZIP")) %>%
+  dag_plate("j","Zip Code",nodeLabels = c("mean","ALPHA","BETA")) %>%
   ### graph rendering
-  dag_render(shortLabel = FALSE)
+  dag_render(shortLabel = TRUE)
+
+dag_create() %>%
+  dag_node("Y","Sales Price", distr = greta::normal) %>%
+  dag_node("Square Footage", children = "Sales Price") %>%
+  dag_render(shortLabel = TRUE)
 
