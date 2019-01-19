@@ -118,11 +118,20 @@ dag_render <- function(graph,
                                          " ",
                                          graph$nodes_df$fullDistLabel[i])
       } else {
-      graph$nodes_df$label[i] = paste0(graph$nodes_df$description[i],
-                                       "\n",
-                                       graph$nodes_df$label[i],
-                                       relation[i],
-                                       graph$nodes_df$fullDistLabel[i])
+      graph$nodes_df$label[i] = sapply(
+        strwrap(
+          paste0(graph$nodes_df$description[i],
+                 " (",
+                 graph$nodes_df$label[i],
+                 ")",
+                 ifelse(is.na(graph$nodes_df$formulaString[i])," ~ "," = "),
+                 graph$nodes_df$fullDistLabel[i]),
+          width = 25,
+          simplify = FALSE
+        ),
+        paste,
+        collapse = "\n"
+      )
     }  #end else
   }  #end for
   }  #end else

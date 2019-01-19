@@ -101,15 +101,20 @@ dag_edge <- function(graph,
                      from,
                      to) {
   ## get label from description if not specified in id
-  if(!(from %in% graph$nodes_df$label)){
-    from = graph$nodes_df$label[which(graph$nodes_df$description == from)]
-  }
-  if(!(to %in% graph$nodes_df$label)){
-    to = graph$nodes_df$label[which(graph$nodes_df$description == to)]
+  for (i in seq_along(from)) {
+    if (!(from[i] %in% graph$nodes_df$label)) {
+      from[i] = graph$nodes_df$label[which(graph$nodes_df$description == from)]
+    }
   }
 
-  graph = graph %>% DiagrammeR::add_edge(from,to)
-    graph
+  for (i in seq_along(to)) {
+    if (!(to %in% graph$nodes_df$label)) {
+      to[i] = graph$nodes_df$label[which(graph$nodes_df$description == to)]
+    }
   }
+
+  graph = graph %>% DiagrammeR::add_edge(from, to)
+  graph
+}
 
 

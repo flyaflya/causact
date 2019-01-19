@@ -62,6 +62,15 @@ dag_plate <- function(graph,
                       description,
                       nodeLabels) {
 
+  ## get label from description if not available as id
+  for (i in seq_along(nodeLabels)){
+    if(!(nodeLabels[i] %in% graph$nodes_df$label)){
+      nodeLabels[i] =
+        graph$nodes_df$label[graph$nodes_df$description ==
+                                     nodeLabels[i]]
+    }
+  }
+
   ## get selection of node IDS from labels
   nodeIDS = dplyr::left_join(
     data.frame(label = nodeLabels, stringsAsFactors = FALSE),graph$nodes_df) %>%
