@@ -105,4 +105,37 @@ graph_object_valid <- function(graph) {
   return(TRUE)
 }
 
+### function that takes greta dist input from user and returns
+### a list of three strings:
+### 1) $distString:  name of distributino
+### 2) $distArgs: string of comma spearated arguments
+### 3) $fullDistLable: label to use in DAG regarding the distribution
+### function that takes input from user and returns
+### a fully formatted label regarding the distribution
+getFullDistList = function(distr = greta::variable) {
 
+  distr = rlang::enexpr(distr) ## take in argument as expression
+  distString = as.character(distr)  ### make into string
+  userSpecifiedArgs = TRUE  ### assume user supplied arguments
+  distArgs = NA  ###initialize as NA
+
+  ## if it is a greta distribution, get default arguments
+  ## when not greta object (e.g. a function like normal(6,2))
+  ## the below code generates errors that are ignored
+  tryCatch({
+    distString = tail(as.character(distr), n = 1) ## function name
+    distArgs = formalArgs(eval(distr))  ##function arguments
+    if(is.character(distArgs)) {userSpecifiedArgs = FALSE}  ## if in this path, arguments not specified
+    numParents = which(distArgs == "dim") - 1  ## get number of dist paramaters
+    distArgs = paste0(distArgs[1:numParents], collapse = ",")  ## keep only dist parameters
+  }, warning = function(w){})
+
+  if (userSpecifiedArgs == TRUE){
+    distString = as.character(distr)  ### make into string
+    distArgs = paste0(distString[2:length(distString)],collapse =",")
+    distString = gsub("greta::","",distString[1])
+  }
+  fullDistLabel = paste0(distString,"(",distArgs,")")
+
+  return(list(distString = distString, distArgs = distArgs, fullDistLabel = fullDistLabel))
+}

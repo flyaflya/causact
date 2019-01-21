@@ -61,27 +61,17 @@ dag_node <- function(graph,
   # update node_data with DAG specific graphing
   distr = rlang::enexpr(distr)  ## take in argument as expression
 
-    # code for when distr is a greta object
-  if(!is.character(distr)){
-    distr = rlang::enexpr(distr)
-    distString = tail(as.character(distr), n=1)
-    distArgs = formalArgs(eval(distr))
-    ##assume arguments before dim are required parameters
-    numParents = which(distArgs == "dim") - 1
-    fullDistLabel = paste0(tail(as.character(distr), n=1),"(",paste0(distArgs[1:numParents],collapse = ","),")")
-  }
-  # code for when distr is a string
-  if(is.character(distr)){
-    distString = distr
-    fullDistLabel = distr
-  }
+  # get node labels based off of user input for distr
+  distList = getFullDistList(rlang::UQ(distr))
+  ## above returns list of dist name, dist arguments, and label
+  distString = distList$distString
+  fullDistLabel = distList$fullDistLabel
 
   ##use formula string for label if available
   ##distribution is ignored when formulaString is provided
   if(!is.na(formulaString)){
     fullDistLabel = formulaString
   }
-
 
   node_data = DiagrammeR::node_data(
     description = description,

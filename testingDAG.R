@@ -94,3 +94,10 @@ dag_create() %>%
   dag_node("Square Footage", children = "Sales Price") %>%
   dag_render(shortLabel = TRUE)
 
+dag_create() %>%
+  dag_node("X") %>%
+  dag_render(shortLabel = TRUE)
+
+
+
+
