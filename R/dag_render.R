@@ -68,43 +68,48 @@
 #' @importFrom glue glue
 #' @export
 dag_render <- function(graph,
-                         shortLabel = FALSE,
-                         layout = NULL,
-                         output = NULL,
-                         as_svg = FALSE,
-                         title = NULL,
-                         width = NULL,
-                         height = NULL) {
-
+                       shortLabel = FALSE,
+                       layout = NULL,
+                       output = NULL,
+                       as_svg = FALSE,
+                       title = NULL,
+                       width = NULL,
+                       height = NULL) {
   ## if graph has zero nodes, return a simple graph that says
   ## start building your model
-  if(nrow(graph$nodes_df) == 0){
+  if (nrow(graph$nodes_df) == 0) {
     graph = graph %>% dag_node("START MODELLING", distr = "use dag_node()")
   }
 
   ## rename label for use in diagram
-  relation = dplyr::case_when(
-    !is.na(graph$nodes_df$formulaString) ~ " = ",
-    TRUE ~ " ~ ") # equal or tilde
+  relation = dplyr::case_when(!is.na(graph$nodes_df$formulaString) ~ " = ",
+                              TRUE ~ " ~ ") # equal or tilde
 
   ## short label implements automatic word wrap and
   ## if descLabel = TRUE, then adds description
   if (shortLabel) {
     graph$nodes_df$label = sapply(ifelse(
-      graph$nodes_df$description == "",
+      is.na(graph$nodes_df$description),
       ##true
-      strwrap(graph$nodes_df$label,
-              width = 12,
-              simplify = FALSE),
-      ##FALSE
       strwrap(
-        paste0(graph$nodes_df$description, " (", graph$nodes_df$label, ")"),
+        graph$nodes_df$label,
         width = 12,
         simplify = FALSE
-      )),
-      paste,
-      collapse = "\n"
-    )
+      ),
+      ##FALSE
+      strwrap(
+        paste0(
+          graph$nodes_df$description,
+          " (",
+          graph$nodes_df$label,
+          ")"
+        ),
+        width = 12,
+        simplify = FALSE
+      )
+    ),
+    paste,
+    collapse = "\n")
   } else {
     ##long label changes depending on whether greta distribution is used
     ##right now, the test for a greta distributioin is the expression in
@@ -112,28 +117,36 @@ dag_render <- function(graph,
 
     for (i in seq_along(graph$nodes_df$distr)) {
       if (graph$nodes_df$distr[i] == graph$nodes_df$fullDistLabel[i]) {
-        graph$nodes_df$label[i] = paste0(graph$nodes_df$description[i],
-                                         "\n",
-                                         graph$nodes_df$label[i],
-                                         " ",
-                                         graph$nodes_df$fullDistLabel[i])
+        if (is.na(graph$nodes_df$description[i])) {
+          graph$nodes_df$description[i] = ""
+        }  ## stop NA from printing
+        graph$nodes_df$label[i] = paste0(
+          graph$nodes_df$description[i],
+          "\n",
+          graph$nodes_df$label[i],
+          " ",
+          graph$nodes_df$fullDistLabel[i]
+        )
       } else {
-      graph$nodes_df$label[i] = sapply(
-        strwrap(
-          paste0(graph$nodes_df$description[i],
-                 " (",
-                 graph$nodes_df$label[i],
-                 ")",
-                 ifelse(is.na(graph$nodes_df$formulaString[i])," ~ "," = "),
-                 graph$nodes_df$fullDistLabel[i]),
+        if (is.na(graph$nodes_df$description[i])) {
+          graph$nodes_df$description[i] = ""
+        }  ## stop NA from printing
+        graph$nodes_df$label[i] = sapply(strwrap(
+          paste0(
+            graph$nodes_df$description[i],
+            " (",
+            graph$nodes_df$label[i],
+            ")",
+            ifelse(is.na(graph$nodes_df$formulaString[i]), " ~ ", " = "),
+            graph$nodes_df$fullDistLabel[i]
+          ),
           width = 25,
           simplify = FALSE
         ),
         paste,
-        collapse = "\n"
-      )
-    }  #end else
-  }  #end for
+        collapse = "\n")
+      }  #end else
+    }  #end for
   }  #end else
 
   ## set global attributes
@@ -146,7 +159,7 @@ dag_render <- function(graph,
                                        attr_type = "node") %>%
     DiagrammeR::add_global_graph_attrs(attr = "style",
                                        value = "filled",
-                                       attr_type = "node")%>%
+                                       attr_type = "node") %>%
     DiagrammeR::add_global_graph_attrs(attr = "shape",
                                        value = "ellipse",
                                        attr_type = "node") %>%
@@ -194,7 +207,7 @@ dag_render <- function(graph,
   ## is any node duplicated
   duplicateFlag = anyDuplicated(graph$plate_nodes_df$nodeID)
 
-  while(duplicateFlag > 0){
+  while (duplicateFlag > 0) {
     duplicatedNodeID = graph$plate_nodes_df$nodeID[duplicateFlag]
 
     ## get vector of indexID's for node
@@ -202,16 +215,25 @@ dag_render <- function(graph,
 
     ## make new combined plate
     newIndex = max(graph$plate_index_df$indexID) + 1
-    newIndexLabel = paste(graph$plate_index_df$indexLabel[indices],collapse = "")
-    newIndexDescr = paste(graph$plate_index_df$indexDescription[indices],collapse = "_")
-    newIndexDispName = paste0(paste0(graph$plate_index_df$indexDescription[indices]," ",
-                                     graph$plate_index_df$indexLabel[indices], collapse = "\\r"),"\\r")
-    newRow = data.frame(indexID = newIndex,
-                        indexLabel = newIndexLabel,
-                        indexDescription = newIndexDescr,
-                        indexDisplayName = newIndexDispName,
-                        stringsAsFactors = FALSE)
-    graph$plate_index_df = dplyr::bind_rows(graph$plate_index_df,newRow)
+    newIndexLabel = paste(graph$plate_index_df$indexLabel[indices], collapse = "")
+    newIndexDescr = paste(graph$plate_index_df$indexDescription[indices], collapse = "_")
+    newIndexDispName = paste0(
+      paste0(
+        graph$plate_index_df$indexDescription[indices],
+        " ",
+        graph$plate_index_df$indexLabel[indices],
+        collapse = "\\r"
+      ),
+      "\\r"
+    )
+    newRow = data.frame(
+      indexID = newIndex,
+      indexLabel = newIndexLabel,
+      indexDescription = newIndexDescr,
+      indexDisplayName = newIndexDispName,
+      stringsAsFactors = FALSE
+    )
+    graph$plate_index_df = dplyr::bind_rows(graph$plate_index_df, newRow)
 
     ## make nodes point to new plate
     graph$plate_nodes_df = graph$plate_nodes_df %>%
@@ -224,12 +246,12 @@ dag_render <- function(graph,
 
 
   ## update attributes for plate notation
-  if(nrow(graph$plate_nodes_df) > 0){
+  if (nrow(graph$plate_nodes_df) > 0) {
     plateDF = dplyr::left_join(graph$plate_nodes_df, graph$plate_index_df) %>%
       dplyr::mutate(clusterName = indexDisplayName) %>%
-      select(nodeID, clusterName) %>%
-      rename(id = nodeID)
-    graph$nodes_df$cluster = dplyr::left_join(graph$nodes_df,plateDF) %>% .$clusterName
+      dplyr::select(nodeID, clusterName) %>%
+      dplyr::rename(id = nodeID)
+    graph$nodes_df$cluster = dplyr::left_join(graph$nodes_df, plateDF) %>% .$clusterName
   }
 
   ## correct for fontcolor bug
@@ -241,10 +263,8 @@ dag_render <- function(graph,
 
   # Validation: Graph object is valid
   if (graph_object_valid(graph) == FALSE) {
-
-    emit_error(
-      fcn_name = fcn_name,
-      reasons = "The graph object is not valid")
+    emit_error(fcn_name = fcn_name,
+               reasons = "The graph object is not valid")
   }
 
   # Create bindings for specific variables
@@ -257,26 +277,24 @@ dag_render <- function(graph,
 
   if (output == "graph") {
     if (!is.null(title)) {
-
       graph <-
-        add_global_graph_attrs(
-          graph, "label", title, "graph")
+        add_global_graph_attrs(graph, "label", title, "graph")
 
-#      graph <-
-#        add_global_graph_attrs(
-#          graph, "labelloc", "t", "graph")
+      #      graph <-
+      #        add_global_graph_attrs(
+      #          graph, "labelloc", "t", "graph")
 
-#      graph <-
-#        add_global_graph_attrs(
-#          graph, "labeljust", "c", "graph")
-#
-#     graph <-
-#       add_global_graph_attrs(
-#         graph, "fontname", "Helvetica", "graph")
+      #      graph <-
+      #        add_global_graph_attrs(
+      #          graph, "labeljust", "c", "graph")
+      #
+      #     graph <-
+      #       add_global_graph_attrs(
+      #         graph, "fontname", "Helvetica", "graph")
 
-#     graph <-
-#       add_global_graph_attrs(
-#         graph, "fontcolor", "gray30", "graph")
+      #     graph <-
+      #       add_global_graph_attrs(
+      #         graph, "fontcolor", "gray30", "graph")
     }
 
     # If no fillcolor provided, use default; if no default available,
@@ -284,10 +302,10 @@ dag_render <- function(graph,
     if (nrow(graph$nodes_df) > 0) {
       if (!("fillcolor" %in% colnames(graph$nodes_df))) {
         if ("fillcolor" %in% graph$global_attrs$attr) {
-
           graph$nodes_df$fillcolor <-
             graph$global_attrs %>%
-            dplyr::filter(attr == "fillcolor" & attr_type == "node") %>%
+            dplyr::filter(attr == "fillcolor" &
+                            attr_type == "node") %>%
             dplyr::select(value) %>%
             purrr::flatten_chr()
         } else {
@@ -301,7 +319,6 @@ dag_render <- function(graph,
     if (nrow(graph$nodes_df) > 0) {
       if ("fillcolor" %in% colnames(graph$nodes_df)) {
         if ("fillcolor" %in% graph$global_attrs$attr) {
-
           graph$nodes_df$fillcolor[which(is.na(graph$nodes_df$fillcolor))] <-
             graph$global_attrs[which(graph$global_attrs$attr == "fillcolor"), 2]
         }
@@ -310,23 +327,22 @@ dag_render <- function(graph,
 
     # Translate X11 colors to hexadecimal colors
     if ("fillcolor" %in% colnames(graph$nodes_df)) {
-
       graph$nodes_df <-
         graph$nodes_df %>%
         dplyr::left_join(
           DiagrammeR::x11_hex() %>%
             dplyr::as_tibble() %>%
             dplyr::mutate(hex = toupper(hex)),
-          by = c("fillcolor" = "x11_name")) %>%
+          by = c("fillcolor" = "x11_name")
+        ) %>%
         dplyr::mutate(new_fillcolor = dplyr::coalesce(hex, fillcolor)) %>%
-        dplyr::select(-fillcolor, -hex) %>%
+        dplyr::select(-fillcolor,-hex) %>%
         dplyr::rename(fillcolor = new_fillcolor)
     }
 
     # Use adaptive font coloring for nodes that have a fill color
     if (!("fontcolor" %in% colnames(graph$nodes_df)) &
         "fillcolor" %in% colnames(graph$nodes_df)) {
-
       graph$nodes_df$fontcolor <-
         tibble::tibble(value = graph$nodes_df$fillcolor) %>%
         dplyr::mutate(value_x = contrasting_text_color(background_color = value)) %>%
@@ -335,13 +351,11 @@ dag_render <- function(graph,
 
     if (!is.null(layout)) {
       if (layout %in% c("circle", "tree", "kk", "fr", "nicely")) {
-
         graph <-
           graph %>%
-          add_global_graph_attrs(
-            attr = "layout",
-            value = "neato",
-            attr_type = "graph")
+          add_global_graph_attrs(attr = "layout",
+                                 value = "neato",
+                                 attr_type = "graph")
 
         if ("x" %in% colnames(graph$nodes_df)) {
           graph$nodes_df <-
@@ -362,8 +376,12 @@ dag_render <- function(graph,
             igraph::layout_in_circle() %>%
             dplyr::as_tibble() %>%
             dplyr::rename(x = V1, y = V2) %>%
-            dplyr::mutate(x = x * (((count_nodes(graph) + (0.25 * count_nodes(graph)))) / count_nodes(graph))) %>%
-            dplyr::mutate(y = y * (((count_nodes(graph) + (0.25 * count_nodes(graph)))) / count_nodes(graph)))
+            dplyr::mutate(x = x * (((
+              count_nodes(graph) + (0.25 * count_nodes(graph))
+            )) / count_nodes(graph))) %>%
+            dplyr::mutate(y = y * (((
+              count_nodes(graph) + (0.25 * count_nodes(graph))
+            )) / count_nodes(graph)))
         }
 
         if (layout == "tree") {
@@ -411,22 +429,24 @@ dag_render <- function(graph,
     }
 
 
-    if (("image" %in% colnames(graph %>% DiagrammeR::get_node_df()) ||
-         "fa_icon" %in% colnames(graph %>% DiagrammeR::get_node_df()) ||
-         as_svg) &
-        requireNamespace("DiagrammeRsvg", quietly = TRUE)) {
-
+    if ((
+      "image" %in% colnames(graph %>% DiagrammeR::get_node_df()) ||
+      "fa_icon" %in% colnames(graph %>% DiagrammeR::get_node_df()) ||
+      as_svg
+    ) &
+    requireNamespace("DiagrammeRsvg", quietly = TRUE)) {
       # Stop function if `DiagrammeRsvg` package is not available
       if (!("DiagrammeRsvg" %in%
             rownames(utils::installed.packages()))) {
-
         emit_error(
           fcn_name = fcn_name,
           reasons = c(
             "Cannot currently render the graph to an SVG",
             "please install the `DiagrammeRsvg` package and retry",
             "pkg installed using `install.packages('DiagrammeRsvg')`",
-            "otherwise, set `as_svg = FALSE`"))
+            "otherwise, set `as_svg = FALSE`"
+          )
+        )
       }
 
       # Generate DOT code
@@ -434,8 +454,7 @@ dag_render <- function(graph,
 
       # Get a vector of SVG lines
       svg_vec <-
-        strsplit(DiagrammeRsvg::export_svg(
-          DiagrammeR::grViz(diagram = dot_code)), "\n") %>%
+        strsplit(DiagrammeRsvg::export_svg(DiagrammeR::grViz(diagram = dot_code)), "\n") %>%
         unlist()
 
       # Get a tibble of SVG data
@@ -452,7 +471,6 @@ dag_render <- function(graph,
       svg_vec[svg_line_no] <- svg_lines
 
       if ("image" %in% colnames(graph %>% DiagrammeR::get_node_df())) {
-
         node_id_images <-
           graph %>%
           DiagrammeR::get_node_df() %>%
@@ -465,11 +483,16 @@ dag_render <- function(graph,
           DiagrammeR::get_node_df() %>%
           dplyr::select(id, image) %>%
           dplyr::filter(image != "") %>%
-          dplyr::mutate(filter_lines = as.character(glue::glue("<filter id=\"{id}\" x=\"0%\" y=\"0%\" width=\"100%\" height=\"100%\"><feImage xlink:href=\"{image}\"/></filter>"))) %>%
+          dplyr::mutate(filter_lines = as.character(
+            glue::glue(
+              "<filter id=\"{id}\" x=\"0%\" y=\"0%\" width=\"100%\" height=\"100%\"><feImage xlink:href=\"{image}\"/></filter>"
+            )
+          )) %>%
           dplyr::pull(filter_lines) %>%
           paste(collapse = "\n")
 
-        filter_shape_refs <- as.character(glue::glue(" filter=\"url(#{node_id_images})\" "))
+        filter_shape_refs <-
+          as.character(glue::glue(" filter=\"url(#{node_id_images})\" "))
 
         svg_shape_nos <-
           svg_tbl %>%
@@ -482,7 +505,6 @@ dag_render <- function(graph,
 
         # Modify shape lines
         for (i in seq(node_id_images)) {
-
           svg_vec[svg_shape_nos[i]] <-
             sub(" ", paste0(filter_shape_refs[i]), svg_vec[svg_shape_nos[i]])
 
@@ -495,17 +517,17 @@ dag_render <- function(graph,
       }
 
       if ("fa_icon" %in% colnames(graph %>% DiagrammeR::get_node_df())) {
-
         # Stop function if `DiagrammeRsvg` package is not available
         if (!("fontawesome" %in%
               rownames(utils::installed.packages()))) {
-
           emit_error(
             fcn_name = fcn_name,
             reasons = c(
               "Cannot currently render FontAwesome icons",
               "please install the `fontawesome` package and retry",
-              "pkg installed using `devtools::install_github('rstudio/fontawesome')`"))
+              "pkg installed using `devtools::install_github('rstudio/fontawesome')`"
+            )
+          )
         }
 
         node_id_fa <-
@@ -521,12 +543,11 @@ dag_render <- function(graph,
           dplyr::pull(id)
 
         for (i in seq(nrow(node_id_fa))) {
-
           random_name <- paste(sample(letters[1:10], 10), collapse = "")
           tmp_svg_file <- paste0(random_name, ".svg")
 
-          fa_icon <- node_id_fa[i, ]$fa_icon
-          id <- node_id_fa[i, ]$id
+          fa_icon <- node_id_fa[i,]$fa_icon
+          id <- node_id_fa[i,]$id
 
           writeLines(fontawesome::fa(fa_icon), tmp_svg_file)
 
@@ -535,7 +556,11 @@ dag_render <- function(graph,
           file.remove(tmp_svg_file)
 
           node_id_fa[i, "fa_uri"] <-
-            as.character(glue::glue("<filter id=\"{id}\" x=\"0%\" y=\"0%\" width=\"100%\" height=\"100%\"><feImage xlink:href=\"{svg_uri}\"/></filter>"))
+            as.character(
+              glue::glue(
+                "<filter id=\"{id}\" x=\"0%\" y=\"0%\" width=\"100%\" height=\"100%\"><feImage xlink:href=\"{svg_uri}\"/></filter>"
+              )
+            )
         }
 
         filter_lines <-
@@ -543,7 +568,8 @@ dag_render <- function(graph,
           dplyr::pull(fa_uri) %>%
           paste(collapse = "\n")
 
-        filter_shape_refs <- as.character(glue::glue(" filter=\"url(#{node_id_svg})\" "))
+        filter_shape_refs <-
+          as.character(glue::glue(" filter=\"url(#{node_id_svg})\" "))
 
         svg_shape_nos <-
           svg_tbl %>%
@@ -556,7 +582,6 @@ dag_render <- function(graph,
 
         # Modify shape lines
         for (i in seq(node_id_svg)) {
-
           svg_vec[svg_shape_nos[i]] <-
             sub(" ", paste0(filter_shape_refs[i]), svg_vec[svg_shape_nos[i]])
 
@@ -573,16 +598,14 @@ dag_render <- function(graph,
       display <- htmltools::browsable(htmltools::HTML(svg_vec_1))
 
     } else {
-
       # Generate DOT code
       dot_code <- DiagrammeR::generate_dot(graph)
 
       # Generate a `DiagrammeR::grViz` object
       grVizObject <-
-        DiagrammeR::grViz(
-          diagram = dot_code,
-          width = width,
-          height = height)
+        DiagrammeR::grViz(diagram = dot_code,
+                          width = width,
+                          height = height)
 
       display <- grVizObject
     }
@@ -593,4 +616,3 @@ dag_render <- function(graph,
     visnetwork(graph)
   }
 }
-

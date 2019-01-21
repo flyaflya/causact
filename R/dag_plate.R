@@ -65,9 +65,9 @@ dag_plate <- function(graph,
   ## get label from description if not available as id
   for (i in seq_along(nodeLabels)){
     if(!(nodeLabels[i] %in% graph$nodes_df$label)){
+      indexOfDescription = which(graph$nodes_df$description == nodeLabels[i])
       nodeLabels[i] =
-        graph$nodes_df$label[graph$nodes_df$description ==
-                                     nodeLabels[i]]
+        graph$nodes_df$label[indexOfDescription]
     }
   }
 
