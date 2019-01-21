@@ -141,7 +141,7 @@ dag_plate <- function(graph,
       dplyr::bind_rows(data.frame(indexID = newIndex, nodeID = duplicatedNodeID))
 
     ## condition to break out.
-    duplicateFlag = anyDuplicated(graph$plate_nodes_df$nodeID)
+    duplicateFlag = anyDuplicated(pseudo_plate_nodes_df$nodeID)
   }
 
 
