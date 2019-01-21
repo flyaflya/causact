@@ -117,7 +117,7 @@ dag_create <- function(...) {
       stringsAsFactors = FALSE)[-1, ]
 
   graph$plate_index_df = pidf
-  graph$plate_node_df = pndf
+  graph$plate_nodes_df = pndf
 
   return(graph)
 }
