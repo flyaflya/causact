@@ -119,5 +119,50 @@ dag_create <- function(...) {
   graph$plate_index_df = pidf
   graph$plate_nodes_df = pndf
 
+  ###update global graph attributes
+  graph = graph %>%
+    DiagrammeR::add_global_graph_attrs(attr = "layout",
+                                       value = "dot",
+                                       attr_type = "graph") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "fillcolor",
+                                       value = "AliceBlue",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "style",
+                                       value = "filled",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "shape",
+                                       value = "ellipse",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "height",
+                                       value = "0.5",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "width",
+                                       value = "0.9",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "fixedsize",
+                                       value = "false",
+                                       attr_type = "node")  %>%
+    DiagrammeR::add_global_graph_attrs(attr = "margin",
+                                       value = "0.05,0.05",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "color",
+                                       value = "gray20",
+                                       attr_type = "node")  %>%
+    DiagrammeR::add_global_graph_attrs(attr = "color",
+                                       value = "gray20",
+                                       attr_type = "edge")  %>%
+    DiagrammeR::add_global_graph_attrs(attr = "fontcolor",
+                                       value = "black",
+                                       attr_type = "node") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "fontcolor",
+                                       value = "black",
+                                       attr_type = "edge") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "labelloc",
+                                       value = "b",
+                                       attr_type = "graph") %>%
+    DiagrammeR::add_global_graph_attrs(attr = "labeljust",
+                                       value = "r",
+                                       attr_type = "graph")
+
   return(graph)
 }

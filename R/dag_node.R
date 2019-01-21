@@ -71,18 +71,21 @@ dag_node <- function(graph,
     fullDistLabel = formulaString
   }
 
+  fillcolor = dplyr::case_when(observed == TRUE ~ "cadetblue",
+                               TRUE ~ "aliceblue")
+
   graph = graph %>% DiagrammeR::add_node(
     type = type,
     label = label,
     node_data =
       DiagrammeR::node_data(
-        type = type,
         description = description,
         distr = distString,
         fullDistLabel = fullDistLabel,
         formulaString = formulaString),
     node_aes =
-      DiagrammeR::node_aes(peripheries = ifelse(is.na(formulaString), 1, 2))
+      DiagrammeR::node_aes(peripheries = ifelse(is.na(formulaString), 1, 2),
+                           fillcolor = fillcolor)
   )
 
   # Add child edge if desired
