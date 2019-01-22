@@ -84,3 +84,59 @@
 #' @source \url{https://data.worldbank.org/indicator/sp.pop.totl} Population data accessed on Oct 1, 2018.
 "corruptDF"
 
+
+#' Dataframe of 1,460 observations of home sales in Ames, Iowa.  Known as "The Ames Housing dataset", it was compiled by Dean De Cock for use in data science education.
+#' Each observation is a home sale.  See \code{houseDFDescr} for more info.}
+#' @format A data frame with 1,460 rows and 37 variables:
+#' \describe{
+#'   \item{SalePrice}{the property's sale price in dollars. This is the target variable}
+#'   \item{MSSubClass}{The building class}
+#'   \item{MSZoning}{The general zoning classification}
+#'   \item{LotFrontage}{Linear feet of street connected to property}
+#'   \item{LotArea}{Lot size in square feet}
+#'   \item{Street}{Type of road access}
+#'   \item{LotShape}{General shape of property}
+#'   \item{LandContour}{Flatness of the property}
+#'   \item{Utilities}{Type of utilities available}
+#'   \item{LotConfig}{Lot configuration}
+#'   \item{Neighborhood}{Physical locations within Ames city limits}
+#'   \item{BldgType}{Type of dwelling}
+#'   \item{HouseStyle}{Style of dwelling}
+#'   \item{OverallQual}{Overall material and finish quality}
+#'   \item{OverallCond}{Overall condition rating}
+#'   \item{YearBuilt}{Original construction date}
+#'   \item{YearRemodAdd}{Remodel date}
+#'   \item{ExterQual}{Exterior material quality}
+#'   \item{ExterCond}{Present condition of the material on the exterior}
+#'   \item{BsmtQual}{Height of the basement}
+#'   \item{BsmtCond}{General condition of the basement}
+#'   \item{BsmtExposure}{Walkout or garden level basement walls}
+#'   \item{BsmtUnfSF}{Unfinished square feet of basement area}
+#'   \item{TotalBsmtSF}{Total square feet of basement area}
+#'   \item{1stFlrSF}{First Floor square feet}
+#'   \item{2ndFlrSF}{Second floor square feet}
+#'   \item{LowQualFinSF}{Low quality finished square feet (all floors)}
+#'   \item{GrLivArea}{Above grade (ground) living area square feet}
+#'   \item{FullBath}{Full bathrooms above grade}
+#'   \item{HalfBath}{Half baths above grade}
+#'   \item{BedroomAbvGr}{Number of bedrooms above basement level}
+#'   \item{TotRmsAbvGrd}{Total rooms above grade (does not include bathrooms)}
+#'   \item{Functional}{Home functionality rating}
+#'   \item{GarageCars}{Size of garage in car capacity}
+#'   \item{MoSold}{Month Sold}
+#'   \item{YrSold}{Year Sold}
+#'   \item{SaleType}{Type of sale}
+#'   \item{SaleCondition}{Condition of sale
+#' }
+#' @source \url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
+"houseDF"
+
+#' Dataframe of 523 descriptions of data values from "The Ames Housing dataset", compiled by Dean De Cock for use in data science education.
+#' Each observation is a possible value from a varaible in the \code{houseDF} dataset.
+#' @format A data frame with 260 rows and 2 variables:
+#' \describe{
+#'   \item{varName}{the name and description of a variable stored in the \code{houseDF} dataset}
+#'   \item{varValueDescr}{The value and accompanying interpretation for values in the \code{houseDF} dataset}
+#' }
+#' @source \url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
+"houseDFDescr"
