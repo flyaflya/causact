@@ -5,11 +5,9 @@
 #' @param shortLabel a logical value.  If set to \code{TRUE}, distribution and formula information is suppressed.
 #' @param ... arguments that can be passed onto \code{Diagrammer::create_graph()}.
 #' @examples
-#' \dontrun{
 #' # Render an  empty graph
 #' dag_create() %>%
 #'   dag_render()
-#'
 #' @importFrom dplyr select rename mutate filter left_join
 #' @importFrom dplyr case_when as_tibble as_data_frame
 #' @importFrom DiagrammeR render_graph
@@ -54,7 +52,7 @@ dag_render <- function(graph,
     collapse = "\n")
   } else {
     ##long label changes depending on whether greta distribution is used
-    ##right now, the test for a greta distributioin is the expression in
+    ##right now, the test for a greta distribution is the expression in
     ##the below if statement.
 
     for (i in seq_along(graph$nodes_df$distr)) {
