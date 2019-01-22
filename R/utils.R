@@ -136,6 +136,9 @@ getFullDistList = function(distr = greta::variable) {
     distString = gsub("greta::","",distString[1])
   }
   fullDistLabel = paste0(distString,"(",distArgs,")")
+  if(fullDistLabel == "NA(NA,NA)") {
+    distString = ""
+    fullDistLabel = ""} ## if NA entered by user
 
   return(list(distString = distString, distArgs = distArgs, fullDistLabel = fullDistLabel))
 }
