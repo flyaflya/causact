@@ -1,7 +1,6 @@
-#' Add an edge between nodes in a graph object created from \code{dag_create}.
+#' Add an edge between nodes in a graph object.
 #'
-#' With a graph object of class \code{dgr_graph}, add an edge to nodes within
-#'   the graph.
+#' With a graph object of class \code{dgr_graph} created from \code{dag_create}, add an edge between nodes in the graph.
 #' @param from the parent node label or description from which the edge is connected.
 #' @param to the child node label or description from which the edge is connected.
 #' @return a graph object of class \code{dgr_graph}.

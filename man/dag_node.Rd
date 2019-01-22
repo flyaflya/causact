@@ -4,57 +4,55 @@
 \alias{dag_node}
 \title{Add a node to an existing graph object}
 \usage{
-dag_node(graph, description = as.character(NA), label = NULL, type = NULL,
-  distribution = greta::variable, from = NULL, to = NULL,
-  node_aes = NULL, edge_aes = NULL, node_data = NULL, edge_data = NULL,
-  peripheries = 1)
+dag_node(graph, label, description = as.character(NA),
+  distr = greta::variable(-Inf, Inf), observed = FALSE,
+  formulaString = as.character(NA), children = as.character(NA))
 }
 \arguments{
-\item{label}{an optional character object that describes the node.}
+\item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}
 
-\item{type}{an optional character object that acts as a group identifier for
-the node to be added.}
+\item{label}{a required character label that describes the node.}
 
-\item{from}{an optional vector containing node IDs from which edges will be
-directed to the new node.}
+\item{description}{a longer more descriptive character label for the node.}
 
-\item{to}{an optional vector containing node IDs to which edges will be
-directed from the new node.}
+\item{distr}{a variable greta array function such as \code{uniform, normal, lognormal, bernoulli,} etc. Function arguments are optional.  Use \code{distr = NA} to suppress distribution assumptions.  Valid values include \code{greta::normal}, \code{normal}, and \code{normal(6,2)}.}
+
+\item{observed}{a logical value indicating whether the node is observed.}
+
+\item{formulaString}{a character string representing an operation that should be performed to calculate the node's value from its parents.  When input, \code{distr} is ignored.}
+
+\item{children}{an optional character vector of existing node labels or node descriptions.  Directed edges from the newly created node will be created.}
 }
 \value{
 a graph object of class \code{dgr_graph}.
 }
 \description{
-With a graph object of class \code{dgr_graph}, add a new node to the graph.
-  One can optionally provide node attributes for the created node. There is
-  also the option to create edges to and from existing nodes in the graph.
-  Because new edges can also be created through this function, there is the
-  possibility to set edge attributes for any new graph edges.
+The graph object should be of class \code{dgr_graph} and created using \code{dag_create()}.
 }
 \examples{
 # Create an empty graph and add 2 nodes by using
 # the `dag_node()` function twice
 graph <-
-  create_graph() \%>\%
-  dag_node() \%>\%
-  dag_node()
+  dag_create() \%>\%
+  dag_node("X") \%>\%
+  dag_node("Y", children = "X")
+dag_render(graph, shortLabel = TRUE)
 
-# Get a count of all nodes
-# in the graph
-graph \%>\% count_nodes()
-
-# The nodes added were given
-# ID values `1` and `2`; obtain
-# the graph's node IDs
-graph \%>\% get_node_ids()
-
-# Add a node with a `type`
-# value defined
-graph <-
-  graph \%>\%
-  dag_node(type = "person")
-
-# View the graph's internal
-# node data frame (ndf)
-graph \%>\% get_node_df()
+dag_create() \%>\%
+  dag_node("Y","Sales Price",
+           distr = normal, observed = TRUE) \%>\%
+  dag_node("X","Square Footage",
+           observed = TRUE, distr = NA) \%>\%
+  dag_node("mean","Exp Sales Price",
+           children = "Sales Price",
+           formulaString = "alpha + beta * x") \%>\%
+  dag_node("beta", "Price per Sq Foot",
+           children = "mean") \%>\%
+  dag_node("SD", "Std Dev of Sales Price",
+           distr = lognormal(0,3),
+           children = "Sales Price") \%>\%
+  dag_node("alpha", "Intercept",
+           children = "mean")  \%>\%
+  dag_edge("Square Footage","mean") \%>\%
+  dag_render()
 }

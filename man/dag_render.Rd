@@ -4,75 +4,20 @@
 \alias{dag_render}
 \title{Render the graph in various formats}
 \usage{
-dag_render(graph, layout = NULL, output = NULL, as_svg = FALSE,
-  title = NULL, width = NULL, height = NULL)
+dag_render(graph, shortLabel = FALSE, ...)
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph}.}
 
-\item{layout}{a string specifying a layout type to use for node placement in
-this rendering. Possible layouts include: \code{nicely}, \code{circle},
-\code{tree}, \code{kk}, and \code{fr}.}
+\item{shortLabel}{a logical value.  If set to \code{TRUE}, distribution and formula information is suppressed.}
 
-\item{output}{a string specifying the output type; \code{graph} (the default)
-renders the graph using the \code{\link{grViz}()} function and
-\code{visNetwork} renders the graph using the \code{\link{visnetwork}()}
-function.}
-
-\item{as_svg}{an option to render the graph as an SVG document.}
-
-\item{title}{an optional title for a graph when using
-\code{output = "graph"}.}
-
-\item{width}{an optional parameter for specifying the width of the resulting
-graphic in pixels.}
-
-\item{height}{an optional parameter for specifying the height of the
-resulting graphic in pixels.}
+\item{...}{arguments that can be passed onto \code{Diagrammer::create_graph()}.}
 }
 \description{
 Using a \code{dgr_graph} object, render the graph in the RStudio Viewer.
 }
 \examples{
-\dontrun{
-# Render a graph that's a
-# balanced tree
-create_graph() \%>\%
-  add_balanced_tree(
-    k = 2, h = 3) \%>\%
-  render_graph()
-
-# Use the `tree` layout for
-# better node placement in this
-# hierarchical graph
-create_graph() \%>\%
-  add_balanced_tree(
-    k = 2, h = 3) \%>\%
-  render_graph(layout = "tree")
-
-# Plot the same tree graph but
-# don't show the node ID values
-create_graph() \%>\%
-  add_balanced_tree(
-    k = 2, h = 3) \%>\%
-  set_node_attr_to_display() \%>\%
-  render_graph(layout = "tree")
-
-# Create a circle graph
-create_graph() \%>\%
-  add_gnm_graph(
-    n = 55,
-    m = 75,
-    set_seed = 23) \%>\%
-  render_graph(
-    layout = "circle")
-
-# Render the graph using the
-# `visNetwork` output option
-create_graph() \%>\%
-  add_balanced_tree(
-    k = 2, h = 3) \%>\%
-  render_graph(
-    output = "visNetwork")
-}
+# Render an  empty graph
+dag_create() \%>\%
+  dag_render()
 }
