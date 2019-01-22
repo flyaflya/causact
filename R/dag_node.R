@@ -45,13 +45,16 @@ dag_node <- function(graph,
                      distr = greta::variable(-Inf,Inf),
                      observed = FALSE,
                      formulaString = as.character(NA),
-                     children = as.character(NA)) {
+                     children = as.character(NA),
+                     data = as.character(NA)) {
 
   # update node_data with DAG specific graphing
   description = description
   distr = rlang::enexpr(distr)  ## take in argument as expression
   type = ifelse(observed == TRUE,"obs","latent")
   formulaString = formulaString
+  data = enquo(data)
+  data = rlang::expr_text(data)
 
   # get node labels based off of user input for distr
   distList = getFullDistList(rlang::UQ(distr))
@@ -77,7 +80,8 @@ dag_node <- function(graph,
         description = description,
         distr = distString,
         fullDistLabel = fullDistLabel,
-        formulaString = formulaString),
+        formulaString = formulaString,
+        data = data),
     node_aes =
       DiagrammeR::node_aes(peripheries = ifelse(is.na(formulaString), 1, 2),
                            fillcolor = fillcolor,

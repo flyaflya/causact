@@ -21,6 +21,7 @@ dag_create <- function(...) {
   graph$nodes_df$distr[-1] = as.character(NA)
   graph$nodes_df$formulaString[-1] = as.character(NA)
   graph$nodes_df$fullDistLabel[-1] = as.character(NA)
+  graph$nodes_df$data[-1] = as.character(NA)
 
   ## add two df's to store plate index information
   # Create an empty index data frame (`idf`)
