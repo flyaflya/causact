@@ -21,7 +21,12 @@
 dag_plate <- function(graph,
                       indexLabel,
                       description,
-                      nodeLabels) {
+                      nodeLabels,
+                      data = as.character(NA)) {
+  ### capture data argument
+  data = enquo(data)
+  data = rlang::expr_text(data)
+
   ## get label from description if not available as id
   for (i in seq_along(nodeLabels)) {
     if (!(nodeLabels[i] %in% graph$nodes_df$label)) {
@@ -43,7 +48,8 @@ dag_plate <- function(graph,
     indexID = lastPlateIndex + 1,
     indexLabel = indexLabel,
     indexDescription = description,
-    indexDisplayName = paste0(description, " ", indexLabel)
+    indexDisplayName = paste0(description, " ", indexLabel),
+    data = data
   )
 
   ## update plate node df
