@@ -36,7 +36,7 @@
 #'   dag_edge("Square Footage","mean") %>%
 #'   dag_render()
 #' @importFrom dplyr select bind_cols as_tibble case_when
-#' @importFrom rlang is_empty UQ enexpr
+#' @importFrom rlang is_empty UQ enexpr enquo expr_text
 #' @importFrom DiagrammeR add_node node_data node_aes
 #' @export
 dag_node <- function(graph,
@@ -54,7 +54,7 @@ dag_node <- function(graph,
   type = ifelse(observed == TRUE,"obs","latent")
   formulaString = formulaString
   data = enquo(data)
-  data = rlang::expr_text(data)
+  data = rlang::quo_name(data)
 
   # get node labels based off of user input for distr
   distList = getFullDistList(rlang::UQ(distr))
