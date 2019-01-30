@@ -141,7 +141,8 @@ dag_greta <- function(graph) {
   #codeStatements
 
   ###gretaCode as text
-  paste(codeStatements, collapse = '\n') %>% cat()
+  paste("The following code was run in the background: \n",
+        codeStatements, collapse = '\n') %>% cat()
 
   ##EVALUATE CODE IN GLOBAL ENVIRONMENT
   ##make expression out of Code Statements
