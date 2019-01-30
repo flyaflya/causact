@@ -29,6 +29,8 @@ dag_edge <- function(graph,
     }
   }
 
+
+
   graph = graph %>% DiagrammeR::add_edge(from, to)
   return(graph)
 }

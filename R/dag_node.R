@@ -42,14 +42,13 @@
 dag_node <- function(graph,
                      label,
                      description = as.character(NA),
-                     distr = greta::variable(-Inf,Inf),
+                     distr = NA,
                      observed = FALSE,
                      formulaString = as.character(NA),
                      children = as.character(NA),
                      data = as.character(NA)) {
 
   # update node_data with DAG specific graphing
-  description = description
   distr = rlang::enexpr(distr)  ## take in argument as expression
   type = ifelse(observed == TRUE,"obs","latent")
   formulaString = formulaString
@@ -62,6 +61,8 @@ dag_node <- function(graph,
   ## above returns list of dist name, dist arguments, and label
   distString = distList$distString
   fullDistLabel = distList$fullDistLabel
+  userSpecifiedArgs = distList$userSpecifiedArgs
+  print(userSpecifiedArgs)
 
   ##use formula string for label if available
   ##distribution is ignored when formulaString is provided
@@ -81,7 +82,10 @@ dag_node <- function(graph,
         distr = distString,
         fullDistLabel = fullDistLabel,
         formulaString = formulaString,
-        data = data),
+        data = data,
+        userSpecifiedArgs = userSpecifiedArgs,
+        ### Add abbreviated label for writing code
+        abbrevLabel = abbreviate(label,6)),
     node_aes =
       DiagrammeR::node_aes(peripheries = ifelse(is.na(formulaString), 1, 2),
                            fillcolor = fillcolor,
@@ -92,7 +96,6 @@ dag_node <- function(graph,
   if (!is.na(children)) {
     graph = graph %>% dag_edge(from = label, to = children)
   }
-
 
   return(graph)
 }

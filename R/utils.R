@@ -128,7 +128,7 @@ getFullDistList = function(distr = greta::variable) {
     if(is.character(distArgs)) {userSpecifiedArgs = FALSE}  ## if in this path, arguments not specified
     numParents = which(distArgs == "dim") - 1  ## get number of dist paramaters
     distArgs = paste0(distArgs[1:numParents], collapse = ",")  ## keep only dist parameters
-  }, warning = function(w){})
+  }, warning = function(w){}, error = function(e) {})
 
   if (userSpecifiedArgs == TRUE){
     distString = as.character(distr)  ### make into string
@@ -140,5 +140,17 @@ getFullDistList = function(distr = greta::variable) {
     distString = ""
     fullDistLabel = ""} ## if NA entered by user
 
-  return(list(distString = distString, distArgs = distArgs, fullDistLabel = fullDistLabel))
+  return(list(distString = distString, distArgs = distArgs, fullDistLabel = fullDistLabel,userSpecifiedArgs = userSpecifiedArgs))
 }
+
+### simplified function to pad an abbreviated label with whitespace
+### to the right.
+abbrevLabelPad <- function(stringVector) {
+  maxStrWidth = max(nchar(stringVector))
+  padding = paste(rep(" ",maxStrWidth), collapse = "")
+  paddedString = paste0(stringVector,padding)
+  string = substr(paddedString,1,maxStrWidth)
+  return(string)
+}
+
+
