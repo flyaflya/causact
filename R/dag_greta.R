@@ -132,15 +132,16 @@ dag_greta <- function(graph) {
                          sep = "\n")
 
   ###Create MODEL Statement
-  # get all non-observed nodes
+  # get all non-observed / non-formula nodes by default
   unobservedNodes = graph$nodes_df %>%
-    dplyr::filter(type != "obs") %>%
+    dplyr::filter(type != "obs" & is.na(formulaString)) %>%
     dplyr::pull(label)
   modelStatement = paste0("gretaModel <- model(",
                           paste0(unobservedNodes, collapse = ","),
-                          ")   #MODEL\n")
+                          ")   #MODEL")
 
   ###Create POSTERIOR draws statement
+  posteriorStatement = paste0("drawsDF <- mcmc(gretaModel) %>% \n as.matrix() %>% \n dplyr::as_tibble()   #POSTERIOR\n")
 
 
   ##########################################
@@ -149,7 +150,8 @@ dag_greta <- function(graph) {
                      priorStatements,
                      opStatements,
                      likeStatements,
-                     modelStatement)
+                     modelStatement,
+                     posteriorStatement)
 
   #codeStatements
 
