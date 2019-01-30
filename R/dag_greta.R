@@ -115,7 +115,9 @@ dag_greta <- function(graph) {
 
   ###LIKELIHOOD:  Create code for LIKELIHOOD lines
   lhsNodesDF = nodesDF %>%
-    dplyr::filter(type == "obs" & userSpecifiedArgs == TRUE) %>%
+    dplyr::filter(type == "obs") %>%  ##only observed nodes
+    dplyr::inner_join(edgesDF, by = c("id" = "to")) %>% # only nodes with parents
+    dplyr::distinct(abbrevLabel,fullDistLabel) %>%
     mutate(codeLine = paste0(abbrevLabelPad(
       paste0("distribution(",
              abbrevLabel,
@@ -123,7 +125,7 @@ dag_greta <- function(graph) {
     ),
     " <- ",
     fullDistLabel)) %>%
-    mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #LIKELIHOOD"))
+    dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #LIKELIHOOD"))
 
   ###Aggregate Code Statements for LIKELIHOOD
   likeStatements = paste(lhsNodesDF$codeLine,
@@ -136,7 +138,7 @@ dag_greta <- function(graph) {
                      opStatements,
                      likeStatements)
 
-  codeStatements
+  #codeStatements
 
   ###gretaCode as text
   paste(codeStatements, collapse = '\n') %>% cat()
@@ -149,5 +151,5 @@ dag_greta <- function(graph) {
   eval(codeExpr, envir = globalenv())
 
   ###return code
-  return(codeExpr)
+  return()
 }

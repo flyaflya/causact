@@ -4,7 +4,7 @@
 \alias{dag_plate}
 \title{Set node attribute values to reflect a desired cluster}
 \usage{
-dag_plate(graph, indexLabel, description, nodeLabels)
+dag_plate(graph, indexLabel, description, nodeLabels, data = as.character(NA))
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}

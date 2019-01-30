@@ -2,7 +2,7 @@
 % Please edit documentation in R/dag_edge.R
 \name{dag_edge}
 \alias{dag_edge}
-\title{Add an edge between nodes in a graph object created from \code{dag_create}.}
+\title{Add an edge between nodes in a graph object.}
 \usage{
 dag_edge(graph, from, to)
 }
@@ -15,8 +15,7 @@ dag_edge(graph, from, to)
 a graph object of class \code{dgr_graph}.
 }
 \description{
-With a graph object of class \code{dgr_graph}, add an edge to nodes within
-  the graph.
+With a graph object of class \code{dgr_graph} created from \code{dag_create}, add an edge between nodes in the graph.
 }
 \examples{
 # Create a graph with 2 connected nodes

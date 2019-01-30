@@ -4,9 +4,9 @@
 \alias{dag_node}
 \title{Add a node to an existing graph object}
 \usage{
-dag_node(graph, label, description = as.character(NA),
-  distr = greta::variable(-Inf, Inf), observed = FALSE,
-  formulaString = as.character(NA), children = as.character(NA))
+dag_node(graph, label, description = as.character(NA), distr = NA,
+  observed = FALSE, formulaString = as.character(NA),
+  children = as.character(NA), data = as.character(NA))
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}
