@@ -131,17 +131,30 @@ dag_greta <- function(graph) {
   likeStatements = paste(lhsNodesDF$codeLine,
                          sep = "\n")
 
+  ###Create MODEL Statement
+  # get all non-observed nodes
+  unobservedNodes = graph$nodes_df %>%
+    dplyr::filter(type != "obs") %>%
+    dplyr::pull(label)
+  modelStatement = paste0("gretaModel <- model(",
+                          paste0(unobservedNodes, collapse = ","),
+                          ")   #MODEL\n")
+
+  ###Create POSTERIOR draws statement
+
+
   ##########################################
   ###Aggregate all code
   codeStatements = c(dataStatements,
                      priorStatements,
                      opStatements,
-                     likeStatements)
+                     likeStatements,
+                     modelStatement)
 
   #codeStatements
 
   ###gretaCode as text
-  paste0("The following code was run in the background: \n",
+  paste0("## The following code was run in the background: \n",
          paste(codeStatements, collapse = '\n')) %>% cat()
 
   ##EVALUATE CODE IN GLOBAL ENVIRONMENT
