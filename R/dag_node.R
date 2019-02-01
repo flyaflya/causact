@@ -40,7 +40,7 @@
 #' @importFrom DiagrammeR add_node node_data node_aes
 #' @export
 dag_node <- function(graph,
-                     label,
+                     label = as.character(NA),
                      description = as.character(NA),
                      distr = NA,
                      observed = FALSE,
@@ -52,26 +52,30 @@ dag_node <- function(graph,
   distr = rlang::enexpr(distr)  ## take in argument as expression
   type = ifelse(observed == TRUE,"obs","latent")
   formulaString = formulaString
-  data = enquo(data)
+  data = rlang::enquo(data)
   data = rlang::quo_name(data)
+  # if data is supplied,update type to observed
+  if(!(data == "as.character(NA)")){type = "obs"}
 
   # get node labels based off of user input for distr
   distList = getFullDistList(rlang::UQ(distr))
 
-  ## above returns list of dist name, dist arguments, and label
+  ## above returns list of dist name, dist arguments, and full label
   distString = distList$distString
   fullDistLabel = distList$fullDistLabel
   userSpecifiedArgs = distList$userSpecifiedArgs
-  print(userSpecifiedArgs)
 
-  ##use formula string for label if available
+  ##use formula string for dist label if available
   ##distribution is ignored when formulaString is provided
   if (!is.na(formulaString)) {
     fullDistLabel = formulaString
   }
 
-  fillcolor = dplyr::case_when(observed == TRUE ~ "cadetblue",
+  fillcolor = dplyr::case_when(type == "obs" ~ "cadetblue",
                                TRUE ~ "aliceblue")
+
+  ###allow node to have just data entered by reproducing it as label
+  if(is.na(label) & !is.na(data)) {label = last(str_split(data,"\\$", simplify = TRUE))}
 
   graph = graph %>% DiagrammeR::add_node(
     type = type,

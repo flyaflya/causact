@@ -11,8 +11,10 @@
 #' @importFrom dplyr bind_rows tibble
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
 #' @importFrom rlang enquo expr_text
+#' @importFrom igraph layout_
 #' @export
-dag_greta <- function(graph) {
+dag_greta <- function(graph,
+                      mcmc = FALSE) {
   ###Extract relevant graph objects
   nodesDF = graph$nodes_df
   edgesDF = graph$edges_df
@@ -61,15 +63,16 @@ dag_greta <- function(graph) {
     }
   }
 
-  ### Add in Sugiyama Layer information to nodesDF
+  ### Add in Sugiyama Layer information to nodesDF (assume more than one node)
+  if(nrow(nodesDF) > 1) {
   sugiYamaLayout = graph %>%
     DiagrammeR::to_igraph() %>%
-    layout_(with_sugiyama())
+    igraph::layout_(igraph::with_sugiyama())
   nodeRankSugi = sugiYamaLayout$layout[, 2]
   ### use sugiyama to arrange nodes by vertical rank
   nodesDF = nodesDF %>%
     dplyr::mutate(nodeRank = nodeRankSugi) %>%
-    arrange(desc(nodeRank))
+    arrange(desc(nodeRank)) }
 
   ###Use DAPROPLIMOPO(DAta,PRior,OPeration,LIkelihood,MOdel,POsterior)
   ###Find all nodes that require data based on user input
@@ -78,12 +81,12 @@ dag_greta <- function(graph) {
   ###DATA:  Create Code for Data Lines
   lhsNodesDF = nodesDF %>%
     dplyr::filter(type == "obs" | data != "as.character(NA)") %>%
-    mutate(codeLine = paste0(abbrevLabelPad(abbrevLabel),
+    dplyr::mutate(codeLine = paste0(abbrevLabelPad(abbrevLabel),
                              " <- ",
                              "as_data(",
                              data,
                              ")")) %>%
-    mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #DATA"))
+    dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #DATA"))
 
   ###Aggregate Code Statements for DATA
   dataStatements = paste(lhsNodesDF$codeLine,
@@ -92,10 +95,10 @@ dag_greta <- function(graph) {
   ###PRIOR:  Create code for prior lines
   lhsNodesDF = nodesDF %>%
     dplyr::filter(type == "latent" & is.na(formulaString)) %>%
-    mutate(codeLine = paste0(abbrevLabelPad(abbrevLabel),
+    dplyr::mutate(codeLine = paste0(abbrevLabelPad(abbrevLabel),
                              " <- ",
                              fullDistLabel)) %>%
-    mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #PRIOR"))
+    dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #PRIOR"))
 
   ###Aggregate Code Statements for PRIOR
   priorStatements = paste(lhsNodesDF$codeLine,
@@ -104,10 +107,10 @@ dag_greta <- function(graph) {
   ###OPERATION:  Create code for OPERATION lines
   lhsNodesDF = nodesDF %>%
     dplyr::filter(type == "latent" & !is.na(formulaString)) %>%
-    mutate(codeLine = paste0(abbrevLabelPad(abbrevLabel),
+    dplyr::mutate(codeLine = paste0(abbrevLabelPad(abbrevLabel),
                              " <- ",
                              formulaString)) %>%
-    mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #OPERATION"))
+    dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #OPERATION"))
 
   ###Aggregate Code Statements for OPERATION
   opStatements = paste(lhsNodesDF$codeLine,
@@ -118,7 +121,7 @@ dag_greta <- function(graph) {
     dplyr::filter(type == "obs") %>%  ##only observed nodes
     dplyr::inner_join(edgesDF, by = c("id" = "to")) %>% # only nodes with parents
     dplyr::distinct(abbrevLabel,fullDistLabel) %>%
-    mutate(codeLine = paste0(abbrevLabelPad(
+    dplyr::mutate(codeLine = paste0(abbrevLabelPad(
       paste0("distribution(",
              abbrevLabel,
              ")")
@@ -141,8 +144,7 @@ dag_greta <- function(graph) {
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
-  posteriorStatement = paste0("drawsDF <- mcmc(gretaModel) %>% \n as.matrix() %>% \n dplyr::as_tibble()   #POSTERIOR\n")
-
+  posteriorStatement = paste0("draws   <- mcmc(gretaModel)   #POSTERIOR\ndrawsDF <- draws %>% as.matrix() %>% as_tibble()   #POSTERIOR\n")
 
   ##########################################
   ###Aggregate all code
@@ -156,7 +158,7 @@ dag_greta <- function(graph) {
   #codeStatements
 
   ###gretaCode as text
-  paste0("## The following code was run in the background: \n",
+  paste0("## The specified DAG corresponds to the following greta code: \n",
          paste(codeStatements, collapse = '\n')) %>% cat()
 
   ##EVALUATE CODE IN GLOBAL ENVIRONMENT
@@ -164,7 +166,7 @@ dag_greta <- function(graph) {
   codeExpr = parse(text = codeStatements)
 
   ##eval expression
-  eval(codeExpr, envir = globalenv())
+  if(mcmc == TRUE) {eval(codeExpr, envir = globalenv())}
 
   ###return code
   return(invisible())

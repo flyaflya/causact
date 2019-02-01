@@ -132,7 +132,10 @@ getFullDistList = function(distr = greta::variable) {
 
   if (userSpecifiedArgs == TRUE){
     distString = as.character(distr)  ### make into string
-    distArgs = paste0(distString[2:length(distString)],collapse =",")
+    distArgs = paste0(ifelse(names(distr)[2:length(distString)] == "",
+                             "",
+                             paste0(names(distr)[2:length(distString)],"=")),
+                             distString[2:length(distString)],collapse =",") ##add argument names if given in original expression e.g. "truncation = c(0,Inf)"
     distString = gsub("greta::","",distString[1])
   }
   fullDistLabel = paste0(distString,"(",distArgs,")")
@@ -146,7 +149,7 @@ getFullDistList = function(distr = greta::variable) {
 ### simplified function to pad an abbreviated label with whitespace
 ### to the right.
 abbrevLabelPad <- function(stringVector) {
-  maxStrWidth = max(nchar(stringVector))
+  maxStrWidth = max(nchar(stringVector),6)
   padding = paste(rep(" ",maxStrWidth), collapse = "")
   paddedString = paste0(stringVector,padding)
   string = substr(paddedString,1,maxStrWidth)
