@@ -100,6 +100,6 @@ dag_render <- function(graph,
   }  #end for
   }  #end else
 
-  graph %>% DiagrammeR::render_graph()  ### render the graph
+  graph %>% DiagrammeR::render_graph(...)  ### render the graph
   #graph %>% dag_greta()   ### supply greta code
 }
