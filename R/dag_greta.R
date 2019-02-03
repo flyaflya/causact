@@ -72,7 +72,7 @@ dag_greta <- function(graph,
   ### use sugiyama to arrange nodes by vertical rank
   nodesDF = nodesDF %>%
     dplyr::mutate(nodeRank = nodeRankSugi) %>%
-    arrange(desc(nodeRank)) }
+    dplyr::arrange(desc(nodeRank)) }
 
   ###Use DAPROPLIMOPO(DAta,PRior,OPeration,LIkelihood,MOdel,POsterior)
   ###Find all nodes that require data based on user input

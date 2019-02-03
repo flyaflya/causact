@@ -58,7 +58,7 @@ dag_node <- function(graph,
   if(!(data == "as.character(NA)")){type = "obs"}
 
   # get node labels based off of user input for distr
-  distList = getFullDistList(rlang::UQ(distr))
+  distList = getFullDistList(!!(distr))
 
   ## above returns list of dist name, dist arguments, and full label
   distString = distList$distString
