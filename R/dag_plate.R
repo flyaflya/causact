@@ -22,10 +22,11 @@ dag_plate <- function(graph,
                       indexLabel,
                       description,
                       nodeLabels,
-                      data = as.character(NA)) {
-  ### capture data argument
-  data = enquo(data)
-  data = rlang::expr_text(data)
+                      dataNode = as.character(NA)) {
+  ### capture data argument as string
+  dataNode = dataNode
+  #data = enquo(data)
+  #data = rlang::expr_text(data)
 
   ## get label from description if not available as id
   for (i in seq_along(nodeLabels)) {
@@ -35,6 +36,13 @@ dag_plate <- function(graph,
         graph$nodes_df$label[indexOfDescription]
     }
   }
+
+  ### get data node label from description if not available as id
+  if (!is.na(dataNode) & !(dataNode %in% graph$nodes_df$label)) {
+      indexOfNode = which(graph$nodes_df$description == dataNode)
+      dataNode =
+        graph$nodes_df$label[indexOfNode]
+    }
 
   ## get selection of node IDS from labels
   nodeIDS = dplyr::left_join(data.frame(label = nodeLabels, stringsAsFactors = FALSE),
@@ -49,7 +57,7 @@ dag_plate <- function(graph,
     indexLabel = indexLabel,
     indexDescription = description,
     indexDisplayName = paste0(description, " ", indexLabel),
-    data = data
+    dataNode = dataNode
   )
 
   ## update plate node df

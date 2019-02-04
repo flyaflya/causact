@@ -33,7 +33,7 @@ dag_create <- function(...) {
       indexLabel = as.character(NA),
       indexDescription = as.character(NA),
       indexDisplayName = as.character(NA),
-      data = as.character(NA),
+      dataNode = as.character(NA),
       stringsAsFactors = FALSE)[-1, ]
 
   # Create an empty plate nodes data frame (`pdf`)

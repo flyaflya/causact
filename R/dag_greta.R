@@ -21,6 +21,18 @@ dag_greta <- function(graph,
   plateDF = graph$plate_index_df
   plateNodesDF = graph$plate_nodes_df
 
+  ###Add dimensionality due to plate notation
+  ###Retrieve nodes with dimensions
+  dimNodesDF = graph$plate_nodes_df %>%
+    dplyr::left_join(graph$plate_index_df, by = "indexID") %>%
+    dplyr::as_tibble() %>%
+    dplyr::left_join(graph$nodes_df, by = c("nodeID" = "id")) %>%
+    dplyr::select(nodeID,indexLabel,label,abbrevLabel,type,formulaString, distr, fullDistLabel) %>%
+    dplyr::filter(type == "latent" & is.na(formulaString)) #%>%
+    #dplyr::select(nodeID, indexLabel)
+  ###Add dim argument to distr
+ # dimNodesDF %>% dplyr::left_joingraph$nodes_df
+
 
   ### Substitute any abbreviated labels within parantheses of fullDistLabel
   ### or within formula.  Only check nodes with edges
@@ -81,6 +93,7 @@ dag_greta <- function(graph,
   ###DATA:  Create Code for Data Lines
   lhsNodesDF = nodesDF %>%
     dplyr::filter(type == "obs" | data != "as.character(NA)") %>%
+    dplyr::filter(!(label %in% plateDF$dataNode)) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(abbrevLabel),
                              " <- ",
                              "as_data(",
@@ -92,7 +105,42 @@ dag_greta <- function(graph,
   dataStatements = paste(lhsNodesDF$codeLine,
                          sep = "\n")
 
+  ###DIM:  Create code for getting Dimensions of prior lines
+  ###get all nodes that are part of a plate with dataNode
+  plateNodesWithData = plateDF %>%
+    dplyr::filter(!is.na(dataNode)) %>%
+    dplyr::left_join(plateNodesDF, by = c("indexID"))
+  ###add dimension of dataNodes
+  uniqDataNodes = unique(plateNodesWithData$dataNode)
+  dimDF = data.frame(label = uniqDataNodes, stringsAsFactors = FALSE) %>%
+    dplyr::left_join(nodesDF) %>%
+    dplyr::select(label, data)
+  ###make labels for dim variables = to label_dim
+  dimStatements = paste(paste0(abbrevLabelPad(paste0(dimDF$label,
+                                                     "_dim")),
+                               " <- ",
+                               "length(",
+                               dimDF$data,
+                               ")   #DIM"),
+                        sep = "\n")
+
+  ###Insert dim argument into fullDistLabel of appropriate nodes
+  dimArgDF = plateNodesWithData %>%
+    dplyr::left_join(dimDF, by = c("dataNode" = "label")) %>%
+    dplyr::mutate(dimLabel = paste0("dim=",dataNode,"_dim"))
+
+  ###Remove last right parenthesis of all affected labels
+  nodesDF$fullDistLabel[dimArgDF$nodeID] =
+    substr(nodesDF$fullDistLabel[dimArgDF$nodeID],
+           1,
+           nchar(nodesDF$fullDistLabel[dimArgDF$nodeID])-1)
+  ###Add in dim statement and add back last parenthesis
+  nodesDF$fullDistLabel[dimArgDF$nodeID] =
+    paste0(nodesDF$fullDistLabel[dimArgDF$nodeID],",",
+           dimArgDF$dimLabel,")")
+
   ###PRIOR:  Create code for prior lines
+  ###create dataframe of dataNodes and their data
   lhsNodesDF = nodesDF %>%
     dplyr::filter(type == "latent" & is.na(formulaString)) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(abbrevLabel),
@@ -149,6 +197,7 @@ dag_greta <- function(graph,
   ##########################################
   ###Aggregate all code
   codeStatements = c(dataStatements,
+                     dimStatements,
                      priorStatements,
                      opStatements,
                      likeStatements,

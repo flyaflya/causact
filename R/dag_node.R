@@ -98,7 +98,9 @@ dag_node <- function(graph,
 
   # Add child edge if desired
   if (!is.na(children)) {
-    graph = graph %>% dag_edge(from = label, to = children)
+    for (i in children) {
+      graph = graph %>% dag_edge(from = label, to = i)
+    }
   }
 
   return(graph)
