@@ -90,6 +90,17 @@ dag_greta <- function(graph,
   ###Find all nodes that require data based on user input
   ###Err on the side of including a node
 
+  ### Initialize all the code statements so that NULL
+  ### values are skipped without Error
+  dataStatements = NULL
+  dimStatements = NULL
+  priorStatements = NULL
+  opStatements = NULL
+  likeStatements = NULL
+  modelStatement = NULL
+  posteriorStatement = NULL
+
+
   ###DATA:  Create Code for Data Lines
   lhsNodesDF = nodesDF %>%
     dplyr::filter(type == "obs" | data != "as.character(NA)") %>%
@@ -110,6 +121,9 @@ dag_greta <- function(graph,
   plateNodesWithData = plateDF %>%
     dplyr::filter(!is.na(dataNode)) %>%
     dplyr::left_join(plateNodesDF, by = c("indexID"))
+
+  ###only do dimension stuff if plateNodesWithData is not empty
+  if(nrow(plateNodesWithData) > 0){
   ###add dimension of dataNodes
   uniqDataNodes = unique(plateNodesWithData$dataNode)
   dimDF = data.frame(label = uniqDataNodes, stringsAsFactors = FALSE) %>%
@@ -138,6 +152,7 @@ dag_greta <- function(graph,
   nodesDF$fullDistLabel[dimArgDF$nodeID] =
     paste0(nodesDF$fullDistLabel[dimArgDF$nodeID],",",
            dimArgDF$dimLabel,")")
+  }  #end If statement that only runs codes for plates
 
   ###PRIOR:  Create code for prior lines
   ###create dataframe of dataNodes and their data
@@ -192,7 +207,7 @@ dag_greta <- function(graph,
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
-  posteriorStatement = paste0("draws   <- mcmc(gretaModel)   #POSTERIOR\ndrawsDF <- draws %>% as.matrix() %>% as_tibble()   #POSTERIOR\n")
+  posteriorStatement = paste0("draws   <- mcmc(gretaModel)   #POSTERIOR\ndrawsDF <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\n")
 
   ##########################################
   ###Aggregate all code
