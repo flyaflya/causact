@@ -132,6 +132,9 @@ getFullDistList = function(distr = greta::variable) {
 
   if (userSpecifiedArgs == TRUE){
     distString = as.character(distr)  ### make into string
+    ### shorten truncation argument if there
+    names(distr)[2:length(distString)] =
+      gsub("truncation","trunc",names(distr))[2:length(distString)]
     distArgs = paste0(ifelse(names(distr)[2:length(distString)] == "",
                              "",
                              paste0(names(distr)[2:length(distString)],"=")),
