@@ -56,7 +56,9 @@ dag_render <- function(graph,
           graph$nodes_df$description[i] = ""
         }  ## stop NA from printing
         graph$nodes_df$label[i] = paste0(
-          graph$nodes_df$description[i],
+          sapply(strwrap(graph$nodes_df$description[i],
+                         width=25,simplify = FALSE),
+                 paste,collapse = "\n"),
           ifelse(graph$nodes_df$description[i]=="","","\n"),
           graph$nodes_df$label[i],
           " ",
@@ -78,11 +80,11 @@ dag_render <- function(graph,
             paste,
             collapse = "\n"),sep = "\n")
         } else {  ## stop NA from printing
-        graph$nodes_df$label[i] = paste(
-            strwrap(graph$nodes_df$description[i],
-              width = 25,
-              simplify = FALSE
-              ),
+        graph$nodes_df$label[i] = paste(sapply(
+          strwrap(graph$nodes_df$description[i],
+                  width = 25,
+                  simplify = FALSE
+          ),paste,collapse="\n"),
           sapply(
             strwrap(
               paste0(
