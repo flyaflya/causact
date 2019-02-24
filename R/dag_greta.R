@@ -93,6 +93,7 @@ dag_greta <- function(graph,
   ### Initialize all the code statements so that NULL
   ### values are skipped without Error
   dataStatements = NULL
+  plateDataStatements = NULL
   dimStatements = NULL
   priorStatements = NULL
   opStatements = NULL
@@ -123,35 +124,78 @@ dag_greta <- function(graph,
     dplyr::left_join(plateNodesDF, by = c("indexID"))
 
   ###only do dimension stuff if plateNodesWithData is not empty
-  if(nrow(plateNodesWithData) > 0){
-  ###add dimension of dataNodes
-  uniqDataNodes = unique(plateNodesWithData$dataNode)
-  dimDF = data.frame(label = uniqDataNodes, stringsAsFactors = FALSE) %>%
-    dplyr::left_join(nodesDF) %>%
-    dplyr::select(label, data)
-  ###make labels for dim variables = to label_dim
-  dimStatements = paste(paste0(abbrevLabelPad(paste0(dimDF$label,
-                                                     "_dim")),
-                               " <- ",
-                               "length(",
-                               dimDF$data,
-                               ")   #DIM"),
-                        sep = "\n")
+  if (nrow(plateNodesWithData) > 0) {
+    ###add dimension of dataNodes
+    uniqDataNodes = unique(plateNodesWithData$dataNode)
+    dimDF = data.frame(label = uniqDataNodes, stringsAsFactors = FALSE) %>%
+      dplyr::left_join(nodesDF) %>%
+      dplyr::select(label, data)
 
-  ###Insert dim argument into fullDistLabel of appropriate nodes
-  dimArgDF = plateNodesWithData %>%
-    dplyr::left_join(dimDF, by = c("dataNode" = "label")) %>%
-    dplyr::mutate(dimLabel = paste0("dim=",dataNode,"_dim"))
+    plateDataStatements = paste(paste0(
+      abbrevLabelPad(paste0(dimDF$label,
+                            "    ")),  # four spaces to have invis _dim
+      " <- ","as.factor(",
+      dimDF$data,
+      ")   #DIM"
+    ),
+    sep = "\n")
 
-  ###Remove last right parenthesis of all affected labels
-  nodesDF$fullDistLabel[dimArgDF$nodeID] =
-    substr(nodesDF$fullDistLabel[dimArgDF$nodeID],
-           1,
-           nchar(nodesDF$fullDistLabel[dimArgDF$nodeID])-1)
-  ###Add in dim statement and add back last parenthesis
-  nodesDF$fullDistLabel[dimArgDF$nodeID] =
-    paste0(nodesDF$fullDistLabel[dimArgDF$nodeID],",",
-           dimArgDF$dimLabel,")")
+    ###make labels for dim variables = to label_dim
+    dimStatements = paste(paste0(
+      abbrevLabelPad(paste0(dimDF$label,
+                            "_dim")),
+      " <- ",
+      "length(unique(",
+      dimDF$label,
+      "))   #DIM"
+    ),
+    sep = "\n")
+
+    ###Insert dim argument into fullDistLabel of appropriate nodes
+    dimArgDF = plateNodesWithData %>%
+      dplyr::left_join(dimDF, by = c("dataNode" = "label")) %>%
+      dplyr::mutate(dimLabel = paste0("dim=", dataNode, "_dim"))
+
+    ###Remove last right parenthesis of all affected labels
+    indexOfMultiDimNodes = nodesDF$id %in% dimArgDF$nodeID
+    nodesDF$fullDistLabel[indexOfMultiDimNodes] =
+      substr(nodesDF$fullDistLabel[indexOfMultiDimNodes],
+             1,
+             nchar(nodesDF$fullDistLabel[indexOfMultiDimNodes]) - 1)
+    ###Add in dim statement and add back last parenthesis
+    nodesDF$fullDistLabel[indexOfMultiDimNodes] =
+      paste0(nodesDF$fullDistLabel[indexOfMultiDimNodes], ",",
+             dimArgDF$dimLabel, ")")
+
+    ###get all children nodes with their parent label and dimension datanode
+    childParentDF = data.frame(from = nodesDF$id[indexOfMultiDimNodes],
+               parentLabel = nodesDF$label[indexOfMultiDimNodes] ) %>%
+      dplyr::left_join(edgesDF, by = "from") %>%
+      dplyr::select(childID = to, parentID = from, parentLabel) %>%
+      dplyr::left_join(plateNodesWithData, by = c("parentID" = "nodeID")) %>%
+      dplyr::select(childID,parentLabel,dataNode) %>%
+      dplyr::mutate(parentLabelWithDim = paste0(parentLabel,"[",dataNode,"]"))
+
+    ### use regualr expression to update formula string and fullDistLabel
+    ### for the children
+    for(i in 1:length(childParentDF)){
+      rowIndex = which(nodesDF$id == childParentDF$childID[i])
+      nodesDF$formulaString[rowIndex] = ifelse(
+        is.na(nodesDF$formulaString[rowIndex]),
+        nodesDF$formulaString[rowIndex],
+        gsub(
+          paste0("\\b",childParentDF$parentLabel[i],"\\b"),
+          childParentDF$parentLabelWithDim[i],
+          nodesDF$formulaString[rowIndex]))
+      nodesDF$fullDistLabel[rowIndex] = ifelse(
+          is.na(nodesDF$fullDistLabel[rowIndex]),
+          nodesDF$fullDistLabel[rowIndex],
+          gsub(
+            paste0("\\b",childParentDF$parentLabel[i],"\\b"),
+            childParentDF$parentLabelWithDim[i],
+            nodesDF$fullDistLabel[rowIndex]))
+    }
+
   }  #end If statement that only runs codes for plates
 
   ###PRIOR:  Create code for prior lines
@@ -212,6 +256,7 @@ dag_greta <- function(graph,
   ##########################################
   ###Aggregate all code
   codeStatements = c(dataStatements,
+                     plateDataStatements,
                      dimStatements,
                      priorStatements,
                      opStatements,
