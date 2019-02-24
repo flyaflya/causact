@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 \R\testingDAG.R
 ^R/testingDAG\.R$
+^\.httr-oauth$
