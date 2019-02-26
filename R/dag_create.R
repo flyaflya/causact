@@ -12,18 +12,46 @@
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
 #' @export
 dag_create <- function(...) {
+  # Create an empty node data frame (`ndf`)
+  ndf <-
+    data.frame(
+      id = as.integer(NA),
+      # user entered quantities
+      label = as.character(NA),
+      descr = as.character(NA),
+      data = as.character(NA),
+      rhs = as.character(NA),
+      #distr or formula
+      child = as.character(NA),
+      obs = as.logical(NA),
+      # auto generated labels
+      auto_label = as.character(NA),
+      auto_descr = as.character(NA),
+      auto_data = as.character(NA),
+      auto_dim = as.character(NA),
+      auto_rhs_FormulaFlag = as.logical(NA),
+      stringsAsFactors = FALSE
+    )[-1,]
 
-  ### create graph
-  graph = DiagrammeR::create_graph(directed = TRUE)
+  ## DF: `edges_df`
+
+  # Create an empty edge data frame (`edf`)
+  edf <-
+    data.frame(
+      id = as.integer(NA),
+      from = as.integer(NA),
+      to = as.integer(NA),
+      stringsAsFactors = FALSE
+    )[-1, ]
 
   # Add custom attributes for DAG building
-  graph$nodes_df$description[-1] = as.character(NA)
-  graph$nodes_df$distr[-1] = as.character(NA)
-  graph$nodes_df$formulaString[-1] = as.character(NA)
-  graph$nodes_df$fullDistLabel[-1] = as.character(NA)
-  graph$nodes_df$data[-1] = as.character(NA)
-  graph$nodes_df$userSpecifiedArgs[-1] = as.logical(NA)
-  graph$nodes_df$gretaRHS[-1] = as.character(NA)
+  # graph$nodes_df$description[-1] = as.character(NA)
+  # graph$nodes_df$distr[-1] = as.character(NA)
+  # graph$nodes_df$formulaString[-1] = as.character(NA)
+  # graph$nodes_df$fullDistLabel[-1] = as.character(NA)
+  # graph$nodes_df$data[-1] = as.character(NA)
+  # graph$nodes_df$userSpecifiedArgs[-1] = as.logical(NA)
+  # graph$nodes_df$gretaRHS[-1] = as.character(NA)
 
   ## add two df's to store plate index information
   # Create an empty index data frame (`idf`)
@@ -34,62 +62,27 @@ dag_create <- function(...) {
       indexDescription = as.character(NA),
       indexDisplayName = as.character(NA),
       dataNode = as.character(NA),
-      stringsAsFactors = FALSE)[-1, ]
+      stringsAsFactors = FALSE
+    )[-1, ]
 
   # Create an empty plate nodes data frame (`pdf`)
   pndf <-
     data.frame(
       indexID = as.integer(NA),
       nodeID = as.integer(NA),
-      stringsAsFactors = FALSE)[-1, ]
+      stringsAsFactors = FALSE
+    )[-1, ]
 
-  graph$plate_index_df = pidf
-  graph$plate_nodes_df = pndf
+  # Initialize a graph object
+  graph <-
+    list(
+      nodes_df = ndf,
+      edges_df = edf,
+      plate_index_df = pidf,
+      plate_node_df = pndf
+    )
 
-  ###update global graph attributes
-  graph = graph %>%
-    DiagrammeR::add_global_graph_attrs(attr = "layout",
-                                       value = "dot",
-                                       attr_type = "graph") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "fillcolor",
-                                       value = "AliceBlue",
-                                       attr_type = "node") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "style",
-                                       value = "filled",
-                                       attr_type = "node") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "shape",
-                                       value = "ellipse",
-                                       attr_type = "node") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "height",
-                                       value = "0.5",
-                                       attr_type = "node") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "width",
-                                       value = "0.9",
-                                       attr_type = "node") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "fixedsize",
-                                       value = "false",
-                                       attr_type = "node")  %>%
-    DiagrammeR::add_global_graph_attrs(attr = "margin",
-                                       value = "0.05,0.05",
-                                       attr_type = "node") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "color",
-                                       value = "gray20",
-                                       attr_type = "node")  %>%
-    DiagrammeR::add_global_graph_attrs(attr = "color",
-                                       value = "gray20",
-                                       attr_type = "edge")  %>%
-    DiagrammeR::add_global_graph_attrs(attr = "fontcolor",
-                                       value = "black",
-                                       attr_type = "node") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "fontcolor",
-                                       value = "black",
-                                       attr_type = "edge") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "labelloc",
-                                       value = "b",
-                                       attr_type = "graph") %>%
-    DiagrammeR::add_global_graph_attrs(attr = "labeljust",
-                                       value = "r",
-                                       attr_type = "graph")
+  attr(graph, "class") <- "causact_graph"
 
   return(graph)
 }
