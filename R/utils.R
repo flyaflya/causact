@@ -1,153 +1,136 @@
-# Function that gets the calling function
-# as a formatted character string
-#' @importFrom stringr str_replace_all
-get_calling_fcn <- function() {
+#### assume RHS is a distribution
+#### if distribution, isolate distribution name,
+#### parameter names/values, and argument names/values
+#### if formula, isolate object names
+#### goal is to auto-produce parent nodes
+rhsDecompDistr = function(rhs){
 
-  calling_fcn <- deparse(sys.call(-1))
+  ## read in expression as a quosure
+  distExpr = rlang::enexpr(rhs)
+  distString = as.character(distExpr)
 
-  stringr::str_replace_all(
-    calling_fcn,
-    pattern = "([a-z0-9_]*)(.*)",
-    replacement = "\\1")
-}
-
-
-# Function to add log line for a graph `action`
-#' @importFrom dplyr bind_rows
-add_action_to_log <- function(graph_log,
-                              version_id,
-                              function_used,
-                              time_modified,
-                              duration,
-                              nodes,
-                              edges,
-                              d_n = 0,
-                              d_e = 0) {
-
-  # Ensure that `time_modified` inherits from POSIXct
-  if (inherits(time_modified, "POSIXct") == FALSE) {
-
-    stop(
-      "The `time_modified` value must inherit from POSIXct.",
-      call. = FALSE)
+  ## create data frame of named arguments and their position
+  namedArgDF = data.frame(position = as.integer(NA),
+                          argName = as.character(NA),
+                          stringsAsFactors = FALSE)[-1,]
+  if (!is.null(names(distExpr))) { ## at least one named arg
+    namedArgDF = data.frame(position = 1:(length(names(distExpr)) - 1),
+                            argName = names(distExpr)[2:length(names(distExpr))],
+                            stringsAsFactors = FALSE)
   }
 
-  # Create a log line
-  graph_log_line <-
-    data.frame(
-      version_id = as.integer(version_id),
-      function_used = as.character(function_used),
-      time_modified = time_modified,
-      duration = as.numeric(duration),
-      nodes = as.integer(nodes),
-      edges = as.integer(edges),
-      d_n = as.integer(d_n),
-      d_e = as.integer(d_e),
-      stringsAsFactors = FALSE)
-
-  # Append the log line to `graph_log`
-  dplyr::bind_rows(graph_log, graph_log_line)
-}
-
-# Function to get the time of the graph function in
-# the user's locale
-graph_function_sys_time <- function() {
-  return(Sys.time())
-}
-
-# Function to get the time difference from the start
-# of the function (relies on a call of the
-# `graph_function_sys_time()` function) to the time
-# of invoking this function
-graph_function_duration <- function(start_time) {
-  end_time <- Sys.time()
-  time_diff_s <- (end_time - start_time)[[1]]
-  return(time_diff_s)
-}
-
-
-###
-# Graph validation functions
-###
-
-# Function to check whether a graph object is valid
-graph_object_valid <- function(graph) {
-
-  # Check for all component names to be present
-  if (!all(c("graph_info", "nodes_df", "edges_df",
-             "global_attrs", "directed",
-             "last_node", "last_edge",
-             "node_selection", "edge_selection",
-             "cache", "graph_log") %in%
-           names(graph))) {
-
-    return(FALSE)
+  ## get top function name - probably better way to do this
+  fnName = head(distString, n = 1) ## function name
+  if (fnName %in% c("::", "greta")) { ##if namespace given
+    fnName = tail(distString, n = 1)
+    distString = distString[-c(1,2)]
   }
 
-  # Check for specific graph classes
-  if (any(
-    inherits(graph$graph_info, "data.frame") == FALSE,
-    inherits(graph$nodes_df, "data.frame") == FALSE,
-    inherits(graph$edges_df, "data.frame") == FALSE,
-    inherits(graph$global_attrs, "data.frame") == FALSE,
-    inherits(graph$global_attrs$attr, "character") == FALSE,
-    inherits(graph$global_attrs$value, "character") == FALSE,
-    inherits(graph$global_attrs$attr_type, "character") == FALSE,
-    inherits(graph$directed, "logical") == FALSE,
-    inherits(graph$node_selection, "data.frame") == FALSE,
-    inherits(graph$edge_selection, "data.frame") == FALSE,
-    inherits(graph$cache, "list") == FALSE,
-    inherits(graph$graph_log, "data.frame") == FALSE)) {
+  ## function arguments list
+  allArgs = formalArgs(fnName)  ##function arguments
 
-    return(FALSE)
+  ## fill in missing arguments in list
+  for (i in 1:length(allArgs)){
+    if(!(allArgs[i] %in% namedArgDF$argName)){ #arg Name missing
+      insertIndex = which(namedArgDF$argName == "")[1]
+      if(!(is.na(insertIndex))) { # blank insert spot available
+        namedArgDF$argName[insertIndex] = allArgs[i] ##fill by arg position
+      } else { # add arg to end of data frame
+        namedArgDF = rbind(namedArgDF,
+                           data.frame(position = nrow(namedArgDF) + 1,
+                                      argName = allArgs[i],
+                                      stringsAsFactors = FALSE))
+      }
+    }
+  }  ## end for loop
+  ## add in known values
+  numberOfKnownArgumentValues = length(distString) - 1
+  namedArgDF$argValue = NA
+  if(numberOfKnownArgumentValues>0){
+    namedArgDF$argValue[1:numberOfKnownArgumentValues] =
+      distString[2:length(distString)]
   }
 
-  return(TRUE)
+  ## sort based on standard parameter ordering for greta
+  allArgsDF = data.frame(argName = allArgs, stringsAsFactors = FALSE) %>%
+    dplyr::left_join(namedArgDF, by = "argName") %>%
+    dplyr::select(-position)
+  rm(namedArgDF)
+
+  numParents = which(allArgs %in% c("dim", "dimension")) - 1  ## get number of dist paramaters
+
+  paramDF = allArgsDF[1:numParents, ]
+  argDF = allArgsDF[(numParents+1):nrow(allArgsDF), ]
+  ## shorten truncation and dimension argName for convenience
+  argDF$argName = sub("truncation","trunc",argDF$argName)
+  argDF$argName = sub("dimension","dim",argDF$argName)
+
+  z = list(distr = TRUE,fcn = fnName,paramDF = paramDF,argDF = argDF)
+  return(z)
 }
 
-### function that takes greta dist input from user and returns
-### a list of three strings:
-### 1) $distString:  name of distributino
-### 2) $distArgs: string of comma spearated arguments
-### 3) $fullDistLable: label to use in DAG regarding the distribution
-### function that takes input from user and returns
-### a fully formatted label regarding the distribution
-getFullDistList = function(distr = greta::variable) {
+###formula for decomposing a formula
+###and placing its parent nodes in paramDF
+rhsDecompFormula = function(rhs){
 
-  distr = rlang::enexpr(distr) ## take in argument as expression
-  distString = as.character(distr)  ### make into string
-  userSpecifiedArgs = TRUE  ### assume user supplied arguments
-  distArgs = NA  ###initialize as NA
+  ## read in expression as a quosure
+  formExpr = rlang::enexpr(rhs)
+  formString = as.character(formExpr)
+  argName = all.vars(formExpr)
+  argValue = argName ##populate both with same value for now...might change
+  fnName = deparse(formExpr)
+  paramDF = data.frame(argName = argName, argValue = argValue,
+                       stringsAsFactors = FALSE)
+  argDF = data.frame(argName = as.character(NA), argValue = as.character(NA),
+                     stringsAsFactors = FALSE)[-1, ]
 
-  ## if it is a greta distribution, get default arguments
-  ## when not greta object (e.g. a function like normal(6,2))
-  ## the below code generates errors that are ignored
-  tryCatch({
-    distString = tail(as.character(distr), n = 1) ## function name
-    distArgs = formalArgs(eval(distr))  ##function arguments
-    if(is.character(distArgs)) {userSpecifiedArgs = FALSE}  ## if in this path, arguments not specified
-    numParents = which(distArgs == "dim") - 1  ## get number of dist paramaters
-    distArgs = paste0(distArgs[1:numParents], collapse = ",")  ## keep only dist parameters
-  }, warning = function(w){}, error = function(e) {})
+  z = list(distr = FALSE,fcn = fnName,paramDF = paramDF,argDF = argDF)
 
-  if (userSpecifiedArgs == TRUE){
-    distString = as.character(distr)  ### make into string
-    ### shorten truncation argument if there
-    if(length(names(distr)) >= 2) {names(distr)[2:length(distString)] =
-      gsub("truncation","trunc",names(distr)[2:length(distString)])}
-    distArgs = paste0(ifelse(names(distr)[2:length(distString)] == "",
-                             "",
-                             paste0(names(distr)[2:length(distString)],"=")),
-                             distString[2:length(distString)],collapse =",") ##add argument names if given in original expression e.g. "truncation = c(0,Inf)"
-    distString = gsub("greta::","",distString[1])
+  return(z)
+}
+
+### function to decompose rhs argument
+### if distribution, call rhsDecompDistr
+### if formula, call rhsDecompFormula
+## read in expression as a quosure
+rhsDecomp = function(rhs) {
+  distExpr = rlang::enexpr(rhs)
+  distString = as.character(distExpr)
+
+  ## get top distr function name - probably better way to do this
+  fnName = head(distString, n = 1) ## function name
+  if (fnName %in% c("::", "greta")) {
+    ##if namespace given
+    fnName = tail(distString, n = 1)
+    distString = distString[-c(1, 2)]
   }
-  fullDistLabel = paste0(distString,"(",distArgs,")")
-  if(fullDistLabel == "NA(NA,NA)") {
-    distString = ""
-    fullDistLabel = ""} ## if NA entered by user
 
-  return(list(distString = distString, distArgs = distArgs, fullDistLabel = fullDistLabel,userSpecifiedArgs = userSpecifiedArgs))
+  ## if function in greta namespace, then assume distr
+  ## otherwise assume formula
+  if(fnName %in% getNamespaceExports("greta")){
+    z = rhsDecompDistr(!!distExpr)
+  } else {
+    z = rhsDecompFormula(!!distExpr)
+  }
+  return(z)
 }
+
+# ##testing code
+# tmp(normal)
+# tmp(greta::normal)
+# tmp(normal(mean = 2, sd = 3))
+# tmp(normal(
+#   mean = 2,
+#   sd = 3,
+#   truncation = c(0, Inf)
+# ))
+# tmp(normal(mean = mu, sd = sigma))
+# tmp(normal(mu, sigma))
+# tmp(normal(mean = mu, sigma))
+# tmp(normal(sd = sigma, mean))
+# tmp(rhs = alpha + beta * x)
+# tmp(rhs = beta * x)
+#
 
 ### simplified function to pad an abbreviated label with whitespace
 ### to the right.
@@ -157,6 +140,37 @@ abbrevLabelPad <- function(stringVector) {
   paddedString = paste0(stringVector,padding)
   string = substr(paddedString,1,maxStrWidth)
   return(string)
+}
+
+### Function that gives data frame of default
+### dgr_graph attributes
+#' @importFrom dplyr tribble
+dgr_graph_global_default = function(){
+  tibble::tribble(
+          ~attr,       ~value, ~attr_type,
+       "layout",        "dot",    "graph",
+  "outputorder", "edgesfirst",    "graph",
+     "fontname",  "Helvetica",     "node",
+     "fontsize",         "10",     "node",
+        "shape",    "ellipse",     "node",
+    "fixedsize",      "FALSE",     "node",
+        "width",        "0.9",     "node",
+        "style",     "filled",     "node",
+    "fillcolor",  "AliceBlue",     "node",
+        "color",     "gray20",     "node",
+    "fontcolor",      "black",     "node",
+      "bgcolor",      "white",    "graph",
+     "fontname",  "Helvetica",     "edge",
+     "fontsize",          "8",     "edge",
+          "len",        "1.5",     "edge",
+        "color",     "gray20",     "edge",
+    "arrowsize",        "0.5",     "edge",
+       "height",        "0.5",     "node",
+       "margin",  "0.05,0.05",     "node",
+    "fontcolor",      "black",     "edge",
+     "labelloc",          "b",    "graph",
+    "labeljust",          "r",    "graph"
+  ) %>% as.data.frame(stringsAsFactors = FALSE)
 }
 
 
