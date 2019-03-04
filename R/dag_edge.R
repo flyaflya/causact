@@ -16,20 +16,27 @@
 dag_edge <- function(graph,
                      from,
                      to) {
-  ## get label from description if not specified in id
-  for (i in seq_along(from)) {
-    if (!(from[i] %in% graph$nodes_df$label)) {
-      from[i] = graph$nodes_df$label[which(graph$nodes_df$description == from)]
-    }
-  }
 
-  for (i in seq_along(to)) {
-    if (!(to %in% graph$nodes_df$label)) {
-      to[i] = graph$nodes_df$label[which(graph$nodes_df$description == to)]
-    }
-  }
+  ## get number of edges
+  numberOfEdges = max(length(from),length(to))
+  ## if no edges, simply return graph
+  if(numberOfEdges == 0) {return(graph)}
 
-  graph = graph %>% DiagrammeR::add_edge(from, to)
+  ## extract nodeIDs
+  fromIDs = findNodeID(graph,from)
+  toIDs = findNodeID(graph,to)
+
+  ## initialize edgeDF info for this edge(s)
+  edgeIDstart = max(graph$edges_df$id,0) + 1
+  edf = data.frame(
+    id = edgeIDstart:(edgeIDstart+numberOfEdges-1),
+    from = fromIDs,
+    to = toIDs,
+    stringsAsFactors = FALSE
+  )
+
+  graph$edges_df = dplyr::bind_rows(graph$edges_df,edf)
+
   return(graph)
 }
 

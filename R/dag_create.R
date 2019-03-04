@@ -20,16 +20,26 @@ dag_create <- function(...) {
       label = as.character(NA),
       descr = as.character(NA),
       data = as.character(NA),
-      rhs = as.character(NA),
-      #distr or formula
+      rhs = as.character(NA),#distr or formula
       child = as.character(NA),
       obs = as.logical(NA),
+      rhsID = as.integer(NA),
       # auto generated labels
+      distr = as.logical(NA), #true for dist / false for formula
       auto_label = as.character(NA),
       auto_descr = as.character(NA),
       auto_data = as.character(NA),
       auto_dim = as.character(NA),
-      auto_rhs_FormulaFlag = as.logical(NA),
+      stringsAsFactors = FALSE
+    )[-1,]
+
+  ## Create a DF to store RHS arguments and their values
+  adf <-
+    data.frame(
+      rhsID = as.integer(NA),
+      argName = as.character(NA),
+      argType = as.character(NA), ##param or arg (i.e. non-param)
+      argValue = as.character(NA),  ## can be node/object name or value
       stringsAsFactors = FALSE
     )[-1,]
 
@@ -78,6 +88,7 @@ dag_create <- function(...) {
     list(
       nodes_df = ndf,
       edges_df = edf,
+      arg_df = adf,
       plate_index_df = pidf,
       plate_node_df = pndf
     )

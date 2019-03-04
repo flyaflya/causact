@@ -40,68 +40,95 @@
 #' @importFrom DiagrammeR add_node node_data node_aes
 #' @export
 dag_node <- function(graph,
+                     descr = as.character(NA),
                      label = as.character(NA),
-                     description = as.character(NA),
-                     distr = NA,
-                     observed = FALSE,
-                     formulaString = as.character(NA),
-                     children = as.character(NA),
-                     data = as.character(NA)) {
+                     data = NULL, # vector or df
+                     rhs = NA, ##not vectorized
+                     child = as.character(NA), ##not vectorized
+                     obs = FALSE) {
 
-  # update node_data with DAG specific graphing
-  distr = rlang::enexpr(distr)  ## take in argument as expression
-  type = ifelse(observed == TRUE,"obs","latent")
-  formulaString = formulaString
-  data = rlang::enquo(data)
-  data = rlang::quo_name(data)
-  # if data is supplied,update type to observed
-  if(!(data == "as.character(NA)")){type = "obs"}
+  # handle blank entry
+  numArgs = length(match.call())-1
+  if(numArgs == 0) {graph = dag_create()
+                    descr = "Type ?dag_create"
+                    label = "to START MODELLING"}
+  if(numArgs == 1) {descr = "Type ?dag_node"
+                    label = "to START MODELLING"}
 
-  # get node labels based off of user input for distr
-  distList = getFullDistList(!!(distr))
+  # capture data as quosure and rhs as expression
+  dataQuo = rlang::enquo(data) ##capture as quosure to get env
+  dataString = ifelse(is.null(data),NA,rlang::quo_name(dataQuo))
+  rhsExpr = rlang::enexpr(rhs) ##distribution or formula
+  rhsList = rhsDecomp(!!rhsExpr)  ## get distr flag,
+        #fcn name (i.e. formula string for formula),
+        #paramDF (distr-TRUE only),argDF (distr or formula)
 
-  ## above returns list of dist name, dist arguments, and full label
-  distString = distList$distString
-  fullDistLabel = distList$fullDistLabel
-  userSpecifiedArgs = distList$userSpecifiedArgs
+  # create dataframe for RHS arguments
+  rhsID = max(graph$arg_df$rhsID,0) + 1
 
-  ##use formula string for dist label if available
-  ##distribution is ignored when formulaString is provided
-  if (!is.na(formulaString)) {
-    fullDistLabel = formulaString
+  argDF = dplyr::bind_rows(list(param=rhsList$paramDF, arg=rhsList$argDF), .id = 'argType')
+  if(nrow(argDF) > 0) { ##add rhsID as first column
+    argDF = cbind(rhsID=rhsID,argDF)
+  } else { ##add rhsID as column with zero rows
+      argDF$rhsID[-1] = as.integer(NA)
   }
 
-  fillcolor = dplyr::case_when(type == "obs" ~ "cadetblue",
-                               TRUE ~ "aliceblue")
 
-  ###allow node to have just data entered by reproducing it as label
-  if(is.na(label) & !is.na(data)) {label = last(str_split(data,"\\$", simplify = TRUE))}
-
-  graph = graph %>% DiagrammeR::add_node(
-    type = type,
-    label = label,
-    node_data =
-      DiagrammeR::node_data(
-        description = description,
-        distr = distString,
-        fullDistLabel = fullDistLabel,
-        formulaString = formulaString,
-        data = data,
-        userSpecifiedArgs = userSpecifiedArgs,
-        ### Add abbreviated label for writing code
-        abbrevLabel = abbreviate(label,6)),
-    node_aes =
-      DiagrammeR::node_aes(peripheries = ifelse(is.na(formulaString), 1, 2),
-                           fillcolor = fillcolor,
-                           fontcolor = "black")
-  )
-
-  # Add child edge if desired
-  if (!is.na(children)) {
-    for (i in children) {
-      graph = graph %>% dag_edge(from = label, to = i)
+  # rhsString is either formula, dist function, or not given
+  if(rhsList$fcn == "NA") { # decomp returns string, not NA
+    rhsString = NA
+    } else {
+      rhsString = rhsList$fcn
     }
+
+  # determine if data is present
+  # data makes for an observed node
+  # observed nodes are always part of an observation plate
+  # if data is multi-columned, get vector of column names
+  if(!is.na(dataString)) {
+    numberOfNodes = max(NCOL(rlang::eval_tidy(dataQuo)),length(descr),length(label))
+    if(is.data.frame(rlang::eval_tidy(dataQuo))) {
+      baseDF = all.vars(dataQuo)[1]
+      dataString = paste0(baseDF,"$",colnames(rlang::eval_tidy(dataQuo)))
+    }
+    obs = TRUE
+    } else {
+      dataString = as.character(NA)  ## restore as NA
+      numberOfNodes = max(length(descr),length(label))
+    }
+
+  ## initialize nodeDF info for this node(s)
+  nodeIDstart = max(graph$nodes_df$id,0) + 1
+  ndf <-
+    data.frame(
+      id = nodeIDstart:(nodeIDstart+numberOfNodes-1),
+      # user entered quantities
+      label = label,
+      descr = descr,
+      data = dataString,
+      rhs = rhsString,
+      #distr or formula
+      child = child,
+      obs = obs,
+      rhsID = rhsID,
+      distr = rhsList$distr,
+      stringsAsFactors = FALSE)
+
+
+  ### complete graph object
+  graph$nodes_df = dplyr::bind_rows(graph$nodes_df,ndf)
+  graph$arg_df = dplyr::bind_rows(graph$arg_df,argDF)
+
+  ## add edges for newly added nodes with non-na children
+  edgeDF = ndf %>% dplyr::filter(!is.na(child))
+  if(nrow(edgeDF) > 0) {
+    fromVector = edgeDF$id
+    toVector = edgeDF$child
+    graph = graph %>% dag_edge(fromVector,toVector)
   }
+
+  ### update labels for plotting
+  graph = autoLabel(graph)
 
   return(graph)
 }
