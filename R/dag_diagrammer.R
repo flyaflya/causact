@@ -5,7 +5,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
 
   ### line needed because DiagrammeR does not support
   ### nested or intersecting subgraphs
-  if(nrow(plateDF)>1) {graph = graph %>% pseudoPlate()}
+  if(nrow(graph$plate_index_df)>1) {graph = graph %>% pseudoPlate()}
 
   ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
   nodeDF = graph$nodes_df

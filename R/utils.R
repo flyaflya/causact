@@ -309,8 +309,8 @@ pseudoPlate = function(graph) {
    graph$nodes_df = nodeDF
    graph$edges_df = edgeDF
    graph$arg_df = argDF
-   graph$plate_index_df = plateDF
-   graph$plate_node_df = plateNodeDF
+   graph$plate_index_df = pseudo_plate_index_df
+   graph$plate_node_df = pseudo_plate_node_df
   return(graph)
 }  #end function
 
