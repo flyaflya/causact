@@ -3,16 +3,28 @@
 dag_diagrammer = function(graph, wrapWidth = 24, ...) {
   dgr_graph = DiagrammeR::create_graph(directed = TRUE)
 
+  ### line needed because DiagrammeR does not support
+  ### nested or intersecting subgraphs
+  if(nrow(plateDF)>1) {graph = graph %>% pseudoPlate()}
+
   ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
   nodeDF = graph$nodes_df
   edgeDF = graph$edges_df
   argDF = graph$arg_df
+  plateDF = graph$plate_index_df
+  plateNodeDF = graph$plate_node_df
+
+  ##create clusterNameDF to map nodes to plates
+  clusterNameDF = plateNodeDF %>%
+    dplyr::left_join(plateDF, by = "indexID") %>%
+    select(id = nodeID, cluster = indexDisplayName)
 
 
   ###make the top line equal to auto_descr (for now ... going with standard output) ... there will always be at least one node
   nodeDF$descLine = ifelse(is.na(nodeDF$auto_descr),
                            nodeDF$auto_label,
-                           nodeDF$auto_descr) %>% abbreviate(minlength = wrapWidth)
+                           nodeDF$auto_descr) %>%
+                    abbreviate(minlength = wrapWidth)
 
   ###make the equation line nicely formatted
   ###equation may not be specified
@@ -29,6 +41,10 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
     group_by(rhsID) %>%
     summarize(argList = paste0(textToCollapse, collapse = ","))
 
+  ## create the equation line
+  ## if rhs represents a formula, use "label = formula"
+  ## if rhs represents distribution, use "label ~ distribution(args)
+  ## if rhs is blank, use "label"
   eqDF = nodeDF %>%
     select(id, auto_label, rhs, rhsID, distr) %>%
     left_join(eqLineDF, by = "rhsID") %>%
@@ -44,7 +60,8 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
            peripheries = ifelse(distr == TRUE | is.na(rhs),1,2),
            fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
            label = paste0(descLine,"\n",eqLine)) %>%
-    select(id,label,type,peripheries,fillcolor)
+    select(id,label,type,peripheries,fillcolor) %>%
+    left_join(clusterNameDF, by = "id")
 
   ### use DIagrammeR::create_node_df
   nodeDF = DiagrammeR::create_node_df(
@@ -53,7 +70,9 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
     label = nodeDF$label,
     type = nodeDF$type,
     peripheries = nodeDF$peripheries,
-    fillcolor = nodeDF$fillcolor)
+    fillcolor = nodeDF$fillcolor,
+    cluster = nodeDF$cluster
+    )
 
   dgr_graph = DiagrammeR::create_graph(directed = TRUE) %>%
     DiagrammeR::add_node_df(nodeDF)

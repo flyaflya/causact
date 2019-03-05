@@ -217,10 +217,104 @@ findNodeID = function(graph, nodeLabel) {
       next
     }
     # return NA
-    errMessage = paste0(nodeLabel,
+    errMessage = paste0(nodeLabel[i],
                         " is not found as a label, description, or data for a node.")
     print(errMessage)
     nodeID[i] = as.integer(NA)
   }
   return(nodeID)
 }
+
+##get number of rows from string vector or data frame
+getRowDim = function(exprArg, nLevelsUp = 1){
+  exprArg = rlang::parse_expr(exprArg)
+  df = rlang::eval_tidy(exprArg,env = rlang::caller_env(nLevelsUp))
+  z = NROW(df)
+  return(z)
+}
+
+##get number of columns from string vector or data frame
+getColDim = function(exprArg, nLevelsUp = 1){
+  exprArg = rlang::parse_expr(exprArg)
+  df = rlang::eval_tidy(exprArg,env = rlang::caller_env(nLevelsUp))
+  z = NCOL(df)
+  return(z)
+}
+
+## since Diagrammer only supports one cluster/subgraph
+## create pseudo plateDF and plateNodeDF that makes unique
+## clusters for every combination of plates
+pseudoPlate = function(graph) {
+  nodeDF = graph$nodes_df
+  edgeDF = graph$edges_df
+  argDF = graph$arg_df
+  plateDF = graph$plate_index_df
+  plateNodeDF = graph$plate_node_df
+
+
+  #####START PLATE NOTATION CODE########
+  ###update graph cluster information for plates
+  ##### Code to render plate notation subgraphs when
+  ##### there are either intersecting or nested subgraphs
+
+  pseudo_plate_index_df = plateDF
+  pseudo_plate_node_df = plateNodeDF
+
+
+  ## is any node duplicated
+  duplicateFlag = anyDuplicated(plateNodeDF$nodeID)
+
+  ## if node appears twice, need to make a virtual cluster
+  ## such that each node is a member of a unique subgraph
+  ## composed of all of the node's indexes
+  while (duplicateFlag > 0) {
+    duplicatedNodeID = plateNodeDF$nodeID[duplicateFlag]
+
+    ## get vector of indexID's for node
+    indices = plateNodeDF$indexID[plateNodeDF$nodeID == duplicatedNodeID]
+
+    ## make new combined plate for multi-index node
+    newIndex = max(plateNodeDF$indexID) + 1
+    newIndexLabel = paste(plateDF$indexLabel[indices], collapse = "")
+    newIndexDescr = paste(plateDF$indexDescription[indices], collapse = "_")
+    newIndexDispName = paste0(
+      paste0(
+        plateDF$indexDescription[indices],
+        " ",
+        plateDF$indexLabel[indices],
+        collapse = "\\r"
+      ),
+      "\\r"
+    )
+    newRow = data.frame(
+      indexID = newIndex,
+      indexLabel = newIndexLabel,
+      indexDescription = newIndexDescr,
+      indexDisplayName = newIndexDispName,
+      stringsAsFactors = FALSE
+    )
+
+    pseudo_plate_index_df = dplyr::bind_rows(plateDF, newRow)
+
+    ## make nodes point to new plate
+    pseudo_plate_node_df = plateNodeDF %>%
+      dplyr::filter(nodeID != duplicatedNodeID) %>%
+      dplyr::bind_rows(data.frame(indexID = newIndex, nodeID = duplicatedNodeID))
+
+    ## condition to break out.
+    duplicateFlag = anyDuplicated(pseudo_plate_node_df$nodeID)
+  }  #end while loop
+
+
+   graph$nodes_df = nodeDF
+   graph$edges_df = edgeDF
+   graph$arg_df = argDF
+   graph$plate_index_df = plateDF
+   graph$plate_node_df = plateNodeDF
+  return(graph)
+}  #end function
+
+
+
+
+
