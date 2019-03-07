@@ -85,7 +85,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
     dplyr::mutate(type = ifelse(obs == TRUE,"obs","latent"),
            peripheries = ifelse(distr == TRUE | is.na(rhs),1,2),
            fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
-           label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine)) %>%  ###poor man's version of shortLabel
+           label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine))) %>%  ###poor man's version of shortLabel
     dplyr::select(id,label,type,peripheries,fillcolor) %>%
     dplyr::left_join(clusterNameDF, by = "id")
 
