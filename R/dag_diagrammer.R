@@ -1,11 +1,13 @@
 ## function to convert graph to Diagrammer object
 ## for visualization
 dag_diagrammer = function(graph, wrapWidth = 24, ...) {
+  # add dimension labels
+  graph = graph %>% dag_dim()
+
+  # create new graph
   dgr_graph = DiagrammeR::create_graph(directed = TRUE)
 
-  ### line needed because DiagrammeR does not support
-  ### nested or intersecting subgraphs
-  if(nrow(graph$plate_index_df)>1) {graph = graph %>% pseudoPlate()}
+
 
   ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
   nodeDF = graph$nodes_df
@@ -13,11 +15,18 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
   argDF = graph$arg_df
   plateDF = graph$plate_index_df
   plateNodeDF = graph$plate_node_df
+  dimDF = graph$dim_df
 
-  ##create clusterNameDF to map nodes to plates
-  clusterNameDF = plateNodeDF %>%
-    dplyr::left_join(plateDF, by = "indexID") %>%
-    select(id = nodeID, cluster = indexDisplayName)
+
+
+  ### line needed because DiagrammeR does not support
+  ### nested or intersecting subgraphs
+  if(nrow(graph$plate_index_df)>1) {
+    graph$plate_index_df = plateDF
+    graph = graph %>% pseudoPlate()
+    plateDF = graph$plate_index_df
+  }
+
 
 
   ###make the top line equal to auto_descr (for now ... going with standard output) ... there will always be at least one node
@@ -25,6 +34,18 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
                            nodeDF$auto_label,
                            nodeDF$auto_descr) %>%
                     abbreviate(minlength = wrapWidth)
+
+  ###section for adding dimension to description
+  dimLabelDF = dimDF %>%
+    filter(dimValue > 1 & dimType != "plate") %>%
+    group_by(nodeID) %>%
+    summarize(dimLabel = paste0(dimValue, collapse = "\U00D7")) %>%
+    mutate(dimLabel = paste0(" [",dimLabel,"]"))
+
+  nodeDF = nodeDF %>%
+    left_join(dimLabelDF,by = c("id" = "nodeID")) %>%
+    dplyr::mutate(dimLabel = replace_na(dimLabel,"")) %>%
+    dplyr::mutate(descLine = paste0(descLine,dimLabel))
 
   ###make the equation line nicely formatted
   ###equation may not be specified
@@ -54,6 +75,11 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
     select(id, eqLine)
 
   ### create nodeDF as DiagrammeR data frame
+  ##create clusterNameDF to map nodes to plates
+  clusterNameDF = plateNodeDF %>%
+    dplyr::left_join(plateDF, by = "indexID") %>%
+    select(id = nodeID, cluster = indexDisplayName)
+
   nodeDF = nodeDF %>%
     left_join(eqDF, by = "id") %>%
     mutate(type = ifelse(obs == TRUE,"obs","latent"),
@@ -79,8 +105,12 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
 
   ### add egdes if applicable
   if (nrow(edgeDF) > 0) {
+    ## use dashed for type = extract
+    edgeDF$style = ifelse(edgeDF$type == "extract","dashed","solid") %>%
+      tidyr::replace_na("solid")
     edgeDF = DiagrammeR::create_edge_df(from = edgeDF$from,
-                                        to = edgeDF$to)
+                                        to = edgeDF$to,
+                                        style = edgeDF$style)
     dgr_graph =  dgr_graph %>% DiagrammeR::add_edge_df(edgeDF)
   }
 

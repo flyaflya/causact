@@ -29,7 +29,7 @@ dag_create <- function(...) {
       auto_label = as.character(NA),
       auto_descr = as.character(NA),
       auto_data = as.character(NA),
-      auto_dim = as.character(NA),
+      dimID = as.integer(NA),
       stringsAsFactors = FALSE
     )[-1,]
 
@@ -51,6 +51,7 @@ dag_create <- function(...) {
       id = as.integer(NA),
       from = as.integer(NA),
       to = as.integer(NA),
+      type = as.character(NA),
       stringsAsFactors = FALSE
     )[-1, ]
 
@@ -83,6 +84,17 @@ dag_create <- function(...) {
       stringsAsFactors = FALSE
     )[-1, ]
 
+  # Create an dimension data frame (`ddf`)
+  ddf <-
+    data.frame(
+      dimID = as.integer(NA),
+      nodeID = as.integer(NA),
+      dimType = as.character(NA),
+      dimDataSource = as.character(NA),
+      dimValue = as.integer(NA),
+      stringsAsFactors = FALSE
+    )[-1, ]
+
   # Initialize a graph object
   graph <-
     list(
@@ -90,7 +102,8 @@ dag_create <- function(...) {
       edges_df = edf,
       arg_df = adf,
       plate_index_df = pidf,
-      plate_node_df = pndf
+      plate_node_df = pndf,
+      dim_df = ddf
     )
 
   attr(graph, "class") <- "causact_graph"

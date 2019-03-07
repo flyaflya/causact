@@ -21,6 +21,10 @@ dag_greta <- function(graph,
   plateDF = graph$plate_index_df
   plateNodesDF = graph$plate_nodes_df
 
+  #
+  # fillcolor = dplyr::case_when(type == "obs" ~ "cadetblue",
+  #                              TRUE ~ "aliceblue")
+
   ###Add dimensionality due to plate notation
   ###Retrieve nodes with dimensions
   dimNodesDF = graph$plate_nodes_df %>%

@@ -24,7 +24,9 @@ dag_plate <- function(graph,
                       nodeLabels,
                       dataNode = as.character(NA)) {
   ### capture data argument as string
-  dataNode = dataNode
+  dataNodeExpr = rlang::enexpr(dataNode)
+  dataNodeString = rlang::expr_text(dataNodeExpr)
+  if(is.na(dataNode[1])) {dataNodeString = as.character(NA)}
 
   ### get nodeIDS for enterned node labels
   ### node labels can be labels, descr, or data
@@ -38,7 +40,7 @@ dag_plate <- function(graph,
     indexLabel = indexLabel,
     indexDescription = description,
     indexDisplayName = paste0(description, " ", indexLabel),
-    dataNode = dataNode
+    dataNode = dataNodeString
   )
 
   ## update plate node df

@@ -184,12 +184,17 @@ dfColToJustCol = function(data) {
 ## or ID's to reference a node
 ## precedence is auto_label, auto_descr, auto_data, data
 ## if duplicates find the one with the highest nodeID
-## (i.e. most recently created id)
-findNodeID = function(graph, nodeLabel) {
+## (i.e. most recently created id) output is vector of node ID's
+findNodeID = function(graphListOrDF, nodeLabel) {
   nodeID = vector(mode="integer", length = length(nodeLabel))
   ## if id's are numeric, assume they are correct
   if(is.numeric(nodeLabel)) {return(nodeLabel)}
-  nodeDF = graph$nodes_df
+  if(is.data.frame(graphListOrDF)) { # assume it is a nodeDF
+    nodeDF = graphListOrDF
+  } else {  ### assume it is a list (i.e. causact_graph)
+    nodeDF = graph$nodes_df
+  }
+
   for (i in 1:length(nodeLabel)) {
     nodeID[i] = as.integer(NA) ## set id to zero meaning unlabelled yet
     # search auto_label column
@@ -238,6 +243,14 @@ getColDim = function(exprArg, nLevelsUp = 1){
   exprArg = rlang::parse_expr(exprArg)
   df = rlang::eval_tidy(exprArg,env = rlang::caller_env(nLevelsUp))
   z = NCOL(df)
+  return(z)
+}
+
+##get number of unique values from string vector
+getPlateDim = function(exprArg, nLevelsUp = 1){
+  exprArg = rlang::parse_expr(exprArg)
+  evalVector = rlang::eval_tidy(exprArg,env = rlang::caller_env(nLevelsUp))
+  z = length(unique(evalVector))
   return(z)
 }
 
