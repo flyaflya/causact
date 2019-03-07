@@ -15,5 +15,9 @@ Imports:
     dplyr (>= 0.7.4),
     magrittr (>= 1.5),
     rlang,
-    greta
-RoxygenNote: 6.0.1
+    greta,
+    purrr,
+    tidyr,
+    igraph,
+    stringr
+RoxygenNote: 6.1.1

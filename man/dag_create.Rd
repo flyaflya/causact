@@ -17,5 +17,5 @@ Generates a \code{dgr_graph} graph object that is set-up for drawing DAG graphs.
 # simply create an empty graph (and
 # add in nodes and edges later
 # with other functions)
-dag_create() \%>\% dag_render(shortLabel = TRUE)
+dag_create() \%>\% dag_render()
 }
