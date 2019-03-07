@@ -44,7 +44,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
 
   nodeDF = nodeDF %>%
     dplyr::left_join(dimLabelDF,by = c("id" = "nodeID")) %>%
-    dplyr::mutate(dimLabel = replace_na(dimLabel,"")) %>%
+    dplyr::mutate(dimLabel = tidyr::replace_na(dimLabel,"")) %>%
     dplyr::mutate(descLine = paste0(descLine,dimLabel))
 
   ###make the equation line nicely formatted
