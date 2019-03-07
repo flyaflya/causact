@@ -37,13 +37,13 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
 
   ###section for adding dimension to description
   dimLabelDF = dimDF %>%
-    filter(dimValue > 1 & dimType != "plate") %>%
-    group_by(nodeID) %>%
-    summarize(dimLabel = paste0(dimValue, collapse = "\U00D7")) %>%
-    mutate(dimLabel = paste0(" [",dimLabel,"]"))
+    dplyr::filter(dimValue > 1 & dimType != "plate") %>%
+    dplyr::group_by(nodeID) %>%
+    dplyr::summarize(dimLabel = paste0(dimValue, collapse = "\U00D7")) %>%
+    dplyr::mutate(dimLabel = paste0(" [",dimLabel,"]"))
 
   nodeDF = nodeDF %>%
-    left_join(dimLabelDF,by = c("id" = "nodeID")) %>%
+    dplyr::left_join(dimLabelDF,by = c("id" = "nodeID")) %>%
     dplyr::mutate(dimLabel = replace_na(dimLabel,"")) %>%
     dplyr::mutate(descLine = paste0(descLine,dimLabel))
 
@@ -51,43 +51,43 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
   ###equation may not be specified
   ###first collapse arg_df, then use in equation line
   eqLineDF = argDF %>%
-    filter(argType == "param" |
+    dplyr::filter(argType == "param" |
              (!is.na(argValue) & argType == "arg")) %>%
-    mutate(textToCollapse = ifelse(is.na(argValue), argName, argValue)) %>%
-    mutate(textToCollapse = ifelse(
+    dplyr::mutate(textToCollapse = ifelse(is.na(argValue), argName, argValue)) %>%
+    dplyr::mutate(textToCollapse = ifelse(
       argType == "arg",
       paste0(argName, "=", argValue),
       textToCollapse
     )) %>%
-    group_by(rhsID) %>%
-    summarize(argList = paste0(textToCollapse, collapse = ","))
+    dplyr::group_by(rhsID) %>%
+    dplyr::summarize(argList = paste0(textToCollapse, collapse = ","))
 
   ## create the equation line
   ## if rhs represents a formula, use "label = formula"
   ## if rhs represents distribution, use "label ~ distribution(args)
   ## if rhs is blank, use "label"
   eqDF = nodeDF %>%
-    select(id, auto_label, rhs, rhsID, distr) %>%
-    left_join(eqLineDF, by = "rhsID") %>%
-    mutate(eqLine = ifelse(!distr & !is.na(rhs), paste0(auto_label," = ",rhs),
+    dplyr::select(id, auto_label, rhs, rhsID, distr) %>%
+    dplyr::left_join(eqLineDF, by = "rhsID") %>%
+    dplyr::mutate(eqLine = ifelse(!distr & !is.na(rhs), paste0(auto_label," = ",rhs),
                            ifelse(is.na(rhs), auto_label,
                                   paste0(auto_label, " ~ ", rhs, "(", argList, ")")))) %>%
-    select(id, eqLine)
+    dplyr::select(id, eqLine)
 
   ### create nodeDF as DiagrammeR data frame
   ##create clusterNameDF to map nodes to plates
   clusterNameDF = plateNodeDF %>%
     dplyr::left_join(plateDF, by = "indexID") %>%
-    select(id = nodeID, cluster = indexDisplayName)
+    dplyr::select(id = nodeID, cluster = indexDisplayName)
 
   nodeDF = nodeDF %>%
-    left_join(eqDF, by = "id") %>%
-    mutate(type = ifelse(obs == TRUE,"obs","latent"),
+    dplyr::left_join(eqDF, by = "id") %>%
+    dplyr::mutate(type = ifelse(obs == TRUE,"obs","latent"),
            peripheries = ifelse(distr == TRUE | is.na(rhs),1,2),
            fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
            label = paste0(descLine,"\n",eqLine)) %>%
-    select(id,label,type,peripheries,fillcolor) %>%
-    left_join(clusterNameDF, by = "id")
+    dplyr::select(id,label,type,peripheries,fillcolor) %>%
+    dplyr::left_join(clusterNameDF, by = "id")
 
   ### use DIagrammeR::create_node_df
   nodeDF = DiagrammeR::create_node_df(
