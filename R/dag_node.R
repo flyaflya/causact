@@ -47,6 +47,9 @@ dag_node <- function(graph,
                      child = as.character(NA), ##not vectorized
                      obs = FALSE) {
 
+  # graph = graph
+  graph = graph
+
   # handle blank entry
   numArgs = length(match.call())-1
   if(numArgs == 0) {graph = dag_create()
