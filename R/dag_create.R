@@ -7,7 +7,7 @@
 #' # simply create an empty graph (and
 #' # add in nodes and edges later
 #' # with other functions)
-#' dag_create() %>% dag_render(shortLabel = TRUE)
+#' dag_create() %>% dag_render()
 #' @importFrom dplyr bind_rows tibble
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
 #' @export

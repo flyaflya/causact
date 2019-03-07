@@ -35,11 +35,9 @@ dag_create() %>%
            rhs = normal(0,10))
 
 dag_create() %>%
-  dag_node("Sales Price","Y",
-           rhs = normal(mean,SD),
-           obs = TRUE,
-           data = attitude$rating) %>%
-  dag_diagrammer() %>% DiagrammeR::render_graph()
+  dag_node(data = attitude[,2:7]) %>%
+  dag_plate("Predictors","j",nodeLabels = c("prvl","rass")) %>%
+  dag_render()
 
 
 graph = dag_create() %>%
