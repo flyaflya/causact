@@ -17,8 +17,8 @@
 #'     dag_render(shortLabel = TRUE)
 #' @importFrom dplyr mutate
 #' @importFrom rlang enquo get_expr UQ
-
 #' @export
+
 dag_plate <- function(graph,
                       description,
                       indexLabel,

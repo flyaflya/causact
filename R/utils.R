@@ -192,7 +192,7 @@ findNodeID = function(graphListOrDF, nodeLabel) {
   if(is.data.frame(graphListOrDF)) { # assume it is a nodeDF
     nodeDF = graphListOrDF
   } else {  ### assume it is a list (i.e. causact_graph)
-    nodeDF = graph$nodes_df
+    nodeDF = graphListOrDF$nodes_df
   }
 
   for (i in 1:length(nodeLabel)) {

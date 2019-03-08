@@ -16,7 +16,7 @@ dag_create() %>% dag_node(c("Momma","Poppa"),data = attitude$complaints, rhs = n
 dag_create() %>% dag_node(rhs = normal(0,10), data = attitude[, 2:7]) %>% dag_diagrammer() %>%
   DiagrammeR::render_graph()
 
-dag_create() %>%
+graph2 = dag_create() %>%
   dag_node("response") %>%
   dag_node(label = c("a","b"),
            rhs = alpha+beta*x,
@@ -32,9 +32,10 @@ dag_create() %>% dag_node(data = attitude[, 2:7]) %>% dag_diagrammer() %>%
 dag_create() %>%
   dag_node(c("comp","priv","learn","rais","crit","adv"),
            data = attitude[, 2:7],
-           rhs = normal(0,10))
+           rhs = normal(0,10)) %>%
+  dag_render()
 
-dag_create() %>%
+graph = dag_create() %>%
   dag_node(data = attitude[,2:7]) %>%
   dag_plate("Predictors","j",nodeLabels = c("prvl","rass")) %>%
   dag_render()

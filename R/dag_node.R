@@ -38,6 +38,7 @@
 #' @importFrom dplyr select bind_cols as_tibble case_when
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text
 #' @importFrom DiagrammeR add_node node_data node_aes
+#' @importFrom greta uniform normal lognormal bernoulli binomial beta_binomial negative_binomial hypergeometric poisson gamma inverse_gamma weibull exponential pareto student laplace beta cauchy chi_squared logistic f multivariate_normal wishart lkj_correlation multinomial categorical dirichlet dirichlet_multinomial
 #' @export
 dag_node <- function(graph,
                      descr = as.character(NA),
@@ -46,9 +47,6 @@ dag_node <- function(graph,
                      rhs = NA, ##not vectorized
                      child = as.character(NA), ##not vectorized
                      obs = FALSE) {
-
-  # graph = graph
-  graph = graph
 
   # handle blank entry
   numArgs = length(match.call())-1
