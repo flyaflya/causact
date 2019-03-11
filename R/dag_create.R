@@ -40,6 +40,7 @@ dag_create <- function(...) {
       argName = as.character(NA),
       argType = as.character(NA), ##param or arg (i.e. non-param)
       argValue = as.character(NA),  ## can be node/object name or value
+      argDimLabels = as.character(NA),
       stringsAsFactors = FALSE
     )[-1,]
 
@@ -73,6 +74,7 @@ dag_create <- function(...) {
       indexDescription = as.character(NA),
       indexDisplayName = as.character(NA),
       dataNode = as.character(NA),
+      rhs = as.character(NA),
       stringsAsFactors = FALSE
     )[-1, ]
 

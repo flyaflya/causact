@@ -4,10 +4,11 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
   # add dimension labels
   graph = graph %>% dag_dim()
 
-  # create new graph
-  dgr_graph = DiagrammeR::create_graph(directed = TRUE)
-
-
+  ### line needed because DiagrammeR does not support
+  ### nested or intersecting subgraphs
+  if(nrow(graph$plate_index_df)>1) {
+    graph = graph %>% pseudoPlate()
+  }
 
   ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
   nodeDF = graph$nodes_df
@@ -16,18 +17,6 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
   plateDF = graph$plate_index_df
   plateNodeDF = graph$plate_node_df
   dimDF = graph$dim_df
-
-
-
-  ### line needed because DiagrammeR does not support
-  ### nested or intersecting subgraphs
-  if(nrow(graph$plate_index_df)>1) {
-    graph$plate_index_df = plateDF
-    graph = graph %>% pseudoPlate()
-    plateDF = graph$plate_index_df
-  }
-
-
 
   ###make the top line equal to auto_descr (for now ... going with standard output) ... there will always be at least one node
   nodeDF$descLine = ifelse(is.na(nodeDF$auto_descr),
@@ -53,6 +42,8 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
   eqLineDF = argDF %>%
     dplyr::filter(argType == "param" |
              (!is.na(argValue) & argType == "arg")) %>%
+    dplyr::mutate(argNameWithDim = ifelse(is.na(argDimLabels),argName,
+                                          paste0(argName,"[",argDimLabels,"]"))) %>%
     dplyr::mutate(textToCollapse = ifelse(is.na(argValue), argName, argValue)) %>%
     dplyr::mutate(textToCollapse = ifelse(
       argType == "arg",
@@ -63,6 +54,19 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
     dplyr::summarize(argList = paste0(textToCollapse, collapse = ","))
 
   ## create the equation line
+  ## substitute dimLabels in formulas .. this section can be cleaned up
+  ## but seems to work for now
+  nodeDF = argDF %>%
+    dplyr::filter(!is.na(argDimLabels)) %>%  ## get arguments with added dim
+    dplyr::mutate(newArgName = paste0(argName,"[",argDimLabels,"]")) %>%
+    dplyr::select(rhsID,oldArgName = argName,newArgName) %>%
+    dplyr::right_join(nodeDF, by = "rhsID") %>%
+    dplyr::mutate(rhs = ifelse(is.na(newArgName), rhs,
+                               stringr::str_replace(rhs,oldArgName,newArgName))) %>%
+    select(id,label,descr,data,rhs,child,obs,rhsID,distr,auto_label,auto_descr,auto_data,dimID,dimLabel,descLine)
+
+
+
   ## if rhs represents a formula, use "label = formula"
   ## if rhs represents distribution, use "label ~ distribution(args)
   ## if rhs is blank, use "label"
@@ -100,6 +104,8 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
     cluster = nodeDF$cluster
     )
 
+
+  # create new graph
   dgr_graph = DiagrammeR::create_graph(directed = TRUE) %>%
     DiagrammeR::add_node_df(nodeDF)
 

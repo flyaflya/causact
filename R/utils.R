@@ -275,13 +275,13 @@ pseudoPlate = function(graph) {
 
 
   ## is any node duplicated
-  duplicateFlag = anyDuplicated(plateNodeDF$nodeID)
+  duplicatePosition = anyDuplicated(plateNodeDF$nodeID)
 
   ## if node appears twice, need to make a virtual cluster
   ## such that each node is a member of a unique subgraph
   ## composed of all of the node's indexes
-  while (duplicateFlag > 0) {
-    duplicatedNodeID = plateNodeDF$nodeID[duplicateFlag]
+  while (duplicatePosition > 0) {
+    duplicatedNodeID = plateNodeDF$nodeID[duplicatePosition]
 
     ## get vector of indexID's for node
     indices = plateNodeDF$indexID[plateNodeDF$nodeID == duplicatedNodeID]
@@ -315,7 +315,7 @@ pseudoPlate = function(graph) {
       dplyr::bind_rows(data.frame(indexID = newIndex, nodeID = duplicatedNodeID))
 
     ## condition to break out.
-    duplicateFlag = anyDuplicated(pseudo_plate_node_df$nodeID)
+    duplicatePosition = anyDuplicated(pseudo_plate_node_df$nodeID)
   }  #end while loop
 
 

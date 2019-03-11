@@ -15,7 +15,8 @@
 #' @export
 dag_edge <- function(graph,
                      from,
-                     to) {
+                     to,
+                     type = as.character(NA)) {
 
   ## get number of edges
   numberOfEdges = max(length(from),length(to))
@@ -32,6 +33,7 @@ dag_edge <- function(graph,
     id = edgeIDstart:(edgeIDstart+numberOfEdges-1),
     from = fromIDs,
     to = toIDs,
+    type = type,
     stringsAsFactors = FALSE
   )
 

@@ -16,7 +16,7 @@ dag_create() %>% dag_node(c("Momma","Poppa"),data = attitude$complaints, rhs = n
 dag_create() %>% dag_node(rhs = normal(0,10), data = attitude[, 2:7]) %>% dag_diagrammer() %>%
   DiagrammeR::render_graph()
 
-graph2 = dag_create() %>%
+dag_create() %>%
   dag_node("response") %>%
   dag_node(label = c("a","b"),
            rhs = alpha+beta*x,
@@ -35,10 +35,20 @@ dag_create() %>%
            rhs = normal(0,10)) %>%
   dag_render()
 
-graph = dag_create() %>%
+dag_create() %>%
   dag_node(data = attitude[,2:7]) %>%
   dag_plate("Predictors","j",nodeLabels = c("prvl","rass")) %>%
+  dag_plate(description = "Other Predictors",indexLabel = "k",nodeLabels = c("crtc","advn","rass"))%>%
   dag_render()
+
+dag_create() %>%
+  dag_node(data = attitude[,2:7]) %>%
+  dag_plate("Predictors","j",nodeLabels = c("rass")) %>%
+  dag_plate(description = "Other Predictors",indexLabel = "k",nodeLabels = c("rass"))%>%
+  dag_render()
+
+
+
 
 
 graph = dag_create() %>%
@@ -59,9 +69,9 @@ graph = dag_create() %>%
            child = "mean", rhs = normal(160000,10000)) %>%
   dag_plate("Observation","i",
             nodeLabels = c("y","x","mean")) %>%
-  dag_plate("Zip Code","j",
+  dag_plate(descr = "Zip Code",label = "j",
             nodeLabels = "alpha",
-            dataNode = houseDF$Neighborhood) %>%
+            data = houseDF$Neighborhood) %>%
   dag_render()
 ###UNFIN:: generate zip code node automatically with data from dag_plate()
 ###function ... any formula children should have extraction added to
