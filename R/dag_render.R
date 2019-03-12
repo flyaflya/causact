@@ -14,85 +14,11 @@
 #' @export
 dag_render <- function(graph,
                        shortLabel = FALSE,
+                       wrapWidth = 24,
                        ...) {
-
-  # ## short label implements automatic word wrap and
-  # ## if descLabel = TRUE, then adds description
-  # if (shortLabel) {
-  #   graph$nodes_df$label = ifelse(is.na(graph$nodes_df$description),
-  #     ##true
-  #     sapply(strwrap(
-  #       graph$nodes_df$label,
-  #       width = 12,
-  #       simplify = FALSE
-  #     ), paste, collapse = "\n"),
-  #     ##FALSE
-  #     paste0(sapply(strwrap(
-  #         graph$nodes_df$description,
-  #         width = 12,
-  #         simplify = FALSE
-  #       ), paste, collapse = "\n"),
-  #       "\n",
-  #       graph$nodes_df$label)
-  #     )
-  # } else {
-  #
-  #   ##long label changes depending on whether greta distribution is used
-  #   ##right now, the test for a greta distribution is the expression in
-  #   ##the below if statement.
-  #
-  #   for (i in seq_along(graph$nodes_df$distr)) {
-  #     if (graph$nodes_df$distr[i] == graph$nodes_df$fullDistLabel[i]) {
-  #       if (is.na(graph$nodes_df$description[i])) {
-  #         graph$nodes_df$description[i] = ""
-  #       }  ## stop NA from printing
-  #       graph$nodes_df$label[i] = paste0(
-  #         sapply(strwrap(graph$nodes_df$description[i],
-  #                        width=25,simplify = FALSE),
-  #                paste,collapse = "\n"),
-  #         ifelse(graph$nodes_df$description[i]=="","","\n"),
-  #         graph$nodes_df$label[i],
-  #         " ",
-  #         graph$nodes_df$fullDistLabel[i]
-  #       )
-  #     } else {
-  #       if (is.na(graph$nodes_df$description[i])) {
-  #         graph$nodes_df$description[i] = ""
-  #         graph$nodes_df$label[i] = paste(sapply(
-  #           strwrap(
-  #             paste0(
-  #               graph$nodes_df$label[i],
-  #               ifelse(is.na(graph$nodes_df$formulaString[i]), " ~ ", " = "),
-  #               graph$nodes_df$fullDistLabel[i]
-  #             ),
-  #             width = 25,
-  #             simplify = FALSE
-  #           ),
-  #           paste,
-  #           collapse = "\n"),sep = "\n")
-  #       } else {  ## stop NA from printing
-  #       graph$nodes_df$label[i] = paste(sapply(
-  #         strwrap(graph$nodes_df$description[i],
-  #                 width = 25,
-  #                 simplify = FALSE
-  #         ),paste,collapse="\n"),
-  #         sapply(
-  #           strwrap(
-  #             paste0(
-  #               graph$nodes_df$label[i],
-  #               ifelse(is.na(graph$nodes_df$formulaString[i]), " ~ ", " = "),
-  #               graph$nodes_df$fullDistLabel[i]
-  #             ),
-  #             width = 25,
-  #             simplify = FALSE
-  #           ),
-  #           paste,
-  #           collapse = "\n"),sep = "\n")
-  #     }  #end else
-  #   }  #end else
-  # }  #end for
-  # }  #end else
-
-  graph %>% dag_diagrammer() %>% DiagrammeR::render_graph(...)  ### render the graph
-  #graph %>% dag_greta()   ### supply greta code
+  sLabel = shortLabel
+  ww = wrapWidth
+  graph %>%
+    dag_diagrammer(shortLabel = sLabel, wrapWidth = ww) %>%
+    DiagrammeR::render_graph(...)
 }

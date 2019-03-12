@@ -69,8 +69,9 @@ graph = dag_create() %>%
             nodeLabels = "alpha",
             data = houseDF$Neighborhood)
 graph %>% dag_render()
+graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
-
+graph %>% dag_greta(mcmc = TRUE)
 
 graph = dag_create() %>%
   dag_node(data = attitude$rating,

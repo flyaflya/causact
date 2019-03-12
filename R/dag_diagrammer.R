@@ -1,6 +1,6 @@
 ## function to convert graph to Diagrammer object
 ## for visualization
-dag_diagrammer = function(graph, wrapWidth = 24, ...) {
+dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE, ...) {
   # add dimension labels
   graph = graph %>% dag_dim()
 
@@ -82,7 +82,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
   ##create clusterNameDF to map nodes to plates
   clusterNameDF = plateNodeDF %>%
     dplyr::left_join(plateDF, by = "indexID") %>%
-    dplyr::select(id = nodeID, cluster = indexDisplayName)
+    dplyr::select(id = nodeID, cluster = indexDisplayName, clusterShortLabel = indexDescription)
 
   nodeDF = nodeDF %>%
     dplyr::left_join(eqDF, by = "id") %>%
@@ -90,8 +90,18 @@ dag_diagrammer = function(graph, wrapWidth = 24, ...) {
            peripheries = ifelse(distr == TRUE | is.na(rhs),1,2),
            fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
            label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine))) %>%  ###poor man's version of shortLabel
-    dplyr::select(id,label,type,peripheries,fillcolor) %>%
+    dplyr::select(id,label,type,peripheries,fillcolor,auto_descr) %>%
     dplyr::left_join(clusterNameDF, by = "id")
+
+  ###just use description if shortLabel = TRUE
+  if(shortLabel == TRUE) {
+    nodeDF$label = sapply(strwrap(nodeDF$auto_descr,
+                                  width = wrapWidth,
+                                  simplify = FALSE),
+                          paste,
+                          collapse = "\n")
+    nodeDF$cluster = nodeDF$clusterShortLabel
+    }
 
   ### use DIagrammeR::create_node_df
   nodeDF = DiagrammeR::create_node_df(
