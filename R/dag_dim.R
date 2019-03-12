@@ -26,7 +26,15 @@ dag_dim <- function(graph, ...) {
   argDF = graph$arg_df
   plateDF = graph$plate_index_df
   plateNodeDF = graph$plate_node_df
-  dimDF = graph$dim_df
+  ### reset dimDF and recalculate it every time
+  dimDF = data.frame(
+      dimID = as.integer(NA),
+      nodeID = as.integer(NA),
+      dimType = as.character(NA),
+      dimDataSource = as.character(NA),
+      dimValue = as.integer(NA),
+      stringsAsFactors = FALSE
+    )[-1, ]
 
 
   # add dimID to nodeDF

@@ -72,6 +72,9 @@ rhsDecompDistr = function(rhs) {
   numParents = which(allArgs %in% c("dim", "dimension")) - 1  ## get number of dist paramaters
 
   paramDF = allArgsDF[1:numParents,]
+  ## fill in missing arg values with argName
+  paramDF$argValue = ifelse(is.na(paramDF$argValue),paramDF$argName,paramDF$argValue)
+
   argDF = allArgsDF[(numParents + 1):nrow(allArgsDF),]
   ## shorten truncation and dimension argName for convenience
   argDF$argName = sub("truncation", "trunc", argDF$argName)
@@ -161,6 +164,77 @@ rhsDecomp = function(rhs) {
 # tmp(rhs = alpha + beta * x)
 # tmp(rhs = beta * x)
 #
+
+### get prior composition
+rhsPriorComposition = function(graph) {
+
+  ## get nodes which have prior information
+  nodeDF = graph$nodes_df %>%
+    dplyr::filter(distr == TRUE) %>%
+    select(id,rhs,rhsID)
+
+  ## retireve non-NA argument list
+  argDF = graph$arg_df %>%
+    dplyr::filter(!is.na(argValue))
+
+  ## get plate information for dim argument of priors
+  plateDimDF = graph$plate_index_df %>%
+    dplyr::filter(!is.na(dataNode)) %>% ##only plates with data
+    dplyr::left_join(graph$plate_node_df, by = "indexID") %>%
+    dplyr::select(nodeID,indexLabel)
+
+  ## create label for the rhs for these nodes
+  auto_rhsDF = nodeDF %>% dplyr::left_join(argDF, by = "rhsID") %>%
+    dplyr::group_by(id,rhsID,rhs) %>%
+    dplyr::summarize(args = paste0(argName," = ",argValue,collapse = ", ")) %>%
+    dplyr::left_join(plateDimDF, by = c("id" = "nodeID")) %>%
+    dplyr::mutate(prior_rhs = paste0(rhs,"(",args,
+                                    ifelse(is.na(indexLabel),"",
+                                           paste0(", dim = ",indexLabel,"_dim")),
+                                    ")")) %>%
+    dplyr::ungroup() %>%
+    select(id,prior_rhs)
+
+  ##update graph with new label
+  graph$nodes_df = graph$nodes_df %>% left_join(auto_rhsDF, by = "id") %>%
+    mutate(auto_rhs = ifelse(is.na(prior_rhs),auto_rhs,prior_rhs)) %>%
+    dplyr::select(-prior_rhs)
+
+  return(graph) ##now has populated graph$nodes_df$auto_rhs for priors
+}
+
+### if formula grab rhs, add dimLabels, and output in auto_rhs
+rhsOperationComposition = function(graph) {
+  graph$nodes_df$auto_rhs = ifelse(is.na(graph$nodes_df$auto_rhs) & graph$nodes_df$distr == FALSE & !is.na(graph$nodes_df$rhs),
+                                   graph$nodes_df$rhs,
+                                   graph$nodes_df$auto_rhs)
+
+  ## update auto_rhs with dimensioned formulas
+  ## get nodes with argDimLabels
+  argDimLabelNodes = graph$arg_df %>%
+    dplyr::filter(!is.na(argDimLabels)) %>%
+    select(rhsID,argName,argDimLabels)
+
+  for(i in 1:nrow(argDimLabelNodes)){
+    ### find index of node with matching rhsID
+    nodePosition = which(graph$nodes_df$rhsID == argDimLabelNodes$rhsID[i])
+    ### replace the string if it is a formula
+    if(graph$nodes_df$distr[nodePosition] == FALSE &
+       !is.na(graph$nodes_df$auto_rhs[nodePosition])) {
+         graph$nodes_df$auto_rhs[nodePosition] =
+           stringr::str_replace(graph$nodes_df$auto_rhs[nodePosition],
+                                argDimLabelNodes$argName[i],
+                                paste0(argDimLabelNodes$argName[i],
+                                       "[",
+                                       argDimLabelNodes$argDimLabels[i],
+                                       "]"))
+       }
+  }  ## end for loop
+
+  return(graph)
+}
+
+
 
 ### simplified function to pad an abbreviated label with whitespace
 ### to the right.

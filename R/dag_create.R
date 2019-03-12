@@ -30,6 +30,7 @@ dag_create <- function(...) {
       auto_descr = as.character(NA),
       auto_data = as.character(NA),
       dimID = as.integer(NA),
+      auto_rhs = as.character(NA),
       stringsAsFactors = FALSE
     )[-1,]
 
