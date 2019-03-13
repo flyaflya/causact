@@ -215,6 +215,9 @@ rhsOperationComposition = function(graph) {
     dplyr::filter(!is.na(argDimLabels)) %>%
     select(rhsID,argName,argDimLabels)
 
+  ## only do if there arguments needing dim labels added
+  if(nrow(argDimLabelNodes) > 0) { ##start if
+
   for(i in 1:nrow(argDimLabelNodes)){
     ### find index of node with matching rhsID
     nodePosition = which(graph$nodes_df$rhsID == argDimLabelNodes$rhsID[i])
@@ -230,6 +233,7 @@ rhsOperationComposition = function(graph) {
                                        "]"))
        }
   }  ## end for loop
+  } ## end if
 
   return(graph)
 }
