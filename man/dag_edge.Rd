@@ -4,7 +4,7 @@
 \alias{dag_edge}
 \title{Add an edge between nodes in a graph object.}
 \usage{
-dag_edge(graph, from, to)
+dag_edge(graph, from, to, type = as.character(NA))
 }
 \arguments{
 \item{from}{the parent node label or description from which the edge is connected.}

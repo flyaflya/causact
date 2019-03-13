@@ -4,20 +4,20 @@
 \alias{dag_plate}
 \title{Set node attribute values to reflect a desired cluster}
 \usage{
-dag_plate(graph, description, indexLabel, nodeLabels,
-  dataNode = as.character(NA))
+dag_plate(graph, descr, label, nodeLabels, data = as.character(NA),
+  addDataNode = TRUE, rhs = NA)
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}
 
-\item{description}{a longer more descriptive label for the cluster/plate.}
+\item{descr}{a longer more descriptive label for the cluster/plate.}
 
-\item{indexLabel}{a short character string to use as an index letter
+\item{label}{a short character string to use as an index letter
 nodes.}
 
 \item{nodeLabels}{a vector of node labels or descriptions to include in the list of nodes}
 
-\item{dataNode}{a vector representing the categorical data whose unique values become the plate index.}
+\item{data}{a vector representing the categorical data whose unique values become the plate index.}
 }
 \value{
 a graph object of class \code{dgr_graph}.

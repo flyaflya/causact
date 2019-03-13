@@ -5,7 +5,8 @@
 \title{Add a node to an existing graph object}
 \usage{
 dag_node(graph, descr = as.character(NA), label = as.character(NA),
-  data = NULL, rhs = NA, child = as.character(NA), obs = FALSE)
+  data = NULL, rhs = NA, child = as.character(NA), obs = FALSE,
+  keepAsDF = FALSE)
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}

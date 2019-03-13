@@ -47,6 +47,9 @@ dag_dim <- function(graph, ...) {
     igraph::topo_sort(mode = "in") %>%
     as.vector()
 
+  ## append non-connected nodes into nodeIDOrder
+  nodeIDOrder = union(nodeIDOrder,nodeDF$id)
+
   ### loop through nodes and add dimension one at a time
   for (nodeIDX in nodeIDOrder) {
     nodePosition = which(nodeDF$id == nodeIDX)

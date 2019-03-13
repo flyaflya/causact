@@ -61,7 +61,7 @@ graph = dag_create() %>%
            child = "mean", rhs = normal(0,10000)) %>%
   dag_node(label = "sd", descr = "Std Dev of Sales Price",
            child = "Sales Price", rhs = lognormal(0,100)) %>%
-  dag_node(label = "alpha", descr = "Intercept",
+  dag_node(label = "alpha", descr = "Exp Sales Price",
            child = "mean", rhs = normal(160000,10000)) %>%
   dag_plate("Observation","i",
             nodeLabels = c("y","x","mean")) %>%

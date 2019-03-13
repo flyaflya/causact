@@ -46,7 +46,8 @@ dag_node <- function(graph,
                      data = NULL, # vector or df
                      rhs = NA, ##not vectorized
                      child = as.character(NA), ##not vectorized
-                     obs = FALSE) {
+                     obs = FALSE,
+                     keepAsDF = FALSE) {
 
   # handle blank entry
   numArgs = length(match.call())-1
@@ -84,18 +85,23 @@ dag_node <- function(graph,
 
   # determine if data is present
   # data makes for an observed node
-
-  if(!is.na(dataString)) {
-    numberOfNodes = max(NCOL(rlang::eval_tidy(dataQuo)),length(descr),length(label))
-    if(is.data.frame(rlang::eval_tidy(dataQuo))) {
+  if (!is.na(dataString) & keepAsDF == FALSE) {
+    numberOfNodes = max(NCOL(rlang::eval_tidy(dataQuo)), length(descr), length(label))
+    if (is.data.frame(rlang::eval_tidy(dataQuo))) {
       baseDF = all.vars(dataQuo)[1]
-      dataString = paste0(baseDF,"$",colnames(rlang::eval_tidy(dataQuo)))
+      dataString = paste0(baseDF, "$", colnames(rlang::eval_tidy(dataQuo)))
     }
     obs = TRUE
-    } else {
-      dataString = as.character(NA)  ## restore as NA
-      numberOfNodes = max(length(descr),length(label))
-    }
+  } else if (!is.na(dataString) & keepAsDF == TRUE) {
+    numberOfNodes = 1
+    dataString = dataString
+    obs = TRUE
+  } else {
+    dataString = as.character(NA)  ## restore as NA
+    numberOfNodes = max(length(descr), length(label))
+  }
+
+
 
   ## initialize nodeDF info for this node(s)
   nodeIDstart = max(graph$nodes_df$id,0) + 1
