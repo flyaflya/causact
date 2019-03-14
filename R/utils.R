@@ -138,7 +138,9 @@ rhsDecomp = function(rhs) {
 
   ## if function in greta namespace, then assume distr
   ## otherwise assume formula
-  if (fnName %in% getNamespaceExports("greta")) {
+  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind")
+  if (fnName %in% getNamespaceExports("greta") &
+      !(fnName %in% notDistrFunctions)) {
     z = rhsDecompDistr(!!distExpr)
   } else {
     z = rhsDecompFormula(!!distExpr)
