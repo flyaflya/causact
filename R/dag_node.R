@@ -49,7 +49,7 @@ dag_node <- function(graph,
                      obs = FALSE,
                      keepAsDF = FALSE) {
 
-  # handle blank entry
+  # handle blank entry -- user enters zero arguments
   numArgs = length(match.call())-1
   if(numArgs == 0) {graph = dag_create()
                     descr = "Type ?dag_create"
@@ -61,27 +61,33 @@ dag_node <- function(graph,
   dataQuo = rlang::enquo(data) ##capture as quosure to get env
   dataString = ifelse(is.null(data),NA,rlang::quo_name(dataQuo))
   rhsExpr = rlang::enexpr(rhs) ##distribution or formula
-  rhsList = rhsDecomp(!!rhsExpr)  ## get distr flag,
-        #fcn name (i.e. formula string for formula),
-        #paramDF (distr-TRUE only),argDF (distr or formula)
 
-  # create dataframe for RHS arguments
-  rhsID = max(graph$arg_df$rhsID,0) + 1
-
-  argDF = dplyr::bind_rows(list(param=rhsList$paramDF, arg=rhsList$argDF), .id = 'argType')
-  if(nrow(argDF) > 0) { ##add rhsID as first column
-    argDF = cbind(rhsID=rhsID,argDF)
-  } else { ##add rhsID as column with zero rows
-      argDF$rhsID[-1] = as.integer(NA)
-  }
-
-
-  # rhsString is either formula, dist function, or not given
-  if(rhsList$fcn == "NA") { # decomp returns string, not NA
+  # capture the parameters and argument of the rhs expression
+  # also, update value of distr to signal whether distribution or formula
+  if (is.na(rlang::expr_text(rhsExpr)) | rlang::expr_text(rhsExpr) == "NA") {
     rhsString = NA
+    rhsDistr = FALSE
+    rhsID = NA   ##signals that rhs is blank
+  } else {
+    rhsList = rhsDecomp(!!rhsExpr)  ## get distr flag,
+    #fcn name (i.e. formula string for formula),
+    #paramDF (distr-TRUE only),argDF (distr or formula)
+
+    # create dataframe for RHS arguments
+    rhsID = max(graph$arg_df$rhsID, 0) + 1
+
+    argDF = dplyr::bind_rows(list(param = rhsList$paramDF, arg = rhsList$argDF), .id = 'argType')
+    if (nrow(argDF) > 0) {
+      ##add rhsID as first column
+      argDF = cbind(rhsID = rhsID, argDF)
     } else {
-      rhsString = rhsList$fcn
+      ##add rhsID as column with zero rows
+      argDF$rhsID[-1] = as.integer(NA)
     }
+
+    rhsString = rhsList$fcn
+    rhsDistr = rhsList$distr
+  }
 
   # determine if data is present
   # data makes for an observed node
@@ -117,13 +123,13 @@ dag_node <- function(graph,
       child = child,
       obs = obs,
       rhsID = rhsID,
-      distr = rhsList$distr,
+      distr = rhsDistr,
       stringsAsFactors = FALSE)
 
 
   ### complete graph object
   graph$nodes_df = dplyr::bind_rows(graph$nodes_df,ndf)
-  graph$arg_df = dplyr::bind_rows(graph$arg_df,argDF)
+  if(!is.na(rhsID)) {graph$arg_df = dplyr::bind_rows(graph$arg_df,argDF)}
 
   ## add edges for newly added nodes with non-na children
   edgeDF = ndf %>% dplyr::filter(!is.na(child))

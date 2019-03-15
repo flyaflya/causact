@@ -23,16 +23,11 @@ rhsDecompDistr = function(rhs) {
     )
   }
 
-  ## get top function name - probably better way to do this
-  fnName = head(distString, n = 1) ## function name
-  if (fnName %in% c("::", "greta")) {
-    ##if namespace given
-    fnName = tail(distString, n = 1)
-    distString = distString[-c(1, 2)]
-  }
+  ## get top function name (note: this assumes namespace is stripped)
+  fnName = rlang::call_name(distExpr)
 
   ## function arguments list
-  allArgs = formalArgs(fnName)  ##function arguments
+  allArgs = names(formals(fnName)) ##function arguments  ##note this used to use formalArgs, but did not work with beta distribution
 
   ## fill in missing arguments in list
   for (i in 1:length(allArgs)) {
@@ -123,17 +118,27 @@ rhsDecompFormula = function(rhs) {
 ## read in expression as a quosure
 rhsDecomp = function(rhs) {
   distExpr = rlang::enexpr(rhs)
-  distString = as.character(distExpr)
 
-
-
-  ## get top distr function name - probably better way to do this
-  fnName = head(distString, n = 1) ## function name
-  if (fnName %in% c("::", "greta")) {
-    ##if namespace given
-    fnName = tail(distString, n = 1)
-    distString = distString[-c(1, 2)]
+  ## handle cases where just distribution name is supplied
+  if(is.symbol(distExpr)) {
+    distExpr = rlang::parse_expr(paste0(rlang::as_string(distExpr),"()"))
   }
+
+  ## handle cases where greta namespace is used
+  distString = rlang::expr_text(distExpr)
+  if (startsWith(distString,"greta::")) {
+    distString = gsub("greta::","",distString)
+    distExpr = rlang::parse_expr(distString)
+    if(is.symbol(distExpr)) {  ## if now symbol, add parantheses
+      distExpr = rlang::parse_expr(paste0(rlang::as_string(distExpr),"()"))
+    }
+  }
+
+  ## standardize the call
+  distExpr = rlang::call_standardise(distExpr)
+
+  ## return function name
+  fnName = rlang::call_name(distExpr)
 
 
   ## if function in greta namespace, then assume distr
