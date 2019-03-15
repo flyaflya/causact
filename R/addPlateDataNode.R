@@ -32,7 +32,7 @@ addPlateDataNode = function(graph,plateIndex,rhs = NA) {
     dplyr::left_join(graph$nodes_df, by = c("nodeID" = "id")) %>%
     dplyr::pull(label)
 
-  ###add argDimLabels to children of parents that are not on this plate
+  ###add argDimLabels to children that are not on this plate
   graph$arg_df = graph$plate_node_df %>%
     dplyr::filter(indexID == plateIndex) %>% ##node on plate
     dplyr::left_join(graph$edges_df, by = c("nodeID" = "from")) %>% ##chilren of nodes on plate

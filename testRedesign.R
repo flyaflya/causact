@@ -67,7 +67,8 @@ graph = dag_create() %>%
             nodeLabels = c("y","x","mean")) %>%
   dag_plate(descr = "Zip Code",label = "zip",
             nodeLabels = "alpha",
-            data = houseDF$Neighborhood)
+            data = houseDF$Neighborhood,
+            addDataNode = TRUE)
 graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()

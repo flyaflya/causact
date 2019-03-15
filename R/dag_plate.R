@@ -24,7 +24,7 @@ dag_plate <- function(graph,
                       label,
                       nodeLabels,
                       data = as.character(NA),
-                      addDataNode = TRUE,
+                      addDataNode = FALSE,
                       rhs = NA ) {
 
   ### capture data argument as string
@@ -58,11 +58,17 @@ dag_plate <- function(graph,
                                           nodeID = nodeIDS[i])
   }
 
+  ##
+
   ## add data node to extract the proper parameter
-  if(!is.na(dataNodeString) & addDataNode == TRUE) {
+  if (!is.na(dataNodeString) & addDataNode == TRUE) {
     graph = graph %>% addPlateDataNode(plateIndex = lastPlateIndex + 1,
                                        rhs = !!rhsExpr)
-    }
+  } else {
+    ## add indexing to children if dataNodeString is NA
+    graph = graph %>%
+      updateRHSForPlateChildren(plateIndex = lastPlateIndex + 1)
+  }
 
-  graph  ## return updated graph
+  return(graph)  ## return updated graph
 }
