@@ -118,10 +118,24 @@ rhsDecompFormula = function(rhs) {
 ## read in expression as a quosure
 rhsDecomp = function(rhs) {
   distExpr = rlang::enexpr(rhs)
+  oneWordEquation = FALSE  ## assume complex expression
 
   ## handle cases where just distribution name is supplied
-  if(is.symbol(distExpr)) {
-    distExpr = rlang::parse_expr(paste0(rlang::as_string(distExpr),"()"))
+  ## if function in greta namespace, then assume distr
+  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind")
+
+  if (is.symbol(distExpr)) {
+    fnName = rlang::as_string(distExpr)
+    if (fnName %in% getNamespaceExports("greta") &
+        !(fnName %in% notDistrFunctions)) {
+      ## it is a greta distribution - add parantheses so not symbol
+      distExpr = rlang::parse_expr(paste0(fnName, "()"))
+    } else {
+      distExpr = rlang::parse_expr(fnName)
+      if (!(fnName %in% getNamespaceExports("greta") &
+          !(fnName %in% notDistrFunctions))) {
+      oneWordEquation = TRUE } ##expression is not complex
+    }
   }
 
   ## handle cases where greta namespace is used
@@ -135,15 +149,11 @@ rhsDecomp = function(rhs) {
   }
 
   ## standardize the call
-  distExpr = rlang::call_standardise(distExpr)
+  if(!oneWordEquation) {distExpr = rlang::call_standardise(distExpr)}
 
   ## return function name
-  fnName = rlang::call_name(distExpr)
+  if(!oneWordEquation) {fnName = rlang::call_name(distExpr)}
 
-
-  ## if function in greta namespace, then assume distr
-  ## otherwise assume formula
-  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind")
   if (fnName %in% getNamespaceExports("greta") &
       !(fnName %in% notDistrFunctions)) {
     z = rhsDecompDistr(!!distExpr)
