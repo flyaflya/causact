@@ -18,7 +18,7 @@ updateRHSForPlateChildren = function(graph, plateIndex) {
     dplyr::left_join(graph$nodes_df, by = c("to" = "id")) %>% # child node info
     dplyr::select(id,rhs,rhsID,parentNodeID = nodeID) %>%
     dplyr::left_join(graph$arg_df, by  = "rhsID") %>%
-    dplyr::filter(argName %in% parentNodeLabels) %>%
+    dplyr::filter(argValue %in% parentNodeLabels) %>%
     dplyr::select(argName,rhsID) %>%
     dplyr::mutate(newArgDim = label) %>%
     dplyr::right_join(graph$arg_df, by = c("argName", "rhsID")) %>%

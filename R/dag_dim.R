@@ -45,7 +45,8 @@ dag_dim <- function(graph, ...) {
   # assign dimensions going bottom-up
   nodeIDOrder = igraph::graph_from_data_frame(edgeDF %>% select(from,to)) %>%
     igraph::topo_sort(mode = "in") %>%
-    as.vector()
+    names() %>%
+    as.integer()
 
   ## append non-connected nodes into nodeIDOrder
   nodeIDOrder = union(nodeIDOrder,nodeDF$id)

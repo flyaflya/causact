@@ -202,6 +202,8 @@ rhsPriorComposition = function(graph) {
 
   ## create label for the rhs for these nodes
   auto_rhsDF = nodeDF %>% dplyr::left_join(argDF, by = "rhsID") %>%
+    dplyr::mutate(argValue = ifelse(is.na(argDimLabels),argValue,
+                                    paste0(argValue,"[",argDimLabels,"]"))) %>% ## add extraction index to label
     dplyr::group_by(id,rhsID,rhs) %>%
     dplyr::summarize(args = paste0(argName," = ",argValue,collapse = ", ")) %>%
     dplyr::left_join(plateDimDF, by = c("id" = "nodeID")) %>%

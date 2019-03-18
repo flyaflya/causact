@@ -43,8 +43,8 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE, ...) {
     dplyr::filter(argType == "param" |
              (!is.na(argValue) & argType == "arg")) %>%
     dplyr::mutate(argNameWithDim = ifelse(is.na(argDimLabels),argName,
-                                          paste0(argName,"[",argDimLabels,"]"))) %>%
-    dplyr::mutate(textToCollapse = ifelse(is.na(argValue), argName, argValue)) %>%
+                                          paste0(argValue,"[",argDimLabels,"]"))) %>%
+    dplyr::mutate(textToCollapse = ifelse(is.na(argValue), argName, argValue)) %>%  dplyr::mutate(textToCollapse = ifelse(is.na(argDimLabels), textToCollapse, argNameWithDim)) %>%
     dplyr::mutate(textToCollapse = ifelse(
       argType == "arg",
       paste0(argName, "=", argValue),

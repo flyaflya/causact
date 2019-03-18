@@ -40,7 +40,7 @@ addPlateDataNode = function(graph,plateIndex,rhs = NA) {
     dplyr::left_join(graph$nodes_df, by = c("to" = "id")) %>% # child node info
     dplyr::select(id,rhs,rhsID,parentNodeID = nodeID) %>%
     dplyr::left_join(graph$arg_df, by  = "rhsID") %>%
-    dplyr::filter(argName %in% parentNodeLabels) %>%
+    dplyr::filter(argValue %in% parentNodeLabels) %>%
     dplyr::select(argName,rhsID) %>%
     dplyr::mutate(newArgDim = label) %>%
     dplyr::right_join(graph$arg_df, by = c("argName", "rhsID")) %>%
@@ -61,21 +61,25 @@ addPlateDataNode = function(graph,plateIndex,rhs = NA) {
     dplyr::mutate(parentNodeID = newNodeIndex) %>%
     dplyr::distinct()
 
-  ### add new data node to plate of its children
+  ### add new data node to plate of its children (if on plate)
   childPlatesDF = childrenNewEdgeDF %>% #get plates of children
     dplyr::filter(!(childID %in% nodesOnThisPlate)) %>% # get rid of same plate children
-    dplyr::left_join(graph$plate_node_df, by = c("childID" = "nodeID"))
+    dplyr::left_join(graph$plate_node_df, by = c("childID" = "nodeID")) %>%
+    dplyr::filter(!is.na(indexID))
 
   ## update plate node df with parent Node ID
-  ## and create edge from child to parent
+  if(NROW(childPlatesDF) >0) {
   for (i in 1:NROW(childPlatesDF)) {
     graph$plate_node_df = dplyr::add_row(graph$plate_node_df,
                                          indexID = childPlatesDF$indexID[i],
                                          nodeID = childPlatesDF$parentNodeID[i])
-  }
+  }}
+  ## and create edge from child to parent
   # create edges
+  if(NROW(childrenNewEdgeDF) >0) {
   graph = graph %>% dag_edge(from = childrenNewEdgeDF$parentNodeID,
                              to = childrenNewEdgeDF$childID)
+  }
 
   return(graph)
 
