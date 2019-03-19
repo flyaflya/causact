@@ -65,12 +65,19 @@ rhsDecompDistr = function(rhs) {
   rm(namedArgDF)
 
   numParents = which(allArgs %in% c("dim", "dimension")) - 1  ## get number of dist paramaters
+  if(rlang::is_empty(numParents)){ numParents = nrow(allArgsDF) }  ## some distributions are missing dim argument, so assume (for now) all arguments are parameters
 
   paramDF = allArgsDF[1:numParents,]
   ## fill in missing arg values with argName
   paramDF$argValue = ifelse(is.na(paramDF$argValue),paramDF$argName,paramDF$argValue)
 
-  argDF = allArgsDF[(numParents + 1):nrow(allArgsDF),]
+  ## if there are more arguments than parameter arguments, add them to argDF
+  if(nrow(allArgsDF) > numParents) {
+    argDF = allArgsDF[(numParents + 1):nrow(allArgsDF),]
+  } else {
+    argDF = allArgsDF[-1,]  ## create empty dataframe
+  }
+
   ## shorten truncation and dimension argName for convenience
   argDF$argName = sub("truncation", "trunc", argDF$argName)
   argDF$argName = sub("dimension", "dim", argDF$argName)

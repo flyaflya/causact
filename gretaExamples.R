@@ -153,3 +153,12 @@ graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
 drawsDF %>% dagp_plot()
 
+### greta example #5: Multiple Categorical Regression
+graph = dag_create() %>%
+  dag_node("Species","y",
+           data = model.matrix(~ Species -1, iris),
+           keepAsDF = TRUE) %>%
+  dag_node(descr = "Category Probabilities",label = "prob",
+           child = "y",
+           rhs = imultilogit(eta))
+graph %>% dag_render()
