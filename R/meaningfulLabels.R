@@ -1,6 +1,15 @@
 #' @import dplyr rlang
 meaningfulLabels = function(graphWithDimensions,plateDataStatements) {
 
+  ## if plateDataStaement is NULL, just return empty DF
+  if(is.null(plateDataStatements)) {
+    relabelDF = data.frame(oldNames = as.character(NA),
+               newNames = as.character(NA),
+               stringsAsFactors = FALSE)[-1,]
+    assign("meaningfulLabels", relabelDF, envir = cacheEnv)
+    return(invisible())
+  }
+
   ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
   nodeDF = graphWithDimensions$nodes_df
   edgeDF = graphWithDimensions$edges_df

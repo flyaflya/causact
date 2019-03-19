@@ -73,6 +73,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
+drawsDF %>% dagp_plot()
 
 graph = dag_create() %>%
   dag_node(data = attitude$rating,
