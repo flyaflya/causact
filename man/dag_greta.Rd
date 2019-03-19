@@ -4,7 +4,7 @@
 \alias{dag_greta}
 \title{Create a graph object focused on drawing a DAG.}
 \usage{
-dag_greta(graph, mcmc = FALSE)
+dag_greta(graph, mcmc = FALSE, meaningfulLabels = TRUE)
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()} with data argument populated.}

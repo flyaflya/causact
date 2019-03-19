@@ -53,11 +53,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-library(tidyverse)
-drawsDF %>% gather() %>%
-  ggplot(aes(x = value, y = ..scaled..)) +
-  geom_density(aes(fill = key)) +
-  facet_wrap(~key, scales = "free_x") + theme_minimal()
+drawsDF %>% dagp_plot()
 
 
 ### greta example #2
@@ -139,15 +135,14 @@ graph = dag_create() %>%
            rhs = c(int, coefs),
            child = "eta") %>%
   dag_node("Intercept","int",
-           rhs = variable,
+           rhs = variable(-Inf,Inf),
            child = "beta") %>%
   dag_node("Slope Coefficients","coefs",
            rhs = normal(0,5),
            child = "beta") %>%
   dag_plate("Predictors","j",
             data = names(df[ ,-1]),
-            nodeLabels = "coefs",
-            addDataNode = FALSE) %>%
+            nodeLabels = "coefs") %>%
   dag_plate("Observations","i",
             nodeLabels = c("y","eta"))
 
@@ -157,3 +152,4 @@ graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
 drawsDF %>% dagp_plot()
+

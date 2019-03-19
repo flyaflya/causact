@@ -64,7 +64,7 @@ dag_dim <- function(graph, ...) {
                        dimType = "row",
                        dimDataSource = dataValOfNode,
                        dimValue = getRowDim(dataValOfNode,4)) %>%
-        dplyr::add_row(dimID = dimID + 1,
+        dplyr::add_row(dimID = dimID,
                        nodeID = nodeIDX,
                        dimType = "column",
                        dimDataSource = dataValOfNode,
@@ -76,15 +76,12 @@ dag_dim <- function(graph, ...) {
                        dimType = "row",
                        dimDataSource = as.character(NA),
                        dimValue = 1) %>%
-        dplyr::add_row(dimID = dimID + 1,
+        dplyr::add_row(dimID = dimID,
                        nodeID = nodeIDX,
                        dimType = "column",
                        dimDataSource = as.character(NA),
                        dimValue = 1)
     }  # end if-else for row column type dimension
-
-    # update counter for current dimID
-    dimID = max(dimDF$dimID,0) + 1
 
     ## add plate indexes as needed
     combinedPlateDF = plateNodeDF %>%

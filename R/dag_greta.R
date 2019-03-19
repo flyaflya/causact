@@ -14,7 +14,8 @@
 #' @importFrom igraph layout_
 #' @export
 dag_greta <- function(graph,
-                      mcmc = FALSE) {
+                      mcmc = FALSE,
+                      meaningfulLabels = TRUE) {
 
   ###get dimension information
   graph = graph %>% dag_dim()
@@ -30,6 +31,18 @@ dag_greta <- function(graph,
   plateDF = graph$plate_index_df
   plateNodeDF = graph$plate_node_df
   dimDF = graph$dim_df
+
+  ###arrangeNodes in topological order -> top-down
+  nodeIDOrder = igraph::graph_from_data_frame(edgeDF %>% select(from,to)) %>%
+    igraph::topo_sort(mode = "out") %>%
+    names() %>%
+    as.integer()
+
+  ## append non-connected nodes into nodeIDOrder
+  nodeIDOrder = union(nodeIDOrder,nodeDF$id)
+
+  ## arrange nodeDF by nodeIDOrder
+  nodeDF = nodeDF[match(nodeIDOrder,nodeDF$id) , ]
 
   ###Use DAPROPLIMOPO(DAta,PRior,OPeration,LIkelihood,MOdel,POsterior)
   ###Find all nodes that require data based on user input
@@ -143,7 +156,8 @@ dag_greta <- function(graph,
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
-  posteriorStatement = paste0("draws   <- mcmc(gretaModel)   #POSTERIOR\ndrawsDF <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\n")
+  meaningfulLabels(graph,plateDataStatements)  ###assign meaningful labels
+  posteriorStatement = paste0("draws   <- mcmc(gretaModel)   #POSTERIOR\ndraws   <- replaceLabels(draws)\ndrawsDF <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\n")
 
   ##########################################
   ###Aggregate all code
