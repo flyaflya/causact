@@ -6,7 +6,7 @@
 \usage{
 dag_node(graph, descr = as.character(NA), label = as.character(NA),
   data = NULL, rhs = NA, child = as.character(NA), obs = FALSE,
-  keepAsDF = FALSE)
+  keepAsDF = FALSE, extract = as.logical(NA))
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}
