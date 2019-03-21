@@ -447,6 +447,7 @@ updateExtractEdges = function(graphWithDim) {
   ## get candidate edges for being extract edges
   edgeDF = graph$edges_df %>%
     dplyr::filter(is.na(type) | type == "extract")
+  extractCandidateDF = edgeDF
   ## make df of plate indexes for each from and to edge
   if(nrow(edgeDF) > 0) {
     ### plate indices for all from nodes
