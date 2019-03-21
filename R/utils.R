@@ -64,7 +64,9 @@ rhsDecompDistr = function(rhs) {
     dplyr::select(-position)
   rm(namedArgDF)
 
-  numParents = which(allArgs %in% c("dim", "dimension")) - 1  ## get number of dist paramaters
+  ## for all greta distributions, one of the below words signals
+  ## the transition from parameter arguments to other arguments
+  numParents = min(which(allArgs %in% c("dim", "dimension", "n_realisations"))) - 1  ## get number of dist paramaters
   if(rlang::is_empty(numParents)){ numParents = nrow(allArgsDF) }  ## some distributions are missing dim argument, so assume (for now) all arguments are parameters
 
   paramDF = allArgsDF[1:numParents,]
@@ -129,7 +131,7 @@ rhsDecomp = function(rhs) {
 
   ## handle cases where just distribution name is supplied
   ## if function in greta namespace, then assume distr
-  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind")
+  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind","icloglog","icauchit","log1pe","imultilogit")
 
   if (is.symbol(distExpr)) {
     fnName = rlang::as_string(distExpr)
@@ -214,9 +216,17 @@ rhsPriorComposition = function(graph) {
     dplyr::group_by(id,rhsID,rhs) %>%
     dplyr::summarize(args = paste0(argName," = ",argValue,collapse = ", ")) %>%
     dplyr::left_join(plateDimDF, by = c("id" = "nodeID")) %>%
+    dplyr::mutate(indexLabel = ifelse(is.na(indexLabel) | indexLabel == "NA","",indexLabel)) %>%
+    dplyr::mutate(indexLabel = ifelse(indexLabel == "","",paste0(indexLabel,"_dim"))) %>%
+    dplyr::group_by(id,rhsID,rhs,args) %>%
+    dplyr::summarize(indexLabel = paste0(indexLabel, collapse = ",")) %>%
+    dplyr::mutate(indexLabel = ifelse(stringr::str_detect(indexLabel,","),
+                                      paste0("c(",indexLabel,")"),
+                                      indexLabel)) %>%
+    dplyr::mutate(indexLabel = ifelse(indexLabel == "",as.character(NA),indexLabel)) %>%
     dplyr::mutate(prior_rhs = paste0(rhs,"(",args,
                                     ifelse(is.na(indexLabel),"",
-                                           paste0(", dim = ",indexLabel,"_dim")),
+                                           paste0(", dim = ",indexLabel)),
                                     ")")) %>%
     dplyr::ungroup() %>%
     select(id,prior_rhs)
@@ -396,9 +406,7 @@ pseudoPlate = function(graph) {
     newIndexDescr = paste(plateDF$indexDescription[indices], collapse = "_")
     newIndexDispName = paste0(
       paste0(
-        plateDF$indexDescription[indices],
-        " ",
-        plateDF$indexLabel[indices],
+        plateDF$indexDisplayName[indices],
         collapse = "\\r"
       ),
       "\\r"
@@ -428,10 +436,106 @@ pseudoPlate = function(graph) {
    graph$arg_df = argDF
    graph$plate_index_df = pseudo_plate_index_df
    graph$plate_node_df = pseudo_plate_node_df
+
+   return(graph)
+}
+
+
+### function to update edgeDF with extract edges
+updateExtractEdges = function(graphWithDim) {
+  graph = graphWithDim
+  ## get candidate edges for being extract edges
+  edgeDF = graph$edges_df %>%
+    dplyr::filter(is.na(type) | type == "extract")
+  ## make df of plate indexes for each from and to edge
+  if(nrow(edgeDF) > 0) {
+    ### plate indices for all from nodes
+    edgeDFFrom = edgeDF %>%
+      dplyr::left_join(graph$plate_node_df, by = c("from" = "nodeID")) %>%
+      dplyr::select(from,indexID) %>%
+      dplyr::distinct() %>%
+      dplyr::group_by(from) %>%
+      tidyr::nest(indexID,.key = "fromPlateIndices")
+    ### plate indices for all to nodes
+    edgeDFTo = edgeDF %>%
+      dplyr::left_join(graph$plate_node_df, by = c("to" = "nodeID"))  %>%
+      dplyr::select(to,indexID) %>%
+      dplyr::distinct() %>%
+      dplyr::group_by(to) %>%
+      tidyr::nest(indexID,.key = "toPlateIndices")
+    ### for all edges have column of plateIndices for from an to
+    extractCandidateDF = edgeDF
+
+    ### initialize column to flag candidates
+    extractCandidateDF$candidate = as.logical(NA)
+
+    ### compare plate indices for from and to
+    if(nrow(extractCandidateDF) > 0) {
+    for (i in 1:nrow(extractCandidateDF)) {
+      fromNode = extractCandidateDF$from[i]
+      toNode = extractCandidateDF$to[i]
+
+      fromPosition = which(edgeDFFrom$from == fromNode)
+      toPosition = which(edgeDFTo$to == toNode)
+
+      fromIndices = unique(unlist(edgeDFFrom$fromPlateIndices[fromPosition]))
+      toIndices = unique(unlist(edgeDFTo$toPlateIndices[toPosition]))
+      if(setequal(fromIndices,toIndices)) { ## same plate, no extract
+        extractCandidateDF$candidate[i] = FALSE } else if (length(setdiff(fromIndices,toIndices)) > 0 & !is.na(setdiff(fromIndices,toIndices))) {  ##from plate has index not on child plate
+          extractCandidateDF$candidate[i] = TRUE } else {  ## child on all plates of parent
+            extractCandidateDF$candidate[i] = FALSE
+          }
+
+    } #end for
+    } #end if
+  } #end if
+
+  ### for now, assume all candidates get arguments updated
+  ### 1) Create extract edge in edgeDF
+  ### 2) Update argDimDF
+  extractNodes = extractCandidateDF %>%
+    dplyr::filter(candidate == TRUE) %>%
+    dplyr::pull(id)
+
+  edgeDF$type[edgeDF$id %in% extractNodes] <- "extract"
+
+  graph$edges_df = graph$edges_df %>%  ### add back edges that are not extract candidates
+    dplyr::union(edgeDF) %>%
+    dplyr::arrange(type) %>%
+    dplyr::distinct(id,from,to,.keep_all = TRUE)  ##get rid of type = NA edges that were found to be extract candidates
+
   return(graph)
-}  #end function
 
+}
 
+### function to update argDF with dimensions of extract edges
+updateExtractArguments = function(graphWithDim) {
+  graph = graphWithDim
+  rowsToAddtoArgDF = graph$edges_df %>%
+    dplyr::filter(type == "extract") %>%
+    dplyr::select(from,to) %>% ## get extraction edges
+    dplyr::left_join(graph$nodes_df, by = c("from" = "id")) %>%
+    dplyr::select(from, to, fromLabel = auto_label) %>%
+    dplyr::left_join(graph$plate_node_df, by = c("from" = "nodeID")) %>%
+    dplyr::left_join(graph$plate_index_df, by = "indexID") %>%
+    dplyr::select(from,to,fromLabel,dimLabel = indexLabel) %>% ## done with from node info
+    dplyr::left_join(graph$nodes_df, by = c("to" = "id")) %>%
+    dplyr::select(from,to,fromLabel,dimLabel,rhsID) %>%
+    dplyr::left_join(graph$arg_df, by = c("rhsID" = "rhsID","fromLabel" = "argValue")) %>%
+    select(rhsID,argName,argType,argValue = fromLabel,argDimLabels = dimLabel)  ##new dim label
 
+  graph$arg_df = dplyr::bind_rows(graph$arg_df,rowsToAddtoArgDF) %>%
+    dplyr::mutate(argID = row_number()) %>%  ## retain order of arguments
+    dplyr::group_by(rhsID,argName,argType,argValue) %>%
+    dplyr::summarize(argDimLabels = paste0(argDimLabels, collapse = ","),
+                     minRowID = min(argID)) %>%
+    dplyr::mutate(argDimLabels = gsub("NA,","",argDimLabels)) %>%
+    dplyr::mutate(argDimLabels = ifelse(argDimLabels=="NA",as.character(NA),argDimLabels)) %>%
+    dplyr::arrange(rhsID,minRowID) %>%
+    dplyr::select(-minRowID) %>%
+    as.data.frame()
+
+  return(graph)
+}
 
 

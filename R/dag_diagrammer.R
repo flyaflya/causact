@@ -82,7 +82,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE, ...) {
   ##create clusterNameDF to map nodes to plates
   clusterNameDF = plateNodeDF %>%
     dplyr::left_join(plateDF, by = "indexID") %>%
-    dplyr::select(id = nodeID, cluster = indexDisplayName, clusterShortLabel = indexDescription)
+    dplyr::select(id = nodeID, cluster = indexDisplayName, clusterShortLabel = indexDisplayName)
 
   nodeDF = nodeDF %>%
     dplyr::left_join(eqDF, by = "id") %>%

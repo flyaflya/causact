@@ -69,15 +69,15 @@ graph = dag_create() %>%
            child = "y") %>%
   dag_node("Predictor Coefficients","coefs",
            rhs = normal(0,10),
-           child = "mu") %>%
+           child = "mu",
+           extract = FALSE) %>%
   dag_node("Predictors","design",
            data = attitude[, 2:7],
            keepAsDF = TRUE,
            child = "mu") %>%
   dag_plate(descr = "Predictors",label = "j",
             nodeLabels = c("coefs"),
-            data = names(attitude[, 2:7]),
-            addDataNode = FALSE) %>%
+            data = names(attitude[, 2:7])) %>%
   dag_plate(descr = "Observation", label = "i",
             nodeLabels = c("mu","y"))
 
@@ -100,15 +100,15 @@ graph = dag_create() %>%
            child = "y") %>%
   dag_node("Predictor Coefficients","coefs",
            rhs = normal(0,10),
-           child = "mu") %>%
+           child = "mu",
+           extract = FALSE) %>%
   dag_node("Predictors","design",
            data = attitude[, 2:7],
            keepAsDF = TRUE,
            child = "mu") %>%
   dag_plate(descr = "Predictors",label = "j",
             nodeLabels = c("coefs"),
-            data = names(attitude[, 2:7]),
-            addDataNode = FALSE) %>%
+            data = names(attitude[, 2:7])) %>%
   dag_plate(descr = "Observation", label = "i",
             nodeLabels = c("mu","y"))
 
@@ -139,7 +139,8 @@ graph = dag_create() %>%
            child = "beta") %>%
   dag_node("Slope Coefficients","coefs",
            rhs = normal(0,5),
-           child = "beta") %>%
+           child = "beta",
+           extract = FALSE) %>%
   dag_plate("Predictors","j",
             data = names(df[ ,-1]),
             nodeLabels = "coefs") %>%
@@ -154,11 +155,40 @@ graph %>% dag_greta(mcmc = TRUE)
 drawsDF %>% dagp_plot()
 
 ### greta example #5: Multiple Categorical Regression
+designDF = as.data.frame(model.matrix(~ Species -1, iris))
+speciesCoding = colnames(designDF)
 graph = dag_create() %>%
   dag_node("Species","y",
-           data = model.matrix(~ Species -1, iris),
-           keepAsDF = TRUE) %>%
-  dag_node(descr = "Category Probabilities",label = "prob",
+           data = designDF,
+           keepAsDF = TRUE,
+           rhs = categorical(prob)) %>%
+  dag_node("Category Probabilities","prob",
            child = "y",
-           rhs = imultilogit(eta))
+           rhs = imultilogit(eta)) %>%
+  dag_node("Linear Predictor","eta",
+           rhs = X %*% beta,
+           child = "prob") %>%
+  dag_node("Design Matrix","X",
+           rhs = cbind(1,J),
+           child = "eta") %>%
+  dag_node("Predictors","J",
+           data = iris[, 1:4],
+           keepAsDF = TRUE,
+           child = "X") %>%
+  dag_node("Predictor Coefficients","beta",
+           rhs = normal(0,5),
+           child = "eta",
+           extract = FALSE) %>%
+  dag_plate(descr = "Predictors",label = "J",
+            nodeLabels = "beta",
+            data = c("interecept",colnames(iris[,1:4]))) %>%
+  dag_plate("Category Codes","K",
+            nodeLabels = "beta",
+            data = speciesCoding)
+
 graph %>% dag_render()
+graph %>% dag_render(shortLabel = TRUE)
+graph %>% dag_greta()
+graph %>% dag_greta(mcmc = TRUE)
+drawsDF %>% dagp_plot()
+

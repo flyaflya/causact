@@ -30,7 +30,7 @@ dag_plate <- function(graph,
   ### capture data argument as string
   dataNodeExpr = rlang::enexpr(data)
   dataNodeString = rlang::expr_text(dataNodeExpr)
-  if(is.na(data[1])) {dataNodeString = as.character(NA)}
+  if(is.na(head(data,1)[1])) {dataNodeString = as.character(NA)}
 
   ## rhs used for adding distribution to observed node
   ## for plates, the observed node is added automatically
@@ -64,10 +64,6 @@ dag_plate <- function(graph,
   if (!is.na(dataNodeString) & addDataNode == TRUE) {
     graph = graph %>% addPlateDataNode(plateIndex = lastPlateIndex + 1,
                                        rhs = !!rhsExpr)
-  } else {
-    ## add indexing to children if dataNodeString is NA
-    graph = graph %>%
-      updateRHSForPlateChildren(plateIndex = lastPlateIndex + 1)
   }
 
   return(graph)  ## return updated graph

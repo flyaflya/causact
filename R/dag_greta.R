@@ -15,7 +15,8 @@
 #' @export
 dag_greta <- function(graph,
                       mcmc = FALSE,
-                      meaningfulLabels = TRUE) {
+                      meaningfulLabels = TRUE,
+                      ...) {
 
   ###get dimension information
   graph = graph %>% dag_dim()
@@ -157,7 +158,10 @@ dag_greta <- function(graph,
 
   ###Create POSTERIOR draws statement
   meaningfulLabels(graph,plateDataStatements)  ###assign meaningful labels
-  posteriorStatement = paste0("draws   <- mcmc(gretaModel)   #POSTERIOR\ndraws   <- replaceLabels(draws)\ndrawsDF <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\n")
+  extraArgList = list(...)
+  extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
+  mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))
+  posteriorStatement = paste0("draws   <- mcmc(",mcmcArgs,")   #POSTERIOR\ndraws   <- replaceLabels(draws)\ndrawsDF <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\n")
 
   ##########################################
   ###Aggregate all code

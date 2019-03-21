@@ -47,7 +47,8 @@ dag_node <- function(graph,
                      rhs = NA, ##not vectorized
                      child = as.character(NA), ##not vectorized
                      obs = FALSE,
-                     keepAsDF = FALSE) {
+                     keepAsDF = FALSE,
+                     extract = as.logical(NA)) {
 
   # handle blank entry -- user enters zero arguments
   numArgs = length(match.call())-1
@@ -136,7 +137,13 @@ dag_node <- function(graph,
   if(nrow(edgeDF) > 0) {
     fromVector = edgeDF$id
     toVector = edgeDF$child
-    graph = graph %>% dag_edge(fromVector,toVector)
+    if(is.na(extract)) {
+      graph = graph %>% dag_edge(fromVector,toVector)
+  } else if(extract == TRUE) {
+    graph = graph %>% dag_edge(fromVector,toVector, type = "extract")
+  } else {
+    graph = graph %>% dag_edge(fromVector,toVector, type = "solid")
+  }
   }
 
   ### update labels for plotting

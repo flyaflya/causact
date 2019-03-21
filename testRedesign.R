@@ -110,6 +110,48 @@ graph %>% dag_render()
 graph %>% dag_render()
 
 
+graph = dag_create() %>%
+  dag_node("Get Card","y",
+           rhs = bernoulli,
+           data = carModelDF$getCard) %>%
+  dag_node(descr = "Observation Probability",label = "prob",
+           child = "y",
+           rhs = theta)  %>%
+  dag_node(descr = "Card Probability by Car",label = "theta",
+           rhs = beta(2,2),
+           child = "prob") %>%
+  dag_node("Car Model","x",
+           data = carModelDF$carModel,
+           child = "prob") %>%
+  dag_plate("Car Model","x",
+            data = carModelDF$carModel,
+            nodeLabels = "theta")
+
+graph %>% dag_render()
+graph %>% dag_greta()
+graph %>% dag_render(shortLabel = TRUE)
+graph %>% dag_greta(mcmc=TRUE)
+drawsDF %>% dagp_plot()
+
+
+graph = dag_create() %>%
+  dag_node("Get Card","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node(descr = "Card Probability",label = "theta",
+           rhs = beta(2,2),
+           child = "y") %>%
+  dag_plate(descr = "Car Model", label = "x",
+            data = carModelDF$carModel,
+            nodeLabels = "theta",
+            addDataNode = TRUE)
+graph %>% dag_dim()
+graph %>% dag_render()
+graph %>% dag_greta(mcmc=TRUE)
+drawsDF %>% dagp_plot()
+
+
+
 descr = "X"
 label = as.character(NA)
 data = NULL # vector or df

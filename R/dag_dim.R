@@ -112,14 +112,17 @@ dag_dim <- function(graph, ...) {
                          paste0(" [",plateDimVector,"]"))
   plateDF$indexDisplayName = paste0(plateDF$indexDisplayName,plateDimLabel)
 
-  ## ASSUME all formula-node parents that are not rhs arguments
-  ## are used for extraction of proper parameters
-  # argEdgeList = nodeDF %>%
-  #   filter(!is.na(rhs) & distr == FALSE) %>%
-  #   select(id,label,rhsID) %>%
-  #   left_join(argDF, by = "rhsID") %>%
-  #   mutate(argNodeID = findNodeID(nodeDF,argName)) %>%
-  #   rename(to = id, from = argNodeID)
+  ## update graph prior to looking for extraction edges
+  graph$nodes_df = nodeDF
+  graph$edges_df = edgeDF
+  graph$plate_index_df = plateDF
+  graph$plate_node_df = plateNodeDF
+  graph$dim_df = dimDF
+
+  ## ASSUME all edges that go from one plate to another
+  ## are candidates to be extraction edges
+  graph = updateExtractEdges(graph)
+  graph = updateExtractArguments(graph)
   #
   # extractionEdges = edgeDF %>% anti_join(argEdgeList, by = c("from", "to")) %>%
   #   filter(to %in% argEdgeList$to) %>%
@@ -130,11 +133,7 @@ dag_dim <- function(graph, ...) {
   # update graph
 
 
-    graph$nodes_df = nodeDF
-    graph$edges_df = edgeDF
-    graph$plate_index_df = plateDF
-    graph$plate_node_df = plateNodeDF
-    graph$dim_df = dimDF
+
 
   return(graph)  ## return updated graph
 }
