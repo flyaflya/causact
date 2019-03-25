@@ -10,15 +10,28 @@
 #'   dag_render()
 #' @importFrom dplyr select rename mutate filter left_join
 #' @importFrom dplyr case_when as_tibble as_data_frame
-#' @importFrom DiagrammeR render_graph
 #' @export
 dag_render <- function(graph,
                        shortLabel = FALSE,
                        wrapWidth = 24,
+                       width = NULL,
+                       height = NULL,
                        ...) {
   sLabel = shortLabel
   ww = wrapWidth
-  graph %>%
+  dot_code = graph %>%
     dag_diagrammer(shortLabel = sLabel, wrapWidth = ww) %>%
-    DiagrammeR::render_graph(...)
+    generate_dot2()
+
+  # Generate a `grViz` object
+  grVizObject <-
+    grViz2(
+      diagram = dot_code,
+      width = width,
+      height = height)
+
+  display <- grVizObject
+
+  display
 }
+

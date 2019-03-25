@@ -24,7 +24,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-drawsDF %>% dagp_plot()
+  drawsDF %>% dagp_plot()
 
 ### greta example 1
 graph = dag_create() %>%

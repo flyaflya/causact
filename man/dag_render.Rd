@@ -4,7 +4,8 @@
 \alias{dag_render}
 \title{Render the graph in various formats}
 \usage{
-dag_render(graph, shortLabel = FALSE, wrapWidth = 24, ...)
+dag_render(graph, shortLabel = FALSE, wrapWidth = 24, width = NULL,
+  height = NULL, ...)
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph}.}
