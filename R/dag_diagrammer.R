@@ -63,7 +63,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE, ...) {
     dplyr::right_join(nodeDF, by = "rhsID") %>%
     dplyr::mutate(rhs = ifelse(is.na(newArgName), rhs,
                                stringr::str_replace(rhs,oldArgName,newArgName))) %>%
-    select(id,label,descr,data,rhs,child,obs,rhsID,distr,auto_label,auto_descr,auto_data,dimID,dimLabel,descLine)
+    dplyr::select(id,label,descr,data,rhs,child,obs,rhsID,distr,auto_label,auto_descr,auto_data,dimID,dimLabel,descLine)
 
 
 
