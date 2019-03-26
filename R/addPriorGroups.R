@@ -1,4 +1,5 @@
 #' @importfrom dplyr select left_join bind_rows arrange
+#' @export
 ### add prior groups
 addPriorGroups = function(tidyDraws) {
 
