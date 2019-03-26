@@ -9,7 +9,7 @@
   \item{partID}{unique part identifier}
   \item{productLine}{a product line associated with the partID}
   \item{prodCategory}{a product category associated with the partID}
-  #' }}
+}}
 \source{
 Adam Fleischhacker
 }

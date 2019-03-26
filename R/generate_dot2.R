@@ -2,7 +2,7 @@
 #'
 #' Generates Graphviz DOT code as an R character object using DiagrammeR graph
 #'   object.
-#' @inheritParams render_graph
+#' @inheritParams DiagrammeR::render_graph
 #' @return a character vector of length 1 containing Graphviz DOT code.
 #' @importFrom dplyr filter mutate pull
 #' @importFrom stringr str_replace str_replace_all

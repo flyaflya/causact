@@ -1,4 +1,6 @@
-#' @import ggplot2 tidyr gridExtra ggridges
+#' @import ggplot2 tidyr
+#' @importFrom ggridges geom_density_ridges theme_ridges
+#' @importFrom cowplot plot_grid
 #' @export
 
 dagp_plot = function(drawsDataFrame) {

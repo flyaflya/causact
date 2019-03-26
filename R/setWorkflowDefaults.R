@@ -6,9 +6,10 @@
 #' @return An updated version of \code{dgrGraph} with good defaults for
 #'   graphical models.
 #' @examples
-#' graphA %>% setDirectedGraphTheme() %>% render_graph()
+#' graphA %>% setDirectedGraphTheme() %>% DiagrammeR::render_graph()
 #' @importFrom DiagrammeR add_global_graph_attrs
 #' @export
+
 setDirectedGraphTheme = function(dgrGraph) {
   ## set global attributes
   tempGR = dgrGraph %>%

@@ -6,6 +6,9 @@
 \usage{
 generate_dot2(graph)
 }
+\arguments{
+\item{graph}{a graph object of class \code{dgr_graph}.}
+}
 \value{
 a character vector of length 1 containing Graphviz DOT code.
 }

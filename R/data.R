@@ -23,7 +23,7 @@
 #'   \item{partID}{unique part identifier}
 #'   \item{productLine}{a product line associated with the partID}
 #'   \item{prodCategory}{a product category associated with the partID}
-#'   #' }
+#' }
 #' @source Adam Fleischhacker
 "prodLineDF"
 
@@ -85,8 +85,8 @@
 "corruptDF"
 
 
-#' Dataframe of 1,460 observations of home sales in Ames, Iowa.  Known as "The Ames Housing dataset", it was compiled by Dean De Cock for use in data science education.
-#' Each observation is a home sale.  See \code{houseDFDescr} for more info.}
+#' Dataframe of 1,460 observations of home sales in Ames, Iowa.  Known as The Ames Housing dataset, it was compiled by Dean De Cock for use in data science education.
+#' Each observation is a home sale.  See \code{houseDFDescr} for more info.
 #' @format A data frame with 1,460 rows and 37 variables:
 #' \describe{
 #'   \item{SalePrice}{the property's sale price in dollars. This is the target variable}
@@ -126,7 +126,7 @@
 #'   \item{MoSold}{Month Sold}
 #'   \item{YrSold}{Year Sold}
 #'   \item{SaleType}{Type of sale}
-#'   \item{SaleCondition}{Condition of sale
+#'   \item{SaleCondition}{Condition of sale}
 #' }
 #' @source \url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 "houseDF"

@@ -17,5 +17,5 @@ An updated version of \code{dgrGraph} with good defaults for
 \code{setDirectedGraph} returns a graph with good defaults.
 }
 \examples{
-graphA \%>\% setDirectedGraphTheme() \%>\% render_graph()
+graphA \%>\% setDirectedGraphTheme() \%>\% DiagrammeR::render_graph()
 }
