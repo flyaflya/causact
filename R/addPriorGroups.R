@@ -1,3 +1,4 @@
+#' @importfrom dplyr select left_join bind_rows arrange
 ### add prior groups
 addPriorGroups = function(tidyDraws) {
 
@@ -17,12 +18,12 @@ addPriorGroups = function(tidyDraws) {
   ## add priorGroup to rootLabel
   priorGroupMappingDF = rootLabelsDF %>%
     dplyr::left_join(priorGroupDF, by = c("rootLabel" = "label")) %>%
-    select(label = newNames,priorGroup) %>%
+    dplyr::select(label = newNames, priorGroup) %>%
     dplyr::bind_rows(priorGroupDF)
 
   tidyDraws = tidyDraws %>%
     dplyr::left_join(priorGroupMappingDF, by = c("key" = "label")) %>%
-    arrange(priorGroup,key)
+    dplyr::arrange(priorGroup,key)
 
   return(tidyDraws)
 }
