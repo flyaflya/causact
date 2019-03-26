@@ -96,7 +96,7 @@ dag_greta <- function(graph,
                                 "_dim")),
                " <- ",
                "length(unique(",
-               plateDimDF$dataNode,
+               plateDimDF$indexLabel,
                "))   #DIM"
                ),
         sep = "\n"
@@ -152,16 +152,26 @@ dag_greta <- function(graph,
   unobservedNodes = graph$nodes_df %>%
     dplyr::filter(obs == FALSE & distr == TRUE) %>%
     dplyr::pull(auto_label)
+
+  #group unobserved nodes by their rhs for later plotting by ggplot
+  #all nodes sharing the same prior will be graphed on the same scale
+  # this code should be moved out of dag_greta at some point
+  priorGroupDF = graph$nodes_df %>%
+    dplyr::filter(obs == FALSE & distr == TRUE) %>%
+    dplyr::mutate(., priorGroup = group_indices(., auto_rhs))
+  assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
+
   modelStatement = paste0("gretaModel <- model(",
                           paste0(unobservedNodes, collapse = ","),
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
-  meaningfulLabels(graph,plateDataStatements)  ###assign meaningful labels
+  meaningfulLabels(graph,plateDataStatements)  ###assign meaningful labels in cacheEnv
   extraArgList = list(...)
   extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
   mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))
-  posteriorStatement = paste0("draws   <- mcmc(",mcmcArgs,")   #POSTERIOR\ndraws   <- replaceLabels(draws)\ndrawsDF <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\n")
+  posteriorStatement = paste0("draws       <- mcmc(",mcmcArgs,")   #POSTERIOR\ndraws       <- replaceLabels(draws)   #POSTERIOR\ndrawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\ntidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
+    addPriorGroups()   #POSTERIOR\n")
 
   ##########################################
   ###Aggregate all code

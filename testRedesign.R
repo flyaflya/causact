@@ -149,6 +149,8 @@ graph %>% dag_dim()
 graph %>% dag_render()
 graph %>% dag_greta(mcmc=TRUE)
 drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
+
 
 
 

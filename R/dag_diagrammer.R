@@ -56,14 +56,22 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE, ...) {
   ## create the equation line
   ## substitute dimLabels in formulas .. this section can be cleaned up
   ## but seems to work for now
-  nodeDF = argDF %>%
+  labelsToReplaceDF = argDF %>%
     dplyr::filter(!is.na(argDimLabels)) %>%  ## get arguments with added dim
     dplyr::mutate(newArgName = paste0(argName,"[",argDimLabels,"]")) %>%
-    dplyr::select(rhsID,oldArgName = argName,newArgName) %>%
-    dplyr::right_join(nodeDF, by = "rhsID") %>%
-    dplyr::mutate(rhs = ifelse(is.na(newArgName), rhs,
-                               stringr::str_replace(rhs,oldArgName,newArgName))) %>%
-    dplyr::select(id,label,descr,data,rhs,child,obs,rhsID,distr,auto_label,auto_descr,auto_data,dimID,dimLabel,descLine)
+    dplyr::select(rhsID,oldArgName = argName,newArgName)
+
+  ## for each label to replace, go through nodeDF and replace string
+  if (nrow(labelsToReplaceDF) > 0) {
+    for (i in 1:nrow(labelsToReplaceDF)) {
+      positionIndex = which(nodeDF$rhsID == labelsToReplaceDF$rhsID[i])
+      for (j in seq_along(positionIndex)) {
+        nodeDF$rhs[positionIndex[j]] = stringr::str_replace(nodeDF$rhs[positionIndex[j]],
+                                             labelsToReplaceDF$oldArgName[i],
+                                             labelsToReplaceDF$newArgName[i])
+      }
+    }
+  }
 
 
 

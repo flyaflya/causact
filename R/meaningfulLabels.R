@@ -1,6 +1,9 @@
 #' @import dplyr rlang
 meaningfulLabels = function(graphWithDimensions,plateDataStatements) {
 
+  ## function makes an environment called cacheEnv where
+  ## it stores meaningful labels for all the plate parameters
+
   ## if plateDataStaement is NULL, just return empty DF
   if(is.null(plateDataStatements)) {
     relabelDF = data.frame(oldNames = as.character(NA),
@@ -34,8 +37,6 @@ meaningfulLabels = function(graphWithDimensions,plateDataStatements) {
 
   if (nrow(renamingMultiDimParamsDF) > 0) {
     for (i in 1:nrow(renamingMultiDimParamsDF)) {
-      ### only handle one dimensional plates at this point
-      if (length(renamingMultiDimParamsDF$dimValue[i] == 1)) {
         oldNames = paste0(
           renamingMultiDimParamsDF$label[i],
           "[",
@@ -44,8 +45,8 @@ meaningfulLabels = function(graphWithDimensions,plateDataStatements) {
         )
         ## reproduce global DIM variables in function environment
         ## separateLHS and rhs  (lhs gets assigned in local environment based on rhs executed in global environment
-        lhs = stringr::word(plateDataStatements)
-        rhs = stringr::str_remove(plateDataStatements,lhs) %>%
+        lhs = stringr::word(plateDataStatements[i])
+        rhs = stringr::str_remove(plateDataStatements[i],lhs) %>%
           stringr::str_remove(" <- ")
         assign(lhs,rlang::eval_tidy(rlang::parse_expr(rhs), env = rlang::global_env()), env = rlang::current_env())
         newNames = rlang::eval_tidy(rlang::parse_expr(
@@ -56,13 +57,15 @@ meaningfulLabels = function(graphWithDimensions,plateDataStatements) {
         env = rlang::current_env())
         newParamVectorValues = paste0(
           renamingMultiDimParamsDF$label[i],
-          "[",
-          abbreviate(newNames, minlength = 8),
-          "]"
+          "_",
+          abbreviate(newNames, minlength = 8)
         )
         names(newParamVectorValues) = oldNames
-        relabelDF = data.frame(oldNames = oldNames, newNames = newParamVectorValues, stringsAsFactors = FALSE)
-      } #end if
+        relabelDF = dplyr::bind_rows(relabelDF,
+                                     data.frame(oldNames = oldNames,
+                                                newNames = newParamVectorValues,
+                                                rootLabel = renamingMultiDimParamsDF$label[i],
+                                                stringsAsFactors = FALSE))
     }# end for
   }# end if
 
@@ -70,6 +73,7 @@ meaningfulLabels = function(graphWithDimensions,plateDataStatements) {
 
   ## assign cached values to a variable
   assign("meaningfulLabels", relabelDF, envir = cacheEnv)
+
   return(invisible())
 
 }  ###assigns named vector - value of meaningful labels in cacheEnv
