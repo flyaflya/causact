@@ -20,5 +20,6 @@ Imports:
     purrr,
     tidyr,
     igraph,
-    stringr
+    stringr,
+    cowplot
 RoxygenNote: 6.1.1
