@@ -33,6 +33,7 @@ dag_dim <- function(graph, ...) {
       dimType = as.character(NA),
       dimDataSource = as.character(NA),
       dimValue = as.integer(NA),
+      dimLabel = as.character(NA),
       stringsAsFactors = FALSE
     )[-1, ]
 
@@ -97,7 +98,8 @@ dag_dim <- function(graph, ...) {
           nodeID = nodeIDX,
           dimType = "plate",
           dimDataSource = combinedPlateDF$dataNode,
-          dimValue = purrr::map_int(combinedPlateDF$dataNode, getPlateDim)
+          dimValue = purrr::map_int(combinedPlateDF$dataNode, getPlateDim),
+          dimLabel = combinedPlateDF$indexLabel
         )
       }
     # update counter for current dimID

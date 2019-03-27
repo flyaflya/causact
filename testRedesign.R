@@ -134,17 +134,16 @@ graph %>% dag_greta(mcmc=TRUE)
 drawsDF %>% dagp_plot()
 
 
+
 graph = dag_create() %>%
   dag_node("Get Card","y",
            rhs = bernoulli(theta),
            data = carModelDF$getCard) %>%
-  dag_node(descr = "Card Probability",label = "theta",
-           rhs = beta(2,2),
+  dag_node("Probability", "theta",
+           rhs = beta(2, 2),
            child = "y") %>%
-  dag_plate(descr = "Car Model", label = "x",
-            data = carModelDF$carModel,
-            nodeLabels = "theta",
-            addDataNode = TRUE)
+  dag_greta(mcmc=TRUE)
+
 graph %>% dag_dim()
 graph %>% dag_render()
 graph %>% dag_greta(mcmc=TRUE)

@@ -1,14 +1,15 @@
 #' @import dplyr rlang
-meaningfulLabels = function(graphWithDimensions,plateDataStatements) {
+meaningfulLabels = function(graphWithDimensions) {
 
   ## function makes an environment called cacheEnv where
   ## it stores meaningful labels for all the plate parameters
 
   ## if plateDataStaement is NULL, just return empty DF
-  if(is.null(plateDataStatements)) {
+  if(nrow(plateDF %>% dplyr::filter(!is.na(dataNode))) == 0) {
     relabelDF = data.frame(oldNames = as.character(NA),
-               newNames = as.character(NA),
-               stringsAsFactors = FALSE)[-1,]
+                           newNames = as.character(NA),
+                           rootLabel = as.character(NA),
+                           stringsAsFactors = FALSE)[-1,]
     assign("meaningfulLabels", relabelDF, envir = cacheEnv)
     return(invisible())
   }
@@ -21,54 +22,61 @@ meaningfulLabels = function(graphWithDimensions,plateDataStatements) {
   plateNodeDF = graphWithDimensions$plate_node_df
   dimDF = graphWithDimensions$dim_df
 
-  ###within posterior change generic coef labels to names
+  ### within posterior change generic coef labels to names
   ### future: consider not doing this by default
-  renamingMultiDimParamsDF = plateDF %>%
-    dplyr::filter(!is.na(dataNode)) %>%
-    left_join(plateNodeDF, by = "indexID") %>%
-    select(indexLabel, nodeID) %>%
-    left_join(nodeDF, by = c("nodeID" = "id")) %>%
-    select(nodeID, indexLabel, label, rhsID) %>%
-    left_join(dimDF %>% dplyr::filter(dimType == "plate"), by = "nodeID") %>%
-    select(label, indexLabel, dimValue)
+  renamingMultiDimParamsDF = plateDF %>% # get plates
+    dplyr::filter(!is.na(dataNode)) %>% #only applies to plates with data
+    left_join(plateNodeDF, by = "indexID") %>% ## find nodes on plates with data
+    select(indexLabel, nodeID,dataNode) %>% #connect labels and nodes
+    left_join(nodeDF, by = c("nodeID" = "id")) %>% # get node info
+    select(nodeID, indexLabel, label, rhsID, dataNode) %>%
+    left_join(dimDF %>% dplyr::filter(dimType == "plate"), by = c("nodeID" = "nodeID", "indexLabel" = "dimLabel")) %>%
+    select(label, indexLabel, dimValue, dataNode)
+
+  ## compress indexLabel and dimValue labels
 
   ## create relabelDF
   relabelDF = NULL
 
   if (nrow(renamingMultiDimParamsDF) > 0) {
-    for (i in 1:nrow(renamingMultiDimParamsDF)) {
-        oldNames = paste0(
-          renamingMultiDimParamsDF$label[i],
-          "[",
-          1:renamingMultiDimParamsDF$dimValue[i],
-          ",1]"
-        )
-        ## reproduce global DIM variables in function environment
-        ## separateLHS and rhs  (lhs gets assigned in local environment based on rhs executed in global environment
-        lhs = stringr::word(plateDataStatements[i])
-        rhs = stringr::str_remove(plateDataStatements[i],lhs) %>%
-          stringr::str_remove(" <- ")
-        assign(lhs,rlang::eval_tidy(rlang::parse_expr(rhs), env = rlang::global_env()), env = rlang::current_env())
-        newNames = rlang::eval_tidy(rlang::parse_expr(
-          paste0("levels(",
-                 renamingMultiDimParamsDF$indexLabel[i],
-                 ")")
-        ),
-        env = rlang::current_env())
-        newParamVectorValues = paste0(
-          renamingMultiDimParamsDF$label[i],
-          "_",
-          abbreviate(newNames, minlength = 8)
-        )
-        names(newParamVectorValues) = oldNames
+    uniqueLabels = unique(renamingMultiDimParamsDF$label)
+    for (i in 1:length(uniqueLabels)) {
+      tempDF = renamingMultiDimParamsDF %>% filter(label == uniqueLabels[i])
+      dimensionList = map(tempDF$dimValue,.f = function(x) { return(1:x)})
+      oldNamesDF = do.call(tidyr::crossing,dimensionList) %>%
+        tidyr::unite(label, sep = ",") %>%
+        mutate(bigLabel = paste0(uniqueLabels[i],"[",label,"]"))
+      oldNames = oldNamesDF %>% pull(bigLabel)
+        ## add [*,,1] back in if only one dim value given to match greta output
+      oldNames = ifelse(stringr::str_detect(oldNames,","),
+             oldNames,
+             stringr::str_replace(oldNames,"]",",1]"))
+
+      namesDF = tempDF %>%
+        dplyr::as_tibble() %>%
+        dplyr::select(indexLabel,dataNode) %>%
+        dplyr::mutate(levelNames = purrr::map(.x = dataNode,.f = getLevelNames))
+
+      newNamesDF = do.call(tidyr::crossing,namesDF$levelNames) %>%
+        dplyr::mutate_all(function(x){abbreviate(x, minlength = 8)}) %>%
+        tidyr::unite(label, sep = "_") %>%
+        dplyr::mutate(bigLabel = paste0(uniqueLabels[i],"_",label))
+
+      newNames = newNamesDF %>% pull(bigLabel)
+
+        names(newNames) = oldNames
         relabelDF = dplyr::bind_rows(relabelDF,
                                      data.frame(oldNames = oldNames,
-                                                newNames = newParamVectorValues,
-                                                rootLabel = renamingMultiDimParamsDF$label[i],
+                                                newNames = newNames,
+                                                rootLabel = uniqueLabels[i],
                                                 stringsAsFactors = FALSE))
     }# end for
-  }# end if
-
+  } else {# end if
+    relabelDF = data.frame(oldNames = as.character(NA),
+                           newNames = as.character(NA),
+                           rootLabel = as.character(NA),
+                           stringsAsFactors = FALSE)[-1,]
+} #end else
   ##
 
   ## assign cached values to a variable

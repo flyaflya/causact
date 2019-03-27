@@ -1,7 +1,7 @@
 #' Create a graph object focused on drawing a DAG.
 #'
-#' The graph object should be of class \code{dgr_graph} and created using \code{dag_create()}.
-#' @param graph a graph object of class \code{dgr_graph} created using \code{dag_create()} with data argument populated.
+#' The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
+#' @param graph a graph object of class \code{causact_graph} created using \code{dag_create()} with data argument populated.
 #' @examples
 #' # With `dag_create()` we can
 #' # simply create an empty graph (and
@@ -166,7 +166,7 @@ dag_greta <- function(graph,
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
-  meaningfulLabels(graph,plateDataStatements)  ###assign meaningful labels in cacheEnv
+  meaningfulLabels(graph)  ###assign meaningful labels in cacheEnv
   extraArgList = list(...)
   extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
   mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))

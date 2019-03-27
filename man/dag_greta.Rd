@@ -7,10 +7,10 @@
 dag_greta(graph, mcmc = FALSE, meaningfulLabels = TRUE, ...)
 }
 \arguments{
-\item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()} with data argument populated.}
+\item{graph}{a graph object of class \code{causact_graph} created using \code{dag_create()} with data argument populated.}
 }
 \description{
-The graph object should be of class \code{dgr_graph} and created using \code{dag_create()}.
+The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
 # With `dag_create()` we can

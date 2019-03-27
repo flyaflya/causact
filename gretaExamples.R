@@ -156,7 +156,7 @@ drawsDF %>% dagp_plot()
 
 ### greta example #5: Multiple Categorical Regression
 designDF = as.data.frame(model.matrix(~ Species -1, iris))
-speciesCoding = colnames(designDF)
+speciesCoding = colnames(designDF) %>% head(-1)
 graph = dag_create() %>%
   dag_node("Species","y",
            data = designDF,
@@ -168,20 +168,17 @@ graph = dag_create() %>%
   dag_node("Linear Predictor","eta",
            rhs = X %*% beta,
            child = "prob") %>%
-  dag_node("Design Matrix","X",
-           rhs = cbind(1,J),
-           child = "eta") %>%
-  dag_node("Predictors","J",
-           data = iris[, 1:4],
+  dag_node("Predictors","X",
+           data = cbind(1,iris[, 1:4]),
            keepAsDF = TRUE,
-           child = "X") %>%
+           child = "eta") %>%
   dag_node("Predictor Coefficients","beta",
            rhs = normal(0,5),
            child = "eta",
            extract = FALSE) %>%
   dag_plate(descr = "Predictors",label = "J",
             nodeLabels = "beta",
-            data = c("interecept",colnames(iris[,1:4]))) %>%
+            data = c("Intercept",colnames(iris[,1:4]))) %>%
   dag_plate("Category Codes","K",
             nodeLabels = "beta",
             data = speciesCoding)
@@ -190,5 +187,5 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
 

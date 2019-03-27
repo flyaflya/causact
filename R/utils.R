@@ -540,3 +540,15 @@ updateExtractArguments = function(graphWithDim) {
 }
 
 
+##helper function to get the level names of a factor
+##in the global environment
+getLevelNames = function(dataNode) {
+  nameVector = rlang::eval_tidy(rlang::parse_expr(
+    paste0("levels(as.factor(",
+           dataNode,
+           "))")
+  ),
+  env = rlang::global_env())
+  return(nameVector)
+}
+
