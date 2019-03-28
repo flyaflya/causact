@@ -1,4 +1,5 @@
 #' @import dplyr rlang
+#' @importFrom purrr map
 meaningfulLabels = function(graphWithDimensions) {
 
   ## function makes an environment called cacheEnv where
@@ -25,12 +26,12 @@ meaningfulLabels = function(graphWithDimensions) {
   ### future: consider not doing this by default
   renamingMultiDimParamsDF = plateDF %>% # get plates
     dplyr::filter(!is.na(dataNode)) %>% #only applies to plates with data
-    left_join(plateNodeDF, by = "indexID") %>% ## find nodes on plates with data
-    select(indexLabel, nodeID,dataNode) %>% #connect labels and nodes
-    left_join(nodeDF, by = c("nodeID" = "id")) %>% # get node info
-    select(nodeID, indexLabel, label, rhsID, dataNode) %>%
-    left_join(dimDF %>% dplyr::filter(dimType == "plate"), by = c("nodeID" = "nodeID", "indexLabel" = "dimLabel")) %>%
-    select(label, indexLabel, dimValue, dataNode)
+    dplyr::left_join(plateNodeDF, by = "indexID") %>% ## find nodes on plates with data
+    dplyr::select(indexLabel, nodeID,dataNode) %>% #connect labels and nodes
+    dplyr::left_join(nodeDF, by = c("nodeID" = "id")) %>% # get node info
+    dplyr::select(nodeID, indexLabel, label, rhsID, dataNode) %>%
+    dplyr::left_join(dimDF %>% dplyr::filter(dimType == "plate"), by = c("nodeID" = "nodeID", "indexLabel" = "dimLabel")) %>%
+    dplyr::select(label, indexLabel, dimValue, dataNode)
 
   ## compress indexLabel and dimValue labels
 
@@ -40,12 +41,14 @@ meaningfulLabels = function(graphWithDimensions) {
   if (nrow(renamingMultiDimParamsDF) > 0) {
     uniqueLabels = unique(renamingMultiDimParamsDF$label)
     for (i in 1:length(uniqueLabels)) {
-      tempDF = renamingMultiDimParamsDF %>% filter(label == uniqueLabels[i])
-      dimensionList = map(tempDF$dimValue,.f = function(x) { return(1:x)})
+      tempDF = renamingMultiDimParamsDF %>%
+        dplyr::filter(label == uniqueLabels[i])
+      dimensionList = purrr:map(tempDF$dimValue,.f = function(x) { return(1:x)})
       oldNamesDF = do.call(tidyr::crossing,dimensionList) %>%
         tidyr::unite(label, sep = ",") %>%
-        mutate(bigLabel = paste0(uniqueLabels[i],"[",label,"]"))
-      oldNames = oldNamesDF %>% pull(bigLabel)
+        dplyr::mutate(bigLabel = paste0(uniqueLabels[i],"[",label,"]"))
+      oldNames = oldNamesDF %>%
+        dplyr::pull(bigLabel)
         ## add [*,,1] back in if only one dim value given to match greta output
       oldNames = ifelse(stringr::str_detect(oldNames,","),
              oldNames,
@@ -61,7 +64,7 @@ meaningfulLabels = function(graphWithDimensions) {
         tidyr::unite(label, sep = "_") %>%
         dplyr::mutate(bigLabel = paste0(uniqueLabels[i],"_",label))
 
-      newNames = newNamesDF %>% pull(bigLabel)
+      newNames = newNamesDF %>% dplyr::pull(bigLabel)
 
         names(newNames) = oldNames
         relabelDF = dplyr::bind_rows(relabelDF,
