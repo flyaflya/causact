@@ -24,7 +24,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-  drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
 
 ### greta example 1
 graph = dag_create() %>%
@@ -53,7 +53,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
 
 
 ### greta example #2
@@ -85,7 +85,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
 
 ### greta example #3
 graph = dag_create() %>%
@@ -116,7 +116,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
 
 ### greta example #4
 df = as.data.frame(model.matrix(breaks ~ wool + tension, warpbreaks))
@@ -152,7 +152,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
 
 ### greta example #5: Multiple Categorical Regression
 designDF = as.data.frame(model.matrix(~ Species -1, iris))

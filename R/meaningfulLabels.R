@@ -3,7 +3,13 @@ meaningfulLabels = function(graphWithDimensions) {
 
   ## function makes an environment called cacheEnv where
   ## it stores meaningful labels for all the plate parameters
-
+  ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
+  nodeDF = graphWithDimensions$nodes_df
+  edgeDF = graphWithDimensions$edges_df
+  argDF = graphWithDimensions$arg_df
+  plateDF = graphWithDimensions$plate_index_df
+  plateNodeDF = graphWithDimensions$plate_node_df
+  dimDF = graphWithDimensions$dim_df
   ## if plateDataStaement is NULL, just return empty DF
   if(nrow(plateDF %>% dplyr::filter(!is.na(dataNode))) == 0) {
     relabelDF = data.frame(oldNames = as.character(NA),
@@ -14,13 +20,6 @@ meaningfulLabels = function(graphWithDimensions) {
     return(invisible())
   }
 
-  ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
-  nodeDF = graphWithDimensions$nodes_df
-  edgeDF = graphWithDimensions$edges_df
-  argDF = graphWithDimensions$arg_df
-  plateDF = graphWithDimensions$plate_index_df
-  plateNodeDF = graphWithDimensions$plate_node_df
-  dimDF = graphWithDimensions$dim_df
 
   ### within posterior change generic coef labels to names
   ### future: consider not doing this by default
