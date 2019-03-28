@@ -43,7 +43,7 @@ meaningfulLabels = function(graphWithDimensions) {
     for (i in 1:length(uniqueLabels)) {
       tempDF = renamingMultiDimParamsDF %>%
         dplyr::filter(label == uniqueLabels[i])
-      dimensionList = purrr:map(tempDF$dimValue,.f = function(x) { return(1:x)})
+      dimensionList = purrr::map(tempDF$dimValue,.f = function(x) { return(1:x)})
       oldNamesDF = do.call(tidyr::crossing,dimensionList) %>%
         tidyr::unite(label, sep = ",") %>%
         dplyr::mutate(bigLabel = paste0(uniqueLabels[i],"[",label,"]"))
