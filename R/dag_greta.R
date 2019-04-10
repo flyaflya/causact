@@ -34,7 +34,7 @@ dag_greta <- function(graph,
   dimDF = graph$dim_df
 
   ###arrangeNodes in topological order -> top-down
-  nodeIDOrder = igraph::graph_from_data_frame(edgeDF %>% select(from,to)) %>%
+  nodeIDOrder = igraph::graph_from_data_frame(edgeDF %>% dplyr::select(from,to)) %>%
     igraph::topo_sort(mode = "out") %>%
     names() %>%
     as.integer()

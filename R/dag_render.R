@@ -17,6 +17,7 @@ dag_render <- function(graph,
                        width = NULL,
                        height = NULL,
                        ...) {
+  graph = graph
   sLabel = shortLabel
   ww = wrapWidth
   dot_code = graph %>%

@@ -73,7 +73,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
-drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
 
 graph = dag_create() %>%
   dag_node(data = attitude$rating,
@@ -85,7 +85,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 
 schools_dat <- data.frame(y = c(28,  8, -3,  7, -1,  1, 18, 12),
-                          sigma = c(15, 10, 16, 11,  9, 11, 10, 18))
+                          sigma = c(15, 10, 16, 11,  9, 11, 10, 18), schoolName = paste0("School",1:8))
 
 graph = dag_create() %>%
   dag_node("Treatment Effect","y",
@@ -103,26 +103,26 @@ graph = dag_create() %>%
   dag_node("School Level Effects","schoolEffect",
            rhs = normal(0,30),
            child = "theta") %>%
-  dag_plate("Observation","i",nodeLabels = c("sigma","y","theta"))
+  dag_plate("Observation","i",nodeLabels = c("sigma","y","theta")) %>%
+  dag_plate("School Name","school",
+            nodeLabels = "schoolEffect",
+            data = schools_dat$schoolName,
+            addDataNode = TRUE)
 graph %>% dag_render()
-
-
-graph %>% dag_render()
+graph %>% dag_greta(mcmc=TRUE)
+tidyDrawsDF %>% dagp_plot()
 
 
 graph = dag_create() %>%
   dag_node("Get Card","y",
-           rhs = bernoulli,
+           rhs = bernoulli(theta),
            data = carModelDF$getCard) %>%
-  dag_node(descr = "Observation Probability",label = "prob",
-           child = "y",
-           rhs = theta)  %>%
   dag_node(descr = "Card Probability by Car",label = "theta",
            rhs = beta(2,2),
-           child = "prob") %>%
+           child = "y") %>%
   dag_node("Car Model","x",
            data = carModelDF$carModel,
-           child = "prob") %>%
+           child = "y") %>%
   dag_plate("Car Model","x",
             data = carModelDF$carModel,
             nodeLabels = "theta")
@@ -131,7 +131,7 @@ graph %>% dag_render()
 graph %>% dag_greta()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta(mcmc=TRUE)
-drawsDF %>% dagp_plot()
+tidyDrawsDF %>% dagp_plot()
 
 
 
@@ -141,12 +141,13 @@ graph = dag_create() %>%
            data = carModelDF$getCard) %>%
   dag_node("Probability", "theta",
            rhs = beta(2, 2),
-           child = "y") %>%
-  dag_greta(mcmc=TRUE)
-
+           child = "y")
 graph %>% dag_dim()
 graph %>% dag_render()
-graph %>% dag_greta(mcmc=TRUE)
+graph %>% dag_greta(mcmc=TRUE)  ##takes 1 minute
+## with tf 1.12.0 and tf 0.5.0
+
+## should take under 20 seconds with right configuration
 drawsDF %>% dagp_plot()
 tidyDrawsDF %>% dagp_plot()
 
