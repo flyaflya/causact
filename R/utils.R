@@ -552,3 +552,17 @@ getLevelNames = function(dataNode) {
   return(nameVector)
 }
 
+
+##function to make diagonal matrix given vector of diagonal elements
+makeDiagMatrix = function(diagVec) {
+
+    #if (!is.vector(diagVec)) {stop("Need to input vector to makeDiagMatrix()")}
+
+    lengthDiag <- length(diagVec)
+    diagMatrix = greta::zeros(lengthDiag,lengthDiag)
+    i <- seq_len(lengthDiag)
+    diagMatrix[cbind(i, i)] <- diagVec
+    return(diagMatrix)
+  }
+
+

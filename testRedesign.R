@@ -49,24 +49,14 @@ dag_create() %>%
 
 graph = dag_create() %>%
   dag_node(label = "y",descr = "Sales Price",
-           rhs = normal,
+           rhs = normal(mu,40000),
            data = houseDF$SalePrice) %>%
-  dag_node(label = "mean",descr = "Exp Sales Price",
-           child = "Sales Price",
-           rhs = alpha + beta * x) %>%
-  dag_node(label = "x",descr = "Square Footage",
-           data = houseDF$`1stFlrSF`,
-           child = "mean") %>%
-  dag_node(label = "beta", descr = "Price per Sq Foot",
-           child = "mean", rhs = normal(0,10000)) %>%
-  dag_node(label = "sd", descr = "Std Dev of Sales Price",
-           child = "Sales Price", rhs = lognormal(0,100)) %>%
-  dag_node(label = "alpha", descr = "Exp Sales Price",
-           child = "mean", rhs = normal(160000,10000)) %>%
+  dag_node(label = "mu", descr = "Exp Sales Price",
+           child = "y", rhs = normal(160000,10000)) %>%
   dag_plate("Observation","i",
-            nodeLabels = c("y","x","mean")) %>%
+            nodeLabels = c("y")) %>%
   dag_plate(descr = "Zip Code",label = "zip",
-            nodeLabels = "alpha",
+            nodeLabels = c("mu"),
             data = houseDF$Neighborhood,
             addDataNode = TRUE)
 graph %>% dag_render()
@@ -133,8 +123,8 @@ graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_greta(mcmc=TRUE)
 tidyDrawsDF %>% dagp_plot()
 
-
-
+library(greta)
+library(causact)
 graph = dag_create() %>%
   dag_node("Get Card","y",
            rhs = bernoulli(theta),
@@ -144,10 +134,12 @@ graph = dag_create() %>%
            child = "y")
 graph %>% dag_dim()
 graph %>% dag_render()
-graph %>% dag_greta(mcmc=TRUE)  ##takes 1 minute
+system.time(graph %>% dag_greta(mcmc=TRUE, warmup = 400) ) ##takes 1 minute
 ## with tf 1.12.0 and tf 0.5.0
 
 ## should take under 20 seconds with right configuration
+
+## takes 20 seconds with: conda create -n r-tensorflow python=3.6 tensorflow-mkl=1.12 tensorflow-probability=0.5 h5py pyyaml requests Pillow scipy pip
 drawsDF %>% dagp_plot()
 tidyDrawsDF %>% dagp_plot()
 

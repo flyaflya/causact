@@ -43,7 +43,8 @@ dag_greta <- function(graph,
   nodeIDOrder = union(nodeIDOrder,nodeDF$id)
 
   ## arrange nodeDF by nodeIDOrder
-  nodeDF = nodeDF[match(nodeIDOrder,nodeDF$id) , ]
+  nodeDF = nodeDF[match(nodeIDOrder,nodeDF$id) , ] %>%
+    dplyr::mutate(nodeOrder = row_number())
 
   ###Use DAPROPLIMOPO(DAta,PRior,OPeration,LIkelihood,MOdel,POsterior)
   ###Find all nodes that require data based on user input
@@ -57,6 +58,12 @@ dag_greta <- function(graph,
   priorStatements = NULL
   opStatements = NULL
   likeStatements = NULL
+  # use priorOpLikeDF to use topological order
+  # for prior, operation, and likelihood statements
+  priorOpLikeDF = data.frame(statement = as.character(NA),
+                             orderID = as.integer(NA),
+                             stringsAsFactors = FALSE)[-1,]
+  priorOpLikeStatements = NULL
   modelStatement = NULL
   posteriorStatement = NULL
 
@@ -103,6 +110,7 @@ dag_greta <- function(graph,
       )
       }
 
+  ### Prior, Operations, and Likelihood Get Sorted by Topological Order
 
   ###PRIOR:  Create code for prior lines
   ###create dataframe of dataNodes and their data
@@ -116,6 +124,10 @@ dag_greta <- function(graph,
   ###Aggregate Code Statements for PRIOR
   priorStatements = paste(lhsNodesDF$codeLine,
                           sep = "\n")
+  priorOpLikeDF = dplyr::bind_rows(priorOpLikeDF,
+                                   data.frame(statement = priorStatements,
+                                              orderID = lhsNodesDF$nodeOrder,
+                                              stringsAsFactors = FALSE))
 
   ###OPERATION:  Create code for OPERATION lines
   lhsNodesDF = nodeDF %>%
@@ -128,12 +140,16 @@ dag_greta <- function(graph,
   ###Aggregate Code Statements for OPERATION
   opStatements = paste(lhsNodesDF$codeLine,
                        sep = "\n")
+  priorOpLikeDF = dplyr::bind_rows(priorOpLikeDF,
+                                   data.frame(statement = opStatements,
+                                              orderID = lhsNodesDF$nodeOrder,
+                                              stringsAsFactors = FALSE))
 
   ###LIKELIHOOD:  Create code for LIKELIHOOD lines
   lhsNodesDF = nodeDF %>%
     dplyr::filter(obs == TRUE) %>%  ##only observed nodes
     dplyr::inner_join(edgeDF, by = c("id" = "to")) %>% # only nodes with parents
-    dplyr::distinct(id,auto_label,auto_rhs) %>%
+    dplyr::distinct(id,auto_label,auto_rhs,nodeOrder) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(
       paste0("distribution(",
              auto_label,
@@ -146,6 +162,17 @@ dag_greta <- function(graph,
   ###Aggregate Code Statements for LIKELIHOOD
   likeStatements = paste(lhsNodesDF$codeLine,
                          sep = "\n")
+  priorOpLikeDF = dplyr::bind_rows(priorOpLikeDF,
+                                   data.frame(statement = likeStatements,
+                                              orderID = lhsNodesDF$nodeOrder,
+                                              stringsAsFactors = FALSE))
+
+  ### Use topological ordering
+  if(nrow(priorOpLikeDF) > 0){
+    priorOpLikeStatements = priorOpLikeDF %>%
+      dplyr::arrange(orderID) %>%
+      dplyr::pull(statement)
+  }
 
   ###Create MODEL Statement
   # get all non-observed / non-formula nodes by default
@@ -178,9 +205,7 @@ dag_greta <- function(graph,
   codeStatements = c(dataStatements,
                      plateDataStatements,
                      dimStatements,
-                     priorStatements,
-                     opStatements,
-                     likeStatements,
+                     priorOpLikeStatements,
                      modelStatement,
                      posteriorStatement)
 
