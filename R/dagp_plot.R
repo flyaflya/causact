@@ -15,10 +15,18 @@ dagp_plot = function(drawsDataFrame) { # case where untidy posterior draws are p
     plot
   } else { # case where tidy posterior draws are provided
     plotList = list()
+    ## filter out NA's like from LKJ prior (we do not know how to plot this)
+    drawsDataFrame = drawsDataFrame %>% dplyr::filter(!is.na(priorGroup))
     priorGroups = unique(drawsDataFrame$priorGroup)
     numPriorGroups = length(priorGroups)
     for (i in 1:numPriorGroups) {
       df = drawsDataFrame %>% filter(priorGroup == priorGroups[i])
+      df$key = factor(df$key)
+      ## reorder levels using character sort from stringr
+      df$key = forcats::fct_relevel(df$key,
+                                    stringr::str_sort(levels(df$key),
+                                                      numeric = TRUE,
+                                                      decreasing = TRUE))
 
       plotList[[i]] = df %>% ggplot(aes(x = value, y = key, fill = key)) +
         ggridges::geom_density_ridges(scale = 2, show.legend = FALSE) +

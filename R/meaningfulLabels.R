@@ -59,7 +59,10 @@ meaningfulLabels = function(graphWithDimensions) {
         dplyr::select(indexLabel,dataNode) %>%
         dplyr::mutate(levelNames = purrr::map(.x = dataNode,.f = getLevelNames))
 
-      newNamesDF = do.call(tidyr::crossing,namesDF$levelNames) %>%
+      ## the default sort order given by getLevelNames is alphabetic
+      ## below assumes the alphabetic sort is used
+
+      newNamesDF = data.frame(levNames = namesDF$levelNames) %>%
         dplyr::mutate_all(function(x){abbreviate(x, minlength = 8)}) %>%
         tidyr::unite(label, sep = "_") %>%
         dplyr::mutate(bigLabel = paste0(uniqueLabels[i],"_",label))
