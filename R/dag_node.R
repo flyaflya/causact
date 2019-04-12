@@ -7,7 +7,7 @@
 #' @param distr a variable greta array function such as \code{uniform, normal, lognormal, bernoulli,} etc. Function arguments are optional.  Use \code{distr = NA} to suppress distribution assumptions.  Valid values include \code{greta::normal}, \code{normal}, and \code{normal(6,2)}.
 #' @param observed a logical value indicating whether the node is observed.
 #' @param formulaString a character string representing an operation that should be performed to calculate the node's value from its parents.  When input, \code{distr} is ignored.
-#' @param children an optional character vector of existing node labels or node descriptions.  Directed edges from the newly created node will be created.
+#' @param child an optional character vector of existing node labels or node descriptions.  Directed edges from the newly created node will be created.
 #' @return a graph object of class \code{dgr_graph}.
 #' @examples
 #' # Create an empty graph and add 2 nodes by using
@@ -43,9 +43,9 @@
 dag_node <- function(graph,
                      descr = as.character(NA),
                      label = as.character(NA),
-                     data = NULL, # vector or df
                      rhs = NA, ##not vectorized
                      child = as.character(NA), ##not vectorized
+                     data = NULL, # vector or df
                      obs = FALSE,
                      keepAsDF = FALSE,
                      extract = as.logical(NA)) {
@@ -62,6 +62,7 @@ dag_node <- function(graph,
   dataQuo = rlang::enquo(data) ##capture as quosure to get env
   dataString = ifelse(is.null(data),NA,rlang::quo_name(dataQuo))
   rhsExpr = rlang::enexpr(rhs) ##distribution or formula
+  childString = ifelse(rlang::is_empty(child),as.character(NA),paste(child, collapse = ",")) ## test whether child has values... if so make string to store values in nodeDF
 
   # capture the parameters and argument of the rhs expression
   # also, update value of distr to signal whether distribution or formula
@@ -118,10 +119,10 @@ dag_node <- function(graph,
       # user entered quantities
       label = label,
       descr = descr,
-      data = dataString,
       rhs = rhsString,
+      child = childString, ##store string of child names
+      data = dataString,
       #distr or formula
-      child = child,
       obs = obs,
       rhsID = rhsID,
       distr = rhsDistr,
@@ -134,9 +135,9 @@ dag_node <- function(graph,
 
   ## add edges for newly added nodes with non-na children
   edgeDF = ndf %>% dplyr::filter(!is.na(child))
-  if(nrow(edgeDF) > 0) {
+  if(!is.na(child[1]) & length(child) > 0) {
     fromVector = edgeDF$id
-    toVector = edgeDF$child
+    toVector = child  ## use vector of child names not string
     if(is.na(extract)) {
       graph = graph %>% dag_edge(fromVector,toVector)
   } else if(extract == TRUE) {

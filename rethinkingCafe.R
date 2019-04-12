@@ -62,7 +62,8 @@ graph = dag_create() %>%
            child = "mu",
            data = waitDF$afternoon) %>%
   dag_node("Exp Wait and Wait Diff","Y",
-           rhs = multivariate_normal(Mean,Sigma)) %>%
+           rhs = multivariate_normal(Mean,Sigma),
+           child = c("alpha_cafe", "beta_cafe")) %>%
   dag_node("Uncorr. Exp. Effects","Mean",
            rhs = cbind(alpha,beta),
            child = "Y") %>%
@@ -70,11 +71,13 @@ graph = dag_create() %>%
            rhs = Sigmas %*% Rho %*% Sigmas,
            child = "Y") %>%
   dag_node("Uncorr. Morning Wait","alpha",
-           rhs = normal(0,10)) %>%
+           rhs = normal(0,10),
+           child = "Mean",
+           extract = FALSE) %>%
   dag_node("Uncorr. Wait Diff","beta",
-           rhs = normal(0,10)) %>%
-  dag_edge(from = "Y", to = c("alpha_cafe","beta_cafe")) %>%
-  dag_edge(from = c("alpha","beta"), to = "Mean", type = "solid") %>%
+           rhs = normal(0,10),
+           child = "Mean",
+           extract = FALSE) %>%
   dag_node("Uncorr Std Devs","Sigmas",
            child = "Sigma",
            rhs = makeDiagMatrix(c(sig_a,sig_b))) %>%
@@ -94,7 +97,8 @@ graph = dag_create() %>%
             nodeLabels = c("x","mu","cafe","afternoon")) %>%
   dag_plate("Cafes","cafe",
             nodeLabels = c("alpha","beta","alpha_cafe","beta_cafe"),
-            data = waitDF$cafe)
+            data = waitDF$cafe) %T>%
+  dag_render()
 
 graph %>% dag_render(width = 2400, height = 600)
 graph %>% dag_render(shortLabel = TRUE)
@@ -106,3 +110,7 @@ graph %>% dag_greta()
 ### and flip flop order of some statements
 graph %>% dag_greta(mcmc=TRUE, one_by_one = TRUE)
 tidyDrawsDF %>% dagp_plot()
+
+graph = dag_create() %>%
+  dag_node("Obs Wait Time","x") %>%
+  dag_render()
