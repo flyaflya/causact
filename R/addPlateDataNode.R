@@ -35,7 +35,8 @@ addPlateDataNode = function(graph,plateIndex,rhs = NA) {
   ### get all the children for the newly created data node
   childrenDF = graph$plate_node_df %>%
     dplyr::filter(indexID == plateIndex) %>% ## parent node on plate
-    dplyr::left_join(graph$edges_df, by = c("nodeID" = "from")) ##chilren of nodes on plate
+    dplyr::left_join(graph$edges_df, by = c("nodeID" = "from")) %>% ##chilren of nodes on plate
+    dplyr::filter(!is.na(to))
 
   ### make edges from new node to existing children
   childrenNewEdgeDF = childrenDF %>%
