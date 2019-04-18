@@ -5,13 +5,15 @@
 \title{Add a node to an existing graph object}
 \usage{
 dag_node(graph, descr = as.character(NA), label = as.character(NA),
-  data = NULL, rhs = NA, child = as.character(NA), obs = FALSE,
+  rhs = NA, child = as.character(NA), data = NULL, obs = FALSE,
   keepAsDF = FALSE, extract = as.logical(NA))
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}
 
 \item{label}{a required character label that describes the node.}
+
+\item{child}{an optional character vector of existing node labels or node descriptions.  Directed edges from the newly created node will be created.}
 
 \item{description}{a longer more descriptive character label for the node.}
 
@@ -20,8 +22,6 @@ dag_node(graph, descr = as.character(NA), label = as.character(NA),
 \item{observed}{a logical value indicating whether the node is observed.}
 
 \item{formulaString}{a character string representing an operation that should be performed to calculate the node's value from its parents.  When input, \code{distr} is ignored.}
-
-\item{children}{an optional character vector of existing node labels or node descriptions.  Directed edges from the newly created node will be created.}
 }
 \value{
 a graph object of class \code{dgr_graph}.
