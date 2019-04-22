@@ -1,3 +1,5 @@
+#' @importFrom forcats fct_relevel
+#' @importFrom stringr str_sort str_detect
 #### assume RHS is a distribution
 #### if distribution, isolate distribution name,
 #### parameter names/values, and argument names/values
@@ -212,7 +214,11 @@ rhsPriorComposition = function(graph) {
   ## create label for the rhs for these nodes
   auto_rhsDF = nodeDF %>% dplyr::left_join(argDF, by = "rhsID") %>%
     dplyr::mutate(argValue = ifelse(is.na(argDimLabels),argValue,
-                                    paste0(argValue,"[",argDimLabels,"]"))) %>% ## add extraction index to label
+                                    paste0(argValue,"[",
+                                           ifelse(stringr::str_detect(argDimLabels,","),
+                                                  paste0("cbind(", argDimLabels,")"),
+                                                  argDimLabels),  ## use cbind for R indexing
+                                           "]"))) %>% ## add extraction index to label
     dplyr::group_by(id,rhsID,rhs) %>%
     dplyr::summarize(args = paste0(argName," = ",argValue,collapse = ", ")) %>%
     dplyr::left_join(plateDimDF, by = c("id" = "nodeID")) %>%
@@ -482,7 +488,7 @@ updateExtractEdges = function(graphWithDim) {
       fromIndices = unique(unlist(edgeDFFrom$fromPlateIndices[fromPosition]))
       toIndices = unique(unlist(edgeDFTo$toPlateIndices[toPosition]))
       if(setequal(fromIndices,toIndices)) { ## same plate, no extract
-        extractCandidateDF$candidate[i] = FALSE } else if (length(setdiff(fromIndices,toIndices)) > 0 & !is.na(setdiff(fromIndices,toIndices))) {  ##from plate has index not on child plate
+        extractCandidateDF$candidate[i] = FALSE } else if (length(setdiff(fromIndices,toIndices)[1]) > 0 & !is.na(setdiff(fromIndices,toIndices)[1])) {  ##from plate has index not on child plate
           extractCandidateDF$candidate[i] = TRUE } else {  ## child on all plates of parent
             extractCandidateDF$candidate[i] = FALSE
           }

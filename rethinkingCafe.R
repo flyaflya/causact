@@ -97,12 +97,11 @@ graph = dag_create() %>%
             nodeLabels = c("x","mu","cafe","afternoon")) %>%
   dag_plate("Cafes","cafe",
             nodeLabels = c("alpha","beta","alpha_cafe","beta_cafe"),
-            data = waitDF$cafe) %T>%
-  dag_render()
+            data = waitDF$cafe)
 
 graph %>% dag_render(width = 2400, height = 600)
 graph %>% dag_render(shortLabel = TRUE)
-graph %>% dag_greta()
+graph %>% dag_greta(mcmc=FALSE)
 ### alter greta code to run:
 # Sigmas <- zeros(2,2)
 # diag(Sigmas) <- c(sig_a,sig_b)

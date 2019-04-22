@@ -114,6 +114,10 @@ dag_greta <- function(graph,
 
   ###PRIOR:  Create code for prior lines
   ###create dataframe of dataNodes and their data
+
+
+  #update auto_rhs to use cbind for R indexing if there is a comma in it
+
   lhsNodesDF = nodeDF %>%
     dplyr::filter(distr == TRUE & obs == FALSE) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(auto_label),

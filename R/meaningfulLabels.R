@@ -44,7 +44,7 @@ meaningfulLabels = function(graphWithDimensions) {
       tempDF = renamingMultiDimParamsDF %>%
         dplyr::filter(label == uniqueLabels[i])
       dimensionList = purrr::map(tempDF$dimValue,.f = function(x) { return(1:x)})
-      oldNamesDF = do.call(tidyr::crossing,dimensionList) %>%
+      oldNamesDF = do.call(expand.grid,dimensionList) %>%
         tidyr::unite(label, sep = ",") %>%
         dplyr::mutate(bigLabel = paste0(uniqueLabels[i],"[",label,"]"))
       oldNames = oldNamesDF %>%
@@ -60,9 +60,9 @@ meaningfulLabels = function(graphWithDimensions) {
         dplyr::mutate(levelNames = purrr::map(.x = dataNode,.f = getLevelNames))
 
       ## the default sort order given by getLevelNames is alphabetic
-      ## below assumes the alphabetic sort is used
-
-      newNamesDF = data.frame(levNames = namesDF$levelNames) %>%
+      ## with str_sort used and numeric = TRUE argument
+      ## below assumes this sort is used
+      newNamesDF = do.call(expand.grid,namesDF$levelNames) %>%
         dplyr::mutate_all(function(x){abbreviate(x, minlength = 8)}) %>%
         tidyr::unite(label, sep = "_") %>%
         dplyr::mutate(bigLabel = paste0(uniqueLabels[i],"_",label))
