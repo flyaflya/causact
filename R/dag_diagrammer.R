@@ -1,6 +1,24 @@
 ## function to convert graph to Diagrammer object
 ## for visualization
-dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE, ...) {
+#' The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
+#' @param graph a graph object of class \code{causact_graph} created using \code{dag_create()}.
+#' @param wrapWidth a required character label that describes the node.
+#' @param shortLabel a longer more descriptive character label for the node.
+#' @return a graph object of class \code{dgr_graph}.
+#' @examples
+#' dag_create() %>%
+#' dag_node("Get Card","y",
+#'          rhs = bernoulli(theta),
+#'          data = carModelDF$getCard) %>%
+#'   dag_diagrammer() %>%
+#'   DiagrammeR::render_graph(title = "DiagrammeR Version of causact_graph")
+
+#' @importFrom dplyr select filter group_by summarize mutate left_join
+#' @importFrom tidyr replace_na
+#' @importFrom stringr str_replace
+#' @importFrom DiagrammeR create_node_df create_graph add_node_df create_edge_df
+
+dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   # add dimension labels
   graph = graph %>% dag_dim()
 
