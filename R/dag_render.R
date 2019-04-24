@@ -20,6 +20,12 @@ dag_render <- function(graph,
   graph = graph
   sLabel = shortLabel
   ww = wrapWidth
+
+  ## code to give output even if no nodes are added
+  if (nrow(graph$nodes_df) == 0) {
+    graph = graph %>% dag_node("START MODELLING", label = "use dag_node()")
+  }
+
   dot_code = graph %>%
     dag_diagrammer(shortLabel = sLabel, wrapWidth = ww) %>%
     generate_dot2()

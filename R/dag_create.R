@@ -1,17 +1,14 @@
 #' Create a graph object focused on drawing a DAG.
 #'
-#' Generates a \code{dgr_graph} graph object that is set-up for drawing DAG graphs.
-#' @param ... Any arguments to pass to \code{DiagrammeR::create_graph()}.
+#' Generates a \code{causact_graph} graph object that is set-up for drawing DAG graphs.
 #' @examples
 #' # With `dag_create()` we can
-#' # simply create an empty graph (and
+#' # simply create an empty graph and
 #' # add in nodes and edges later
-#' # with other functions)
+#' # with other functions.
 #' dag_create() %>% dag_render()
-#' @importFrom dplyr bind_rows tibble
-#' @importFrom DiagrammeR create_graph add_global_graph_attrs
 #' @export
-dag_create <- function(...) {
+dag_create <- function() {
   # Create an empty node data frame (`ndf`)
   ndf <-
     data.frame(

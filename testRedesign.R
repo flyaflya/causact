@@ -128,10 +128,12 @@ library(causact)
 graph = dag_create() %>%
   dag_node("Get Card","y",
            rhs = bernoulli(theta),
-           data = carModelDF$getCard) %>%
+           data = carModelDF$getCard[1:10]) %>%
   dag_node("Probability", "theta",
-           rhs = beta(2, 2),
-           child = "y")
+           rhs = beta(6, 2),
+           child = "y") %>%
+  dag_node("Simulate Prior","prior",
+           rhs = beta(6,2))
 graph %>% dag_dim()
 graph %>% dag_render()
 system.time(graph %>% dag_greta(mcmc=TRUE, warmup = 400) ) ##takes 1 minute
@@ -146,9 +148,44 @@ tidyDrawsDF %>% dagp_plot()
 
 
 
-descr = "X"
-label = as.character(NA)
-data = NULL # vector or df
-rhs = NULL ##not vectorized
-child = as.character(NA) ##not vectorized
-obs = FALSE
+graph1 = dag_create() %>%
+  dag_node("Get Card","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard)
+
+graph2 = dag_create() %>%
+  dag_node("Get Card","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node(descr = "Card Probability by Car",label = "theta",
+           rhs = beta(2,2),
+           child = "y")
+
+graph3 = dag_create() %>%
+  dag_node("Get Card","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node(descr = "Card Probability by Car",label = "theta",
+           rhs = beta(2,2),
+           child = "y") %>%
+  dag_node("Car Model","x",
+           data = carModelDF$carModel,
+           child = "y")
+
+graph4 = dag_create() %>%
+  dag_node("Get Card","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node(descr = "Card Probability by Car",label = "theta",
+           rhs = beta(2,2),
+           child = "y") %>%
+  dag_node("Car Model","x",
+           data = carModelDF$carModel,
+           child = "y") %>%
+  dag_plate("Car Model","x",
+            data = carModelDF$carModel,
+            nodeLabels = "theta")
+graph1 %>% dag_diagrammer() %>% generate_dot2() %>% cat()
+graph2 %>% dag_diagrammer() %>% generate_dot2() %>% cat()
+graph3 %>% dag_diagrammer() %>% generate_dot2() %>% cat()
+graph4 %>% dag_diagrammer() %>% generate_dot2() %>% cat()
