@@ -2,31 +2,16 @@
 % Please edit documentation in R/dag_dim.R
 \name{dag_dim}
 \alias{dag_dim}
-\title{Set node attribute values to reflect a desired cluster}
+\title{Add dimension information to \code{causact_graph}}
 \usage{
-dag_dim(graph, ...)
+dag_dim(graph)
 }
 \arguments{
-\item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}
-
-\item{indexLabel}{a short character string to use as an index letter
-nodes.}
-
-\item{description}{a longer more descriptive label for the cluster/plate.}
-
-\item{nodeLabels}{a vector of node labels or descriptions to include in the list of nodes}
+\item{graph}{a graph object of class \code{causact_graph} created using \code{dag_create()}.}
 }
 \value{
-a graph object of class \code{dgr_graph}.
+a graph object of class \code{causact_graph} with populated dimension information.
 }
 \description{
-From a graph object of class \code{dgr_graph}, set node attribute values for
-  one or more nodes.
-}
-\examples{
-# create small DF
-dag_create() \%>\%
-    dag_node("Y","House Prices") \%>\%
-    dag_plate("i","Observation",nodeLabels = "Y") \%>\%
-    dag_render(shortLabel = TRUE)
+Internal function that is used as part of rendering graph or running greta.
 }

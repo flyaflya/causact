@@ -9,50 +9,70 @@ dag_node(graph, descr = as.character(NA), label = as.character(NA),
   keepAsDF = FALSE, extract = as.logical(NA))
 }
 \arguments{
-\item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}
+\item{graph}{a graph object of class \code{causact_graph} created using \code{dag_create()}.}
 
-\item{label}{a required character label that describes the node.}
+\item{label}{a shorter character label for referencing the node (e.g. "X","beta").}
 
-\item{child}{an optional character vector of existing node labels or node descriptions.  Directed edges from the newly created node will be created.}
+\item{rhs}{either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.}
+
+\item{child}{an optional character vector of existing node labels.  Directed edges from the newly created node to the supplied nodes will be created.}
+
+\item{data}{a vector or data frame (with observations in rows and variables in columns).}
+
+\item{obs}{a logical value indicating whether the node is observed.  Assumed to be \code{TRUE} when \code{data} argument is given.}
+
+\item{keepAsDF}{a logical value indicating whether the \code{data} argument should be split into one random varaible node per column or kept together as a random matrix for matrix computation.  Defaults to creating one node per column of the data frame.}
+
+\item{extract}{a logical value.  When TRUE, child nodes will try to extract an indexed value from this node.  When FALSE, the entire random object (e.g. scalar, vector, matrix) is passed to children nodes.  Only use this argument when overriding default behavior seen using \code{dag_render()}.}
 
 \item{description}{a longer more descriptive character label for the node.}
-
-\item{distr}{a variable greta array function such as \code{uniform, normal, lognormal, bernoulli,} etc. Function arguments are optional.  Use \code{distr = NA} to suppress distribution assumptions.  Valid values include \code{greta::normal}, \code{normal}, and \code{normal(6,2)}.}
-
-\item{observed}{a logical value indicating whether the node is observed.}
-
-\item{formulaString}{a character string representing an operation that should be performed to calculate the node's value from its parents.  When input, \code{distr} is ignored.}
 }
 \value{
-a graph object of class \code{dgr_graph}.
+a graph object of class \code{causact_graph}.
 }
 \description{
-The graph object should be of class \code{dgr_graph} and created using \code{dag_create()}.
+The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
 # Create an empty graph and add 2 nodes by using
 # the `dag_node()` function twice
-graph <-
-  dag_create() \%>\%
-  dag_node("X") \%>\%
-  dag_node("Y", children = "X")
-dag_render(graph, shortLabel = TRUE)
+graph2 = dag_create() \%>\%
+  dag_node("Get Card","y",
+         rhs = bernoulli(theta),
+         data = carModelDF$getCard) \%>\%
+  dag_node(descr = "Card Probability by Car",label = "theta",
+           rhs = beta(2,2),
+           child = "y")
+graph2 \%>\% dag_render()
 
-dag_create() \%>\%
-  dag_node("Y","Sales Price",
-           distr = normal, observed = TRUE) \%>\%
-  dag_node("X","Square Footage",
-           observed = TRUE, distr = NA) \%>\%
-  dag_node("mean","Exp Sales Price",
-           children = "Sales Price",
-           formulaString = "alpha + beta * x") \%>\%
-  dag_node("beta", "Price per Sq Foot",
-           children = "mean") \%>\%
-  dag_node("SD", "Std Dev of Sales Price",
-           distr = lognormal(0,3),
-           children = "Sales Price") \%>\%
-  dag_node("alpha", "Intercept",
-           children = "mean")  \%>\%
-  dag_edge("Square Footage","mean") \%>\%
-  dag_render()
+
+# The Eight Schools Example from Gelman et al.:
+
+schools_dat <- data.frame(y = c(28,  8, -3,  7, -1,  1, 18, 12),
+sigma = c(15, 10, 16, 11,  9, 11, 10, 18), schoolName = paste0("School",1:8))
+
+graph = dag_create() \%>\%
+  dag_node("Treatment Effect","y",
+           rhs = normal(theta, sigma),
+           data = schools_dat$y) \%>\%
+  dag_node("Std Error of Effect Estimates","sigma",
+           data = schools_dat$sigma,
+           child = "y") \%>\%
+  dag_node("Exp. Treatment Effect","theta",
+           child = "y",
+           rhs = avgEffect + schoolEffect) \%>\%
+  dag_node("Pop Treatment Effect","avgEffect",
+           child = "theta",
+           rhs = normal(0,30)) \%>\%
+  dag_node("School Level Effects","schoolEffect",
+           rhs = normal(0,30),
+           child = "theta") \%>\%
+  dag_plate("Observation","i",nodeLabels = c("sigma","y","theta")) \%>\%
+  dag_plate("School Name","school",
+            nodeLabels = "schoolEffect",
+            data = schools_dat$schoolName,
+            addDataNode = TRUE)
+graph \%>\% dag_render()
+graph \%>\% dag_greta(mcmc=TRUE)
+tidyDrawsDF \%>\% dagp_plot()
 }

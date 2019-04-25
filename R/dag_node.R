@@ -4,7 +4,7 @@
 #' @param graph a graph object of class \code{causact_graph} created using \code{dag_create()}.
 #' @param description a longer more descriptive character label for the node.
 #' @param label a shorter character label for referencing the node (e.g. "X","beta").
-#' @param rhs either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. Function arguments are optional.  Use \code{distr = NA} to suppress distribution assumptions.  Valid values include \code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  Or an R computation/expression like \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.
+#' @param rhs either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.
 #' @param child an optional character vector of existing node labels.  Directed edges from the newly created node to the supplied nodes will be created.
 #' @param data a vector or data frame (with observations in rows and variables in columns).
 #' @param obs a logical value indicating whether the node is observed.  Assumed to be \code{TRUE} when \code{data} argument is given.
@@ -24,7 +24,7 @@
 #' graph2 %>% dag_render()
 #'
 #'
-#' The Eight Schools Example from Gelman et al.:
+#' # The Eight Schools Example from Gelman et al.:
 #'
 #' schools_dat <- data.frame(y = c(28,  8, -3,  7, -1,  1, 18, 12),
 #' sigma = c(15, 10, 16, 11,  9, 11, 10, 18), schoolName = paste0("School",1:8))

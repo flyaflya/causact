@@ -1,24 +1,13 @@
-#' Set node attribute values to reflect a desired cluster
+#' Add dimension information to \code{causact_graph}
 #'
-#' From a graph object of class \code{dgr_graph}, set node attribute values for
-#'   one or more nodes.
-#' @param graph a graph object of class \code{dgr_graph} created using \code{dag_create()}.
-#' @param indexLabel a short character string to use as an index letter
-#'   nodes.
-#' @param description a longer more descriptive label for the cluster/plate.
-#' @param nodeLabels a vector of node labels or descriptions to include in the list of nodes
-#' @return a graph object of class \code{dgr_graph}.
-#' @examples
-#' # create small DF
-#' dag_create() %>%
-#'     dag_node("Y","House Prices") %>%
-#'     dag_plate("i","Observation",nodeLabels = "Y") %>%
-#'     dag_render(shortLabel = TRUE)
-#' @importFrom dplyr mutate
-#' @importFrom rlang enquo get_expr UQ
+#' Internal function that is used as part of rendering graph or running greta.
+#' @param graph a graph object of class \code{causact_graph} created using \code{dag_create()}.
+#' @return a graph object of class \code{causact_graph} with populated dimension information.
+#' @importFrom dplyr mutate filter left_join select add_row
+#' @importFrom purrr map_int
+#' @importFrom igraph graph_from_data_frame topo_sort
 
-#' @export
-dag_dim <- function(graph, ...) {
+dag_dim <- function(graph) {
 
   ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
   nodeDF = graph$nodes_df
@@ -44,7 +33,7 @@ dag_dim <- function(graph, ...) {
 
   # make simple igraph to use topological sort
   # assign dimensions going bottom-up
-  nodeIDOrder = igraph::graph_from_data_frame(edgeDF %>% select(from,to)) %>%
+  nodeIDOrder = igraph::graph_from_data_frame(edgeDF %>% dplyr::select(from,to)) %>%
     igraph::topo_sort(mode = "in") %>%
     names() %>%
     as.integer()
