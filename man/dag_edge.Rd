@@ -7,15 +7,17 @@
 dag_edge(graph, from, to, type = as.character(NA))
 }
 \arguments{
-\item{from}{the parent node label or description from which the edge is connected.}
+\item{from}{a character vector representing the parent nodes label or description from which the edge is connected.}
 
 \item{to}{the child node label or description from which the edge is connected.}
+
+\item{type}{character string used to represent the DiagrammeR line type (e.g. \code{"solid"}).  Use \code{type = "extract"} to encourage causact to only pass indexed elements of the parent node to each instance of the child node.  Specify \code{type = "solid"} to override any automated extract behavior.}
 }
 \value{
 a graph object of class \code{dgr_graph}.
 }
 \description{
-With a graph object of class \code{dgr_graph} created from \code{dag_create}, add an edge between nodes in the graph.
+With a graph object of class \code{causact_graph} created from \code{dag_create}, add an edge between nodes in the graph.  Vector recycling is used for all arguments.
 }
 \examples{
 # Create a graph with 2 connected nodes

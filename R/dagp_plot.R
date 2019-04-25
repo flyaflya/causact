@@ -1,5 +1,57 @@
+#' Plot posterior distribution of latent parameters in \code{causact_graph} model.
+#'
+#' The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
+#' @param drawsDataFrame one of the two posterior data frame objects created by \code{dag_greta()}.  If \code{drawsDataFrame=drawsDF}, each parameter gets its own density plot.  If \code{drawsDataFrame=tidyDrawsDF} (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
+#' @return a credible interval plot of all latent posterior distribution parameters.
+#' @examples
+#' # Create a 2 node graph
+#' graph2 = dag_create() %>%
+#'   dag_node("Get Card","y",
+#'          rhs = bernoulli(theta),
+#'          data = carModelDF$getCard) %>%
+#'   dag_node(descr = "Card Probability by Car",label = "theta",
+#'            rhs = beta(2,2),
+#'            child = "y")
+#' graph2 %>% dag_render()
+#' drawsDF %>% dag_plot()
+#' tidyDrawsDF %>% dag_plot()
+#'
+#' # multiple plate example
+#' library(dplyr)
+#' poolTimeGymDF = gymDF %>%
+#' mutate(stretchType = ifelse(yogaStretch == 1,
+#'                             "Yoga Stretch",
+#'                             "Traditional")) %>%
+#' group_by(gymID,stretchType,yogaStretch) %>%
+#'   summarize(nTrialCustomers = sum(nTrialCustomers),
+#'             nSigned = sum(nSigned))
+#' graph = dag_create() %>%
+#'   dag_node("Cust Signed","k",
+#'            rhs = binomial(n,p),
+#'            data = poolTimeGymDF$nSigned) %>%
+#'   dag_node("Probability of Signing","p",
+#'            rhs = beta(2,2),
+#'            child = "k") %>%
+#'   dag_node("Trial Size","n",
+#'            data = poolTimeGymDF$nTrialCustomers,
+#'            child = "k") %>%
+#'   dag_plate("Yoga Stretch","x",
+#'             nodeLabels = c("p"),
+#'             data = poolTimeGymDF$stretchType,
+#'             addDataNode = TRUE) %>%
+#'   dag_plate("Observation","i",
+#'             nodeLabels = c("x","k","n")) %>%
+#'   dag_plate("Gym","j",
+#'             nodeLabels = "p",
+#'             data = poolTimeGymDF$gymID,
+#'             addDataNode = TRUE)
+#' graph %>% dag_render()
+#' graph %>% dag_greta(mcmc=TRUE)
+#' tidyDrawsDF %>% dagp_plot()
+#' @importFrom dplyr bind_rows filter
+#' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy
+#' @export
 #' @import ggplot2 tidyr
-#' @importFrom ggridges geom_density_ridges theme_ridges
 #' @importFrom cowplot plot_grid
 #' @export
 

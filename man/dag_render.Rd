@@ -2,7 +2,7 @@
 % Please edit documentation in R/dag_render.R
 \name{dag_render}
 \alias{dag_render}
-\title{Render the graph in various formats}
+\title{Render the graph as an htmlwidget}
 \usage{
 dag_render(graph, shortLabel = FALSE, wrapWidth = 24, width = NULL,
   height = NULL, ...)
@@ -10,12 +10,18 @@ dag_render(graph, shortLabel = FALSE, wrapWidth = 24, width = NULL,
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph}.}
 
-\item{shortLabel}{a logical value.  If set to \code{TRUE}, distribution and formula information is suppressed.}
+\item{shortLabel}{a logical value.  If set to \code{TRUE}, distribution and formula information is suppressed.  Meant for communication with non-statistical stakeholders.}
 
-\item{...}{arguments that can be passed onto \code{Diagrammer::create_graph()}.}
+\item{wrapWidth}{a numeric value.  Used to restrict width of nodes.  Default is wrap text after 24 characters.}
+
+\item{width}{a numeric value.  an optional parameter for specifying the width of the resulting graphic in pixels.}
+
+\item{height}{a numeric value.  an optional parameter for specifying the height of the resulting graphic in pixels.}
+
+\item{...}{arguments that can be passed onto \code{Diagrammer::render_graph()}.}
 }
 \description{
-Using a \code{dgr_graph} object, render the graph in the RStudio Viewer.
+Using a \code{causact_graph} object, render the graph in the RStudio Viewer.
 }
 \examples{
 # Render an  empty graph
