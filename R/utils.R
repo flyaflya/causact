@@ -166,8 +166,7 @@ rhsDecomp = function(rhs) {
   ## return function name
   if(!oneWordEquation) {fnName = rlang::call_name(distExpr)}
 
-  if (fnName %in% getNamespaceExports("greta") &
-      !(fnName %in% notDistrFunctions)) {
+  if (fnName %in% getNamespaceExports("greta") | fnName %in% customDistr & !(fnName %in% notDistrFunctions)) {
     z = rhsDecompDistr(!!distExpr)
   } else {
     z = rhsDecompFormula(!!distExpr)
