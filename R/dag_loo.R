@@ -28,6 +28,8 @@ print(loo1)
 ### Analyze the data using greta
 library(greta)
 library(tidyverse)
+library(rlang)
+library()
 
 X <- roaches %>%
   select(roach1,treatment,senior)
@@ -95,4 +97,54 @@ print(loo2)
 
 ############# calculate loo using the carModelDF in causact
 # remotes::install_github("flyaflya/causact")
+# devtools::install_github('flyaflya/causact')
 library(causact)
+
+carModelDF$carModel[1:4]
+
+graph <- dag_create() %>%
+  dag_node("Bernoulli","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node("Probability","theta",
+           rhs = beta(2,2),
+           child = "y")
+
+graph %>% dag_render()
+
+graph %>% dag_greta(mcmc = T)
+
+graph %>% causact:::dag_dim()
+
+length(graph$nodes_df$data[1])
+length(carModelDF$getCard)
+eval(graph$nodes_df$data[1])
+expr(graph$nodes_df$data[1])
+Unquote(graph$nodes_df$data[1])
+length(expr(graph$nodes_df$data[1]))
+class(expr(graph$nodes_df$data[1]))
+class(graph$nodes_df$data[1])
+(!!(graph$nodes_df$data[1]))
+!!as_string("carModelDF$getCard")
+data_test <- quo(graph$nodes_df$data[1])
+length(!!data_test)
+rlang::sym(graph$nodes_df$data[1])
+length(rlang::sym(graph$nodes_df$data[1]))
+noquote(graph$nodes_df$data[1])
+class(noquote(graph$nodes_df$data[1]))
+quote(graph$nodes_df$data[1])
+length(quote(graph$nodes_df$data[1]))
+
+graph <- graph %>% causact:::dag_dim()
+nodes_df <- graph$nodes_df
+data_input <- nodes_df$data[1]
+length(noquote(data_input))
+
+length(rlang::enexpr(data_input))
+
+######### carModelDF$getCard needs to be replaced
+data_length <- length(carModelDF$getCard)
+Prop_fit <- matrix(0,nrow = 4000, ncol = data_length)
+for(i in (1:data_length)) {
+  Prop_fit[,i] <- dbinom(carModelDF$getCard[i], 1, as.array(drawsDF,dim=1))
+}
