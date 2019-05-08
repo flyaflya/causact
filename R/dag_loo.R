@@ -1,6 +1,6 @@
 
 
-
+### Original example from the "loo" package
 library("rstanarm")
 library("bayesplot")
 library("loo")
@@ -22,8 +22,10 @@ fit1 <-
   )
 
 loo1 <- loo(fit1, save_psis = TRUE)
+plot(loo1)
 print(loo1)
 
+### Analyze the data using greta
 library(greta)
 library(tidyverse)
 
@@ -56,6 +58,7 @@ lambda_fit <- exp(y_fit)
 dpois(153,100.247993)
 summary(lambda_fit - fit1$fitted.values)
 
+### manually calculate pointwise log-likelihood
 ParaEst_post <- as_tibble(rbind(draw_m_greta[[1]],draw_m_greta[[2]],draw_m_greta[[3]],draw_m_greta[[4]]))
 
 a_post <- ParaEst_post[,1]
@@ -86,5 +89,10 @@ rel_n_eff <- ifelse(is.na(rel_n_eff),mean(rel_n_eff,na.rm = T),rel_n_eff)
 loo2 <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
 plot(loo2)
 
+### compare loo results from rstanarm and greta
 print(loo1)
 print(loo2)
+
+############# calculate loo using the carModelDF in causact
+# remotes::install_github("flyaflya/causact")
+library(causact)
