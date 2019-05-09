@@ -19,14 +19,24 @@ dag_edge <- function(graph,
                      to,
                      type = as.character(NA)) {
 
+  ## extract nodeIDs
+  ## checking that the 'from' and 'to' nodes exist in the graph.
+  fromIDs = findNodeID(graph,from)
+  if(anyNA(fromIDs)){
+    errorMessage <- paste("Node",from,"does not exist. Check for spelling errors. Check the order the nodes were created.")
+    stop(errorMessage)
+  }
+
+  toIDs = findNodeID(graph,to)
+  if(anyNA(toIDs)){
+    errorMessage <- paste("Node",to,"does not exist. Check for spelling errors. Check the order the nodes were created.")
+    stop(errorMessage)
+  }
+
   ## get number of edges
   numberOfEdges = max(length(from),length(to))
   ## if no edges, simply return graph
   if(numberOfEdges == 0) {return(graph)}
-
-  ## extract nodeIDs
-  fromIDs = findNodeID(graph,from)
-  toIDs = findNodeID(graph,to)
 
   ## initialize edgeDF info for this edge(s)
   edgeIDstart = max(graph$edges_df$id,0) + 1
