@@ -29,7 +29,7 @@ print(loo1)
 library(greta)
 library(tidyverse)
 library(rlang)
-library()
+
 
 X <- roaches %>%
   select(roach1,treatment,senior)
@@ -99,7 +99,12 @@ print(loo2)
 # remotes::install_github("flyaflya/causact")
 # devtools::install_github('flyaflya/causact')
 library(causact)
+library(loo)
+library(greta)
+library(tidyverse)
+library(rlang)
 
+### Example 1
 carModelDF$carModel[1:4]
 
 graph <- dag_create() %>%
@@ -114,37 +119,153 @@ graph %>% dag_render()
 
 graph %>% dag_greta(mcmc = T)
 
-graph %>% causact:::dag_dim()
+###
 
-length(graph$nodes_df$data[1])
-length(carModelDF$getCard)
-eval(graph$nodes_df$data[1])
-expr(graph$nodes_df$data[1])
-Unquote(graph$nodes_df$data[1])
-length(expr(graph$nodes_df$data[1]))
-class(expr(graph$nodes_df$data[1]))
-class(graph$nodes_df$data[1])
-(!!(graph$nodes_df$data[1]))
-!!as_string("carModelDF$getCard")
-data_test <- quo(graph$nodes_df$data[1])
-length(!!data_test)
-rlang::sym(graph$nodes_df$data[1])
-length(rlang::sym(graph$nodes_df$data[1]))
-noquote(graph$nodes_df$data[1])
-class(noquote(graph$nodes_df$data[1]))
-quote(graph$nodes_df$data[1])
-length(quote(graph$nodes_df$data[1]))
+graph %>% causact:::dag_dim()
 
 graph <- graph %>% causact:::dag_dim()
 nodes_df <- graph$nodes_df
 data_input <- nodes_df$data[1]
-length(noquote(data_input))
+eval(parse_expr(paste0("length(",data_input,")")))
 
-length(rlang::enexpr(data_input))
+data_length <- eval(parse_expr(paste0("length(",data_input,")")))
 
-######### carModelDF$getCard needs to be replaced
-data_length <- length(carModelDF$getCard)
+a_post <- drawsDF[,1]
+a_array <- array(as.matrix(a_post),c(4000))
+
+linear_combination <- a_array
+
 Prop_fit <- matrix(0,nrow = 4000, ncol = data_length)
 for(i in (1:data_length)) {
-  Prop_fit[,i] <- dbinom(carModelDF$getCard[i], 1, as.array(drawsDF,dim=1))
+  Prop_fit[,i] <- dbinom(carModelDF$getCard[i], 1, linear_combination)
 }
+
+LLmat <- log(Prop_fit)
+rel_n_eff <- relative_eff(exp(LLmat), chain_id = rep(1:4, each = 1000))
+rel_n_eff <- ifelse(is.na(rel_n_eff),mean(rel_n_eff,na.rm = T),rel_n_eff)
+loo <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
+print(loo)
+plot(loo)
+
+### Exmaple 2
+graph <- dag_create() %>%
+  dag_node("Bernoulli","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node("Probability","theta",
+           rhs = beta(2,2),
+           child = "y") %>%
+  dag_plate("Car Model","x",
+            nodeLabels = "theta",
+            data = carModelDF$carModel,
+            addDataNode = TRUE
+  )
+
+graph %>% dag_render()
+
+graph %>% dag_greta(mcmc = T)
+
+y_train <- parse_expr(graph$nodes_df$data[1])
+likelihood_distribution <- graph$nodes_df$rhs[1]
+data_length <- eval(parse_expr(paste0("length(",graph$nodes_df$data[1],")")))
+
+plateDimDF <-  graph$plate_index_df %>% dplyr::filter(!is.na(dataNode))
+plate_flag <- ifelse(nrow(plateDimDF)>0,1,0)
+a_label <- parse_expr(plateDimDF$indexLabel)
+a_dim <- parse_expr(paste0(plateDimDF$indexLabel,"_dim"))
+if(plate_flag==1){
+  a_post <- drawsDF[,(1:eval(a_dim))]
+  a_array <- array(as.matrix(a_post),c(4000,eval(a_dim)))
+} else{
+  a_post <- drawsDF[,1]
+  a_array <-array(as.matrix(a_post),c(4000))
+  }
+
+linear_combination <- a_array
+
+
+Prop_fit <- matrix(0,nrow = 4000, ncol = data_length)
+for(i in (1:data_length)) {
+  if(likelihood_distribution == "bernoulli"){
+    if(plate_flag==1){
+      Prop_fit[,i] <- dbinom(eval(y_train)[i], 1, a_array[,as.numeric(eval(a_label))[i]])
+    } else{Prop_fit[,i] <- dbinom(eval(y_train)[i], 1, a_array[,1]) }
+
+    } else{Prop_fit[,i] <- -1}
+}
+LLmat <- log(Prop_fit)
+rel_n_eff <- relative_eff(exp(LLmat), chain_id = rep(1:4, each = 1000))
+rel_n_eff <- ifelse(is.na(rel_n_eff),mean(rel_n_eff,na.rm = T),rel_n_eff)
+loo <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
+print(loo)
+print(loo2)
+plot(loo2)
+
+### linear regression
+data(attitude)
+design <- as.matrix(attitude[, 2:7])
+
+graph <- dag_create() %>%
+  dag_node("normal","y",
+           rhs = normal(mu,sd),
+           data = attitude$rating) %>%
+  dag_node("Mean","mu",
+           rhs = int+design %*% coefs,
+           child = "y") %>%
+  dag_node("Intercept","int",
+           rhs = normal(0,10),
+           child = "mu") %>%
+  dag_node("Coefficient","coefs",
+           rhs = normal(0,10,dim=ncol(design)),
+           child = "mu") %>%
+  dag_node("Standard deviation","sd",
+           rhs = cauchy(0, 3, truncation = c(0, Inf)),
+           child = "y")
+
+graph %>% dag_render()
+
+graph %>% dag_greta(mcmc = T)
+
+y_train <- parse_expr(graph$nodes_df$data[1])
+likelihood_distribution <- graph$nodes_df$rhs[1]
+data_length <- eval(parse_expr(paste0("length(",graph$nodes_df$data[1],")")))
+
+plateDimDF <-  graph$plate_index_df %>% dplyr::filter(!is.na(dataNode))
+plate_flag <- ifelse(nrow(plateDimDF)>0,1,0)
+if(plate_flag==1){
+  a_label <- parse_expr(plateDimDF$indexLabel)
+  a_dim <- parse_expr(paste0(plateDimDF$indexLabel,"_dim"))
+}
+
+if(plate_flag==1){
+  a_post <- drawsDF[,(1:eval(a_dim))]
+  a_array <- array(as.matrix(a_post),c(4000,eval(a_dim)))
+} else{
+  a_post <- drawsDF[,1]
+  a_array <-array(as.matrix(a_post),c(4000))
+}
+
+linear_combination <- a_array
+
+
+Prop_fit <- matrix(0,nrow = 4000, ncol = data_length)
+for(i in (1:data_length)) {
+  if(likelihood_distribution == "bernoulli"){
+    if(plate_flag==1){
+      Prop_fit[,i] <- dbinom(eval(y_train)[i], 1, a_array[,as.numeric(eval(a_label))[i]])
+    } else{Prop_fit[,i] <- dbinom(eval(y_train)[i], 1, a_array[,1]) }
+
+  } else if(likelihood_distribution == "normal"){
+    if(plate_flag==1){
+      Prop_fit[,i] <- dnorm(eval(y_train)[i], 1, a_array[,as.numeric(eval(a_label))[i]])
+    } else{Prop_fit[,i] <- dnorm(eval(y_train)[i], 1, a_array[,1]) }
+
+  } else if(likelihood_distribution == "possion"){
+
+  } else{Prop_fit[,i] <- -1}
+ }
+LLmat <- log(Prop_fit)
+rel_n_eff <- relative_eff(exp(LLmat), chain_id = rep(1:4, each = 1000))
+rel_n_eff <- ifelse(is.na(rel_n_eff),mean(rel_n_eff,na.rm = T),rel_n_eff)
+loo <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
+loo_linear <- loo
