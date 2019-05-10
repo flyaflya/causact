@@ -136,7 +136,7 @@ graph = dag_create() %>%
            rhs = beta(6,2))
 graph %>% dag_dim()
 graph %>% dag_render()
-system.time(graph %>% dag_greta(mcmc=TRUE, warmup = 400) ) ##takes 1 minute
+system.time(graph4 %>% dag_greta(mcmc=TRUE, warmup = 400) ) ##takes 1 minute
 ## with tf 1.12.0 and tf 0.5.0
 
 ## should take under 20 seconds with right configuration

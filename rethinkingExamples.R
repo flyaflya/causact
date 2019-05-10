@@ -6,6 +6,7 @@ library(rethinking)
 #library(causact)
 library(greta)
 library(tidyverse)
+library(causact)
 
 data("chimpanzees")
 chimpanzeesDF = chimpanzees %>%
