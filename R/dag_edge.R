@@ -23,13 +23,13 @@ dag_edge <- function(graph,
   ## checking that the 'from' and 'to' nodes exist in the graph.
   fromIDs = findNodeID(graph,from)
   if(anyNA(fromIDs)){
-    errorMessage <- paste("Node",from,"does not exist. Check for spelling errors. Check the order the nodes were created.")
+    errorMessage <- paste("Node",from,"does not exist. Check for spelling errors. Check the order the nodes were created!")
     stop(errorMessage)
   }
 
   toIDs = findNodeID(graph,to)
   if(anyNA(toIDs)){
-    errorMessage <- paste("Node",to,"does not exist. Check for spelling errors. Check the order the nodes were created.")
+    errorMessage <- paste("Node",to,"does not exist. Check for spelling errors. Check the order the nodes were created!")
     stop(errorMessage)
   }
 
