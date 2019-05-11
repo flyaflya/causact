@@ -19,6 +19,13 @@ dag_edge <- function(graph,
                      to,
                      type = as.character(NA)) {
 
+  ## Check that we maintain a DAG
+  ## That that the edge being created is not to the same node.
+  if(anyDuplicated(c(from,to))){
+    errorMessage <- paste("You have attempted to connect", c(from,to)[anyDuplicated(c(from,to))],"to itself, but this would create a cycle and is not a Directed Acyclic Graph. You cannot connect a node to itself in a DAG.")
+    stop(errorMessage)
+  }
+
   ## extract nodeIDs
   ## checking that the 'from' and 'to' nodes exist in the graph.
   fromIDs = findNodeID(graph,from)
