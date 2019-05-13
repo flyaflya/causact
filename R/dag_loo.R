@@ -1,3 +1,40 @@
+#' Generate efficient approximate leave-one-out cross-validation
+#'
+#' The input should be the graph created using \code{dag_create()} and results generated from \code{dag_greta(mcmc=TRUE)}
+#'
+#'
+#'
+#' @param
+#' @return return a named list with class c("psis_loo", "loo") and components. Please see the loo function in a package \code{rstanarm} for more details.
+#'
+#' @examples
+#' graph = dag_create() %>%
+#'   dag_node("Get Card","y",
+#'            rhs = bernoulli(theta),
+#'            data = carModelDF$getCard) %>%
+#'   dag_node(descr = "Card Probability by Car",label = "theta",
+#'            rhs = beta(2,2),
+#'            child = "y") %>%
+#'   dag_node("Car Model","x",
+#'            data = carModelDF$carModel,
+#'            child = "y") %>%
+#'   dag_plate("Car Model","x",
+#'             data = carModelDF$carModel,
+#'             nodeLabels = "theta")
+#'
+#' graph %>% dag_render()
+#' graph %>% dag_greta()
+#' graph %>% dag_render(shortLabel = TRUE)
+#' graph %>% dag_greta(mcmc=TRUE)
+#' tidyDrawsDF %>% dagp_plot()
+#' @importFrom dplyr bind_rows tibble left_join select add_row as_tibble
+#' @importFrom DiagrammeR create_graph add_global_graph_attrs
+#' @importFrom rlang enquo expr_text
+#' @importFrom igraph graph_from_data_frame topo_sort
+#' @importFrom tidyr gather
+#' @importFrom greta mcmc model as_data
+#' @export
+
 
 
 ### Original example from the "loo" package
@@ -104,7 +141,7 @@ library(greta)
 library(tidyverse)
 library(rlang)
 
-### Example 1
+### Example 1 Bernoulli_simple
 carModelDF$carModel[1:4]
 
 graph <- dag_create() %>%
@@ -147,7 +184,7 @@ loo <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
 print(loo)
 plot(loo)
 
-### Exmaple 2
+### Exmaple 2 Bernoulli_w_plate
 graph <- dag_create() %>%
   dag_node("Bernoulli","y",
            rhs = bernoulli(theta),
@@ -173,6 +210,7 @@ plateDimDF <-  graph$plate_index_df %>% dplyr::filter(!is.na(dataNode))
 plate_flag <- ifelse(nrow(plateDimDF)>0,1,0)
 a_label <- parse_expr(plateDimDF$indexLabel)
 a_dim <- parse_expr(paste0(plateDimDF$indexLabel,"_dim"))
+
 if(plate_flag==1){
   a_post <- drawsDF[,(1:eval(a_dim))]
   a_array <- array(as.matrix(a_post),c(4000,eval(a_dim)))
@@ -201,7 +239,7 @@ print(loo)
 print(loo2)
 plot(loo2)
 
-### linear regression
+### Example 3 linear regression
 data(attitude)
 design <- as.matrix(attitude[, 2:7])
 
@@ -226,6 +264,7 @@ graph %>% dag_render()
 
 graph %>% dag_greta(mcmc = T)
 
+
 y_train <- parse_expr(graph$nodes_df$data[1])
 likelihood_distribution <- graph$nodes_df$rhs[1]
 data_length <- eval(parse_expr(paste0("length(",graph$nodes_df$data[1],")")))
@@ -245,7 +284,6 @@ if(plate_flag==1){
   a_array <-array(as.matrix(a_post),c(4000))
 }
 
-linear_combination <- a_array
 
 
 Prop_fit <- matrix(0,nrow = 4000, ncol = data_length)
@@ -256,9 +294,24 @@ for(i in (1:data_length)) {
     } else{Prop_fit[,i] <- dbinom(eval(y_train)[i], 1, a_array[,1]) }
 
   } else if(likelihood_distribution == "normal"){
+
     if(plate_flag==1){
-      Prop_fit[,i] <- dnorm(eval(y_train)[i], 1, a_array[,as.numeric(eval(a_label))[i]])
-    } else{Prop_fit[,i] <- dnorm(eval(y_train)[i], 1, a_array[,1]) }
+      int_fit <- drawsDF[,1:eval(a_dim)]
+      coefs_fit <- t(cbind(drawsDF[,(eval(a_dim)+1):(ncol(drawsDF)-1)]))
+      mu_formular <- graph$nodes_df$rhs[graph$nodes_df$label=='mu']
+      X <- str_split(mu_formular, boundary("word"))[[1]][2]
+      mu_fit <- int_fit[,as.numeric(eval(a_label))[i]] + t(eval(parse_expr(X)) %*% coefs_fit)
+      sd_fit <- drawsDF[,ncol(drawsDF)]
+      Prop_fit[,i] <- dnorm(eval(y_train)[i], mu_fit, sd_fit)
+
+    } else{
+      int_fit <- drawsDF[,1]
+      coefs_fit <- t(cbind(drawsDF[,2:(ncol(drawsDF)-1)]))
+      mu_formular <- graph$nodes_df$rhs[graph$nodes_df$label=='mu']
+      X <- str_split(mu_formular, boundary("word"))[[1]][2]
+      mu_fit <- int_fit + t(eval(parse_expr(X)) %*% coefs_fit)
+      sd_fit <- drawsDF[,ncol(drawsDF)]
+      Prop_fit[,i] <- dnorm(eval(y_train)[i], mu_fit[,i], sd_fit) }
 
   } else if(likelihood_distribution == "possion"){
 
@@ -269,3 +322,86 @@ rel_n_eff <- relative_eff(exp(LLmat), chain_id = rep(1:4, each = 1000))
 rel_n_eff <- ifelse(is.na(rel_n_eff),mean(rel_n_eff,na.rm = T),rel_n_eff)
 loo <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
 loo_linear <- loo
+
+### Example 4 Poisson regression
+nycTicketsDF = ticketsDF %>%
+  group_by(date) %>%
+  summarize(numTickets = sum(daily_tickets)) %>%
+  mutate(dayOfWeek = lubridate::wday(date, label = TRUE))
+
+graph = dag_create() %>%
+  dag_node("# of tickets","K",
+           rhs = poisson(lambda),
+           data = nycTicketsDF$numTickets) %>%
+  dag_node("Exp Number of Tickets","lambda",
+           rhs = normal(4500,2000,truncation = c(0,Inf)),
+           child = "K") %>%
+  dag_plate("Day of The Week","day",
+            nodeLabels = "lambda",
+            data = nycTicketsDF$dayOfWeek,
+            addDataNode = TRUE)
+graph %>% dag_render()
+graph %>% dag_greta(mcmc = TRUE)
+
+###
+
+y_train <- parse_expr(graph$nodes_df$data[1])
+likelihood_distribution <- graph$nodes_df$rhs[1]
+data_length <- eval(parse_expr(paste0("length(",graph$nodes_df$data[1],")")))
+
+plateDimDF <-  graph$plate_index_df %>% dplyr::filter(!is.na(dataNode))
+plate_flag <- ifelse(nrow(plateDimDF)>0,1,0)
+if(plate_flag==1){
+  a_label <- parse_expr(plateDimDF$indexLabel)
+  a_dim <- parse_expr(paste0(plateDimDF$indexLabel,"_dim"))
+}
+
+if(plate_flag==1){
+  a_post <- drawsDF[,(1:eval(a_dim))]
+  a_array <- array(as.matrix(a_post),c(4000,eval(a_dim)))
+} else{
+  a_post <- drawsDF[,1]
+  a_array <-array(as.matrix(a_post),c(4000))
+}
+
+
+Prop_fit <- matrix(0,nrow = 4000, ncol = data_length)
+for(i in (1:data_length)) {
+  if(likelihood_distribution == "bernoulli"){
+    if(plate_flag==1){
+      Prop_fit[,i] <- dbinom(eval(y_train)[i], 1, a_array[,as.numeric(eval(a_label))[i]])
+    } else{Prop_fit[,i] <- dbinom(eval(y_train)[i], 1, a_array[,1]) }
+
+  } else if(likelihood_distribution == "normal"){
+
+    if(plate_flag==1){
+      int_fit <- drawsDF[,1:eval(a_dim)]
+      coefs_fit <- t(cbind(drawsDF[,(eval(a_dim)+1):(ncol(drawsDF)-1)]))
+      mu_formular <- graph$nodes_df$rhs[graph$nodes_df$label=='mu']
+      X <- str_split(mu_formular, boundary("word"))[[1]][2]
+      mu_fit <- int_fit[,as.numeric(eval(a_label))[i]] + t(eval(parse_expr(X)) %*% coefs_fit)
+      sd_fit <- drawsDF[,ncol(drawsDF)]
+      Prop_fit[,i] <- dnorm(eval(y_train)[i], mu_fit, sd_fit)
+
+    } else{
+      int_fit <- drawsDF[,1]
+      coefs_fit <- t(cbind(drawsDF[,2:(ncol(drawsDF)-1)]))
+      mu_formular <- graph$nodes_df$rhs[graph$nodes_df$label=='mu']
+      X <- str_split(mu_formular, boundary("word"))[[1]][2]
+      mu_fit <- int_fit + t(eval(parse_expr(X)) %*% coefs_fit)
+      sd_fit <- drawsDF[,ncol(drawsDF)]
+      Prop_fit[,i] <- dnorm(eval(y_train)[i], mu_fit[,i], sd_fit) }
+
+  } else if(likelihood_distribution == "poisson"){
+    if(plate_flag==1){
+      Prop_fit[,i] <- dpois(eval(y_train)[i],exp(a_array[,as.numeric(eval(a_label))[i]]))
+    } else{
+      Prop_fit[,i] <- dpois(eval(y_train)[i],exp(a_array[,1]))
+    }
+
+  } else{Prop_fit[,i] <- -1}
+}
+LLmat <- log(Prop_fit)
+rel_n_eff <- relative_eff(exp(LLmat), chain_id = rep(1:4, each = 1000))
+rel_n_eff <- ifelse(is.na(rel_n_eff),mean(rel_n_eff,na.rm = T),rel_n_eff)
+loo <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
