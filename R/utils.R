@@ -571,4 +571,16 @@ makeDiagMatrix = function(diagVec) {
     return(diagMatrix)
   }
 
+##Logistic function for distribution
+
+
+Logistic = function(x,
+                     midpoint = 0,
+                     growthr = 1,
+                     maximumV = 1){
+  f = maximumV/(1+exp(-growthr*(x-midpoint)))
+  return(f)
+  
+}
+
 
