@@ -189,3 +189,53 @@ graph %>% dag_greta()
 graph %>% dag_greta(mcmc = TRUE)
 tidyDrawsDF %>% dagp_plot()
 
+### greta example #6: Multiple Possion Regression
+data("warpbreaks")
+x <- as_data(model.matrix(breaks ~ wool + tension, warpbreaks))
+y <- as_data(warpbreaks$breaks)
+
+graph = dag_create() %>%
+  dag_node("final",label="poisson",rhs=poisson(exp(eta)), data=y) %>%
+  dag_node("eta",label="eta", rhs=x%*%beta, child="final") %>%
+  dag_node("x", label="x", data=x, child="eta") %>%
+  dag_node("beta",label="beta", rhs=c(int,coefs), child="eta") %>%
+  dag_node("intercept",label="int", rhs=variable(-Inf,Inf), child="beta") %>%
+  dag_node("coefficient",label="coefs", rhs=normal(0,5,dim=(ncol(x)-1)), child="beta")
+
+graph %>% dag_render()
+graph %>% dag_greta(mcmc=TRUE)
+
+### greta example #7: Hierarchical Linear Regression in General Conditional Formulation
+n_species  <- length(unique(iris$Species))
+species_id <- as.numeric(iris$Species)
+Z <- model.matrix(~ Species + Sepal.Length * Species - 1, data = iris)
+gamma_matrix <- multivariate_normal(matrix(0, 1, 2), diag(2), n_realisations = 3)
+gamma <- c(gamma_matrix)
+wi <- as_data(iris$Sepal.Width)
+Z  <- as_data(Z)
+
+
+graph = dag_create() %>%
+  dag_node("dist", label="dist", rhs=normal(mu,sd), data=iris$Sepal.Length) %>%
+  dag_node("mu", label="mu", rhs=int+coef*wi+Z%*%gamma, child="dist") %>%
+  dag_node("int", label="int", rhs=normal(0,10), child="mu") %>%
+  dag_node("coef", label="coef", rhs=normal(0,10), child="mu") %>%
+  dag_node("sd", label="sd", rhs=cauchy(0,3,truncation=c(0,Inf)), child="dist")
+graph %>% dag_render()
+graph %>% dag_greta(mcmc=TRUE)
+
+### greta example #8: Beyasian Neural Network
+N <- 100
+p <- 10
+y <- matrix(rnorm(N * p), N)%*%rnorm(10) +rnorm(N, sd=0.1)
+set.seed(23)
+graph = dag_create() %>%
+  dag_node("output", label="output", rhs=normal(x%*%weights, sd), data=y) %>%
+  dag_node("weights", label="weights", rhs=normal(0,1,dim=c(p,1)), child="output") %>%
+  dag_node("x", label="x", rhs=matrix(rnorm(N*p),N), child="output") %>%
+  dag_node("sd", label="sd", rhs=inverse_gamma(1,1), child="output") #%>%
+#dag_node("y", label="y", rhs=matrix(rnorm(N * p), N)%*%rnorm(10) +rnorm(N, sd=0.1), child="output")
+graph %>% dag_render()
+graph %>% dag_greta(mcmc=TRUE)
+
+
