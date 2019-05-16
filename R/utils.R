@@ -572,3 +572,17 @@ makeDiagMatrix = function(diagVec) {
   }
 
 
+
+
+##Logitic Function
+
+Logistic  = function(x,
+                     midpoint = 0,
+                     growthr = 1,
+                     maximumV = 1){
+  f = maximumV/(1+exp(-growthr*(x-midpoint)))
+  return(f)
+  
+}
+
+
