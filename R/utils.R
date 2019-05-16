@@ -574,7 +574,7 @@ makeDiagMatrix = function(diagVec) {
 
 
 
-##Logitic Function 
+##Logistic Function 
 
 Logistic  = function(x, # Variable
                      midpoint = 0, #duc ith the  x axis
