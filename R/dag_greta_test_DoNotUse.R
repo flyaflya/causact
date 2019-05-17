@@ -315,7 +315,7 @@ dag_greta <- function(graph,
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
-  meaningfulLabels(graph)  ###assign meaningful labels in cacheEnv
+  causact:::meaningfulLabels(graph)  ###assign meaningful labels in cacheEnv
   extraArgList = list(...)
   extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
   mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))

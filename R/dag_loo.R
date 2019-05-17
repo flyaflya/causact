@@ -338,6 +338,81 @@ graph %>% dag_render()
 graph %>% dag_greta(mcmc = T)
 
 
+graph = graph %>% causact:::dag_dim()
+graph = causact:::rhsPriorComposition(graph)
+graph = causact:::rhsOperationComposition(graph)
+
+nodeDF = graph$nodes_df
+edgeDF = graph$edges_df
+argDF = graph$arg_df
+plateDF = graph$plate_index_df
+plateNodeDF = graph$plate_node_df
+dimDF = graph$dim_df
+
+NodeToOutput = nodeDF %>%
+  dplyr::filter(obs == TRUE) %>%  ##only observed nodes
+  dplyr::inner_join(edgeDF, by = c("id" = "to")) %>%
+  distinct(from) %>%
+  inner_join(nodeDF,by = c("from"="id")) %>%
+  mutate(fitted_flag = if_else(obs == FALSE & distr == TRUE,1,0) ) %>%
+  left_join(filter(argDF,argName=="dim"), by = c("from"="rhsID"))
+
+fitted <- NodeToOutput %>%
+  dplyr::filter(fitted_flag == 1) %>%
+  select(label) %>%
+  unlist()
+
+fitted_vector  <-  paste0(fitted,"_fit")
+
+fitted_vector <- drawsDF %>%
+  select(fitted)
+
+colnames(fitted_vector) <- paste0(fitted,"_fit")
+
+if(sum(NodeToOutput$fitted_flag)<nrow(NodeToOutput)){
+  NodeToOutput_2 = NodeToOutput %>%
+    dplyr::filter(fitted_flag == 0) %>%
+    rename("id" = "from") %>%
+    dplyr::inner_join(edgeDF, by = c("id" = "to")) %>%
+    distinct(from) %>%
+    inner_join(nodeDF,by = c("from"="id")) %>%
+    mutate(fitted_flag = if_else(obs == FALSE & distr == TRUE,1,0) ) %>%
+    left_join(filter(argDF,argName=="dim"), by = c("from"="rhsID"))
+}
+
+fitted <- NodeToOutput_2 %>%
+  dplyr::filter(fitted_flag == 1) %>%
+  select(label) %>%
+  unlist()
+
+
+to_calculate <- NodeToOutput %>%
+  dplyr::filter(fitted_flag == 0) %>%
+  select(label,rhs)
+
+eval(rlang::parse_expr(to_calculate$rhs))
+
+formula_words <- str_split(to_calculate$rhs, boundary("word"))[[1]]
+for(i in 1:length(formula_words)){
+
+  fitted_vector <- drawsDF[,grep(formula_words[i], colnames(drawsDF))]
+  colnames(fitted_vector) <- paste0(fitted,"_fit")
+}
+i <- 1
+
+
+
+DrawCol <- vector('numeric')
+
+for(i in 1:length(fitted)){
+  DrawCol <- grep(fitted[i], colnames(drawsDF))
+  fitted_vector <- cbind(fitted_vector,drawsDF[,DrawCol])
+
+}
+
+
+colnames(fitted_vector) <- paste0(fitted,"_fit")
+
 #
 # loo <- dag_loo()
 # print(loo)
@@ -418,6 +493,8 @@ graph %>% dag_greta(mcmc = TRUE)
 loo <- dag_loo()
 print(loo)
 plot(loo)
+
+
 
 
 ### Example 5 Poisson regression
