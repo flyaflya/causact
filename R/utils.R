@@ -560,17 +560,3 @@ getLevelNames = function(dataNode) {
 
 
 
-##Logistic Function 
-
-Logistic  = function(x, # Variable
-                     midpoint = 0, #duc ith the  x axis
-                     growthr = 1,  # growth rate for the sigmoid
-                     maximumV = 1 #maximun value in sigmoid function
-                     )
-                     {
-  f = maximumV/(1+exp(-growthr*(x-midpoint)))
-  return(f)
-  
-}
-
-
