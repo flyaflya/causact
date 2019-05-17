@@ -572,3 +572,4 @@ makeDiagMatrix = function(diagVec) {
   }
 
 
+
