@@ -45,7 +45,7 @@ dag_greta <- function(graph,
                       ...) {
 
   ###get dimension information
-  graph = graph %>% dag_dim()
+  graph = graph %>% causact:::dag_dim()
 
   rhsPriorComposition = function(graph) {
 
