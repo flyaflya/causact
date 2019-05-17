@@ -570,3 +570,5 @@ makeDiagMatrix = function(diagVec) {
     diagMatrix[cbind(i, i)] <- diagVec
     return(diagMatrix)
   }
+
+
