@@ -68,14 +68,20 @@ dag_loo <- function(){
         sd_fit <- as.numeric(unlist(drawsDF[,ncol(drawsDF)]))
         Prop_fit[,i] <- dnorm(eval(y_train)[i], mu_fit[,i], sd_fit)
 
-      } else{
-        int_fit <- drawsDF[,1]
-        coefs_fit <- t(cbind(drawsDF[,2:(ncol(drawsDF)-1)]))
-        mu_formular <- graph$nodes_df$rhs[graph$nodes_df$label=='mu']
-        X <- str_split(mu_formular, boundary("word"))[[1]][2]
-        mu_fit <- unlist(int_fit) + t(eval(parse_expr(X)) %*% coefs_fit)
-        sd_fit <- as.numeric(unlist(drawsDF[,ncol(drawsDF)]))
-        Prop_fit[,i] <- dnorm(eval(y_train)[i], mu_fit[,i], sd_fit) }
+      } else {
+        mu_fit <- a_array[,1]
+        sd_fit <- array(as.matrix(drawsDF[,2]),c(4000,1))[,1]
+        Prop_fit[,i] <- dnorm(eval(y_train)[i], mu_fit, sd_fit)
+      }
+
+        # else{
+        # int_fit <- drawsDF[,1]
+        # coefs_fit <- t(cbind(drawsDF[,2:(ncol(drawsDF)-1)]))
+        # mu_formular <- graph$nodes_df$rhs[graph$nodes_df$label=='mu']
+        # X <- str_split(mu_formular, boundary("word"))[[1]][2]
+        # mu_fit <- unlist(int_fit) + t(eval(parse_expr(X)) %*% coefs_fit)
+        # sd_fit <- as.numeric(unlist(drawsDF[,ncol(drawsDF)]))
+        # Prop_fit[,i] <- dnorm(eval(y_train)[i], mu_fit[,i], sd_fit) }
 
     } else if(likelihood_distribution == "poisson"){
       if(plate_flag==1){
@@ -97,127 +103,127 @@ dag_loo <- function(){
 }
 
 ### Original example from the "loo" package
-# library("rstanarm")
-# library("bayesplot")
-# library("loo")
-#
-# data(roaches)
-# str(roaches)
-#
-# roaches$roach1 <- roaches$roach1 / 100
-#
-# fit1 <-
-#   stan_glm(
-#     formula = y ~ roach1 + treatment + senior,
-#     #offset = log(exposure2),
-#     data = roaches,
-#     family = poisson(link = "log"),
-#     prior = normal(0, 2.5, autoscale = TRUE),
-#     prior_intercept = normal(0, 5, autoscale = TRUE),
-#     seed = 12345
-#   )
-#
-# loo1 <- loo(fit1, save_psis = TRUE)
-# plot(loo1)
-# print(loo1)
+library("rstanarm")
+library("bayesplot")
+library("loo")
+
+data(roaches)
+str(roaches)
+
+roaches$roach1 <- roaches$roach1 / 100
+
+fit1 <-
+  stan_glm(
+    formula = y ~ roach1 + treatment + senior,
+    #offset = log(exposure2),
+    data = roaches,
+    family = poisson(link = "log"),
+    prior = normal(0, 2.5, autoscale = TRUE),
+    prior_intercept = normal(0, 5, autoscale = TRUE),
+    seed = 12345
+  )
+
+loo1 <- loo(fit1, save_psis = TRUE)
+plot(loo1)
+print(loo1)
 
 ### Analyze the data using greta
-# library(greta)
-# library(tidyverse)
-# library(rlang)
+library(greta)
+library(tidyverse)
+library(rlang)
+
+
+X <- roaches %>%
+  select(roach1,treatment,senior)
+x_greta <- as_data(X)
+y_greta <- as_data(roaches$y)
+
+a <- normal(0, 5)
+b1 <- normal(0, 2.5)
+b2 <- normal(0, 2.5)
+b3 <- normal(0, 2.5)
+y <- a+ b1*X$roach1 + b2*X$treatment + b3*X$senior
+lambda <- exp(y)
+distribution(y_greta) <- poisson(lambda)
+
+m_greta <- model(a,b1,b2,b3)
+plot(m_greta)
 #
-#
-# X <- roaches %>%
-#   select(roach1,treatment,senior)
-# x_greta <- as_data(X)
-# y_greta <- as_data(roaches$y)
-#
-# a <- normal(0, 5)
-# b1 <- normal(0, 2.5)
-# b2 <- normal(0, 2.5)
-# b3 <- normal(0, 2.5)
-# y <- a+ b1*X$roach1 + b2*X$treatment + b3*X$senior
-# lambda <- exp(y)
-# distribution(y_greta) <- poisson(lambda)
-#
-# m_greta <- model(a,b1,b2,b3)
-# plot(m_greta)
-#
-# draw_m_greta <- mcmc(m_greta, warmup = 3000, n_samples = 1000)
+draw_m_greta <- mcmc(m_greta, warmup = 3000, n_samples = 1000)
 # # draw_trace <- mcmc_trace(draw_m_greta)
 # # draw_pairs <- mcmc_pairs(draw_m_greta)
 # # draw_trace
 # # draw_pairs
 #
 # summary(draw_m_greta)
-# para_fit <- summary(draw_m_greta)[[1]][,1]
-# y_fit <- para_fit[1]+ para_fit[2]*X$roach1 + para_fit[3]*X$treatment + para_fit[4]*X$senior
-# lambda_fit <- exp(y_fit)
-# dpois(153,100.247993)
-# summary(lambda_fit - fit1$fitted.values)
-#
-# ### manually calculate pointwise log-likelihood
-# ParaEst_post <- as_tibble(rbind(draw_m_greta[[1]],draw_m_greta[[2]],draw_m_greta[[3]],draw_m_greta[[4]]))
-#
-# a_post <- ParaEst_post[,1]
-# a_array <- array(as.matrix(a_post),c(4000))
-#
-# b1_post <- ParaEst_post[,2]
-# b1_array <- array(as.matrix(b1_post),c(4000))
-#
-# b2_post <- ParaEst_post[,3]
-# b2_array <- array(as.matrix(b2_post),c(4000))
-#
-# b3_post <- ParaEst_post[,3]
-# b3_array <- array(as.matrix(b3_post),c(4000))
-#
-# Prop_fit <- matrix(0,nrow = 4000, ncol = nrow(X))
-# i <- 1
-# for(i in (1:nrow(X))) {
-#
-#   Prop_fit[,i] <- dpois(y_greta[i] ,exp(a_array+ b1_array*X$roach1[i] +
-#                                        b2_array*X$treatment[i] + b3_array*X$senior[i]))
-# }
-# dim(Prop_fit)
-# summary(Prop_fit)
-# LLmat <- log(Prop_fit)
-# LLmat[is.na]
-# rel_n_eff <- relative_eff(exp(LLmat), chain_id = rep(1:4, each = 1000))
-# rel_n_eff <- ifelse(is.na(rel_n_eff),mean(rel_n_eff,na.rm = T),rel_n_eff)
-# loo2 <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
-# plot(loo2)
-#
-# ### compare loo results from rstanarm and greta
-# print(loo1)
-# print(loo2)
+para_fit <- summary(draw_m_greta)[[1]][,1]
+y_fit <- para_fit[1]+ para_fit[2]*X$roach1 + para_fit[3]*X$treatment + para_fit[4]*X$senior
+lambda_fit <- exp(y_fit)
+dpois(153,100.247993)
+summary(lambda_fit - fit1$fitted.values)
+
+### manually calculate pointwise log-likelihood
+ParaEst_post <- as_tibble(rbind(draw_m_greta[[1]],draw_m_greta[[2]],draw_m_greta[[3]],draw_m_greta[[4]]))
+
+a_post <- ParaEst_post[,1]
+a_array <- array(as.matrix(a_post),c(4000))
+
+b1_post <- ParaEst_post[,2]
+b1_array <- array(as.matrix(b1_post),c(4000))
+
+b2_post <- ParaEst_post[,3]
+b2_array <- array(as.matrix(b2_post),c(4000))
+
+b3_post <- ParaEst_post[,3]
+b3_array <- array(as.matrix(b3_post),c(4000))
+
+Prop_fit <- matrix(0,nrow = 4000, ncol = nrow(X))
+i <- 1
+for(i in (1:nrow(X))) {
+
+  Prop_fit[,i] <- dpois(y_greta[i] ,exp(a_array+ b1_array*X$roach1[i] +
+                                       b2_array*X$treatment[i] + b3_array*X$senior[i]))
+}
+dim(Prop_fit)
+summary(Prop_fit)
+LLmat <- log(Prop_fit)
+LLmat[is.na]
+rel_n_eff <- relative_eff(exp(LLmat), chain_id = rep(1:4, each = 1000))
+rel_n_eff <- ifelse(is.na(rel_n_eff),mean(rel_n_eff,na.rm = T),rel_n_eff)
+loo2 <- loo(LLmat, r_eff = rel_n_eff, cores = 4,save_psis = TRUE)
+plot(loo2)
+
+### compare loo results from rstanarm and greta
+print(loo1)
+print(loo2)
 
 ############# calculate loo using the carModelDF in causact
 # remotes::install_github("flyaflya/causact")
 # devtools::install_github('flyaflya/causact')
-# library(causact)
-# library(loo)
-# library(greta)
-# library(tidyverse)
-# library(rlang)
+library(causact)
+library(loo)
+library(greta)
+library(tidyverse)
+library(rlang)
 #
 # ### Example 1 Bernoulli_simple
-# carModelDF$carModel[1:4]
-#
-# graph <- dag_create() %>%
-#   dag_node("Bernoulli","y",
-#            rhs = bernoulli(theta),
-#            data = carModelDF$getCard) %>%
-#   dag_node("Probability","theta",
-#            rhs = beta(2,2),
-#            child = "y")
-#
-# graph %>% dag_render()
-#
-# graph %>% dag_greta(mcmc = T)
-#
-# loo <- dag_loo()
-# print(loo)
-# plot(loo)
+carModelDF$carModel[1:4]
+
+graph <- dag_create() %>%
+  dag_node("Bernoulli","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node("Probability","theta",
+           rhs = beta(2,2),
+           child = "y")
+
+graph %>% dag_render()
+
+graph %>% dag_greta(mcmc = T)
+
+loo1 <- dag_loo()
+print(loo1)
+plot(loo1)
 ###
 
 # graph %>% causact:::dag_dim()
@@ -247,27 +253,28 @@ dag_loo <- function(){
 # plot(loo)
 
 ### Exmaple 2 Bernoulli_w_plate
-# graph <- dag_create() %>%
-#   dag_node("Bernoulli","y",
-#            rhs = bernoulli(theta),
-#            data = carModelDF$getCard) %>%
-#   dag_node("Probability","theta",
-#            rhs = beta(2,2),
-#            child = "y") %>%
-#   dag_plate("Car Model","x",
-#             nodeLabels = "theta",
-#             data = carModelDF$carModel,
-#             addDataNode = TRUE
-#   )
-#
-# graph %>% dag_render()
-#
-# graph %>% dag_greta(mcmc = T)
-#
-# loo <- dag_loo()
-# print(loo)
-# plot(loo)
+graph <- dag_create() %>%
+  dag_node("Bernoulli","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node("Probability","theta",
+           rhs = beta(2,2),
+           child = "y") %>%
+  dag_plate("Car Model","x",
+            nodeLabels = "theta",
+            data = carModelDF$carModel,
+            addDataNode = TRUE
+  )
 
+graph %>% dag_render()
+
+graph %>% dag_greta(mcmc = T)
+
+loo2 <- dag_loo()
+print(loo2)
+plot(loo2)
+
+print(loo1)
 # y_train <- parse_expr(graph$nodes_df$data[1])
 # likelihood_distribution <- graph$nodes_df$rhs[1]
 # data_length <- eval(parse_expr(paste0("length(",graph$nodes_df$data[1],")")))
@@ -306,29 +313,31 @@ dag_loo <- function(){
 # plot(loo2)
 
 ### Example 3 linear regression
-# data(attitude)
-# design <- as.matrix(attitude[, 2:7])
-#
-# graph <- dag_create() %>%
-#   dag_node("normal","y",
-#            rhs = normal(mu,sd),
-#            data = attitude$rating) %>%
-#   dag_node("Mean","mu",
-#            rhs = int+design %*% coefs,
-#            child = "y") %>%
-#   dag_node("Intercept","int",
-#            rhs = normal(0,10),
-#            child = "mu") %>%
-#   dag_node("Coefficient","coefs",
-#            rhs = normal(0,10,dim=ncol(design)),
-#            child = "mu") %>%
-#   dag_node("Standard deviation","sd",
-#            rhs = cauchy(0, 3, truncation = c(0, Inf)),
-#            child = "y")
-#
-# graph %>% dag_render()
-#
-# graph %>% dag_greta(mcmc = T)
+data(attitude)
+design <- as.matrix(attitude[, 2:7])
+
+graph <- dag_create() %>%
+  dag_node("normal","y",
+           rhs = normal(mu,sd),
+           data = attitude$rating) %>%
+  dag_node("Mean","mu",
+           rhs = int+design %*% coefs,
+           child = "y") %>%
+  dag_node("Intercept","int",
+           rhs = normal(0,10),
+           child = "mu") %>%
+  dag_node("Coefficient","coefs",
+           rhs = normal(0,10,dim=ncol(design)),
+           child = "mu") %>%
+  dag_node("Standard deviation","sd",
+           rhs = cauchy(0, 3, truncation = c(0, Inf)),
+           child = "y")
+
+graph %>% dag_render()
+
+graph %>% dag_greta(mcmc = T)
+
+
 #
 # loo <- dag_loo()
 # print(loo)
@@ -393,47 +402,47 @@ dag_loo <- function(){
 # loo_linear <- loo
 
 ### Example 4 linear regression2
-# graph = dag_create() %>%
-#   dag_node("Cherry Tree Height","X",
-#            rhs = normal(mu,sigma),
-#            data = trees$Height) %>%
-#   dag_node("Exp Height of Tree","mu",
-#            rhs = normal(50,24.5),
-#            child = 'X') %>%
-#   dag_node("Sd of Tree","sigma",
-#            rhs = uniform (0,50),
-#            child = 'X')
-# graph %>% dag_render()
-# graph %>% dag_greta(mcmc = TRUE)
-#
-# loo <- dag_loo()
-# print(loo)
-# plot(loo)
+graph = dag_create() %>%
+  dag_node("Cherry Tree Height","X",
+           rhs = normal(mu,sigma),
+           data = trees$Height) %>%
+  dag_node("Exp Height of Tree","mu",
+           rhs = normal(50,24.5),
+           child = 'X') %>%
+  dag_node("Sd of Tree","sigma",
+           rhs = uniform (0,50),
+           child = 'X')
+graph %>% dag_render()
+graph %>% dag_greta(mcmc = TRUE)
+
+loo <- dag_loo()
+print(loo)
+plot(loo)
 
 
 ### Example 5 Poisson regression
-# nycTicketsDF = ticketsDF %>%
-#   group_by(date) %>%
-#   summarize(numTickets = sum(daily_tickets)) %>%
-#   mutate(dayOfWeek = lubridate::wday(date, label = TRUE))
-#
-# graph = dag_create() %>%
-#   dag_node("# of tickets","K",
-#            rhs = poisson(lambda),
-#            data = nycTicketsDF$numTickets) %>%
-#   dag_node("Exp Number of Tickets","lambda",
-#            rhs = normal(4500,2000,truncation = c(0,Inf)),
-#            child = "K") %>%
-#   dag_plate("Day of The Week","day",
-#             nodeLabels = "lambda",
-#             data = nycTicketsDF$dayOfWeek,
-#             addDataNode = TRUE)
-# graph %>% dag_render()
-# graph %>% dag_greta(mcmc = TRUE)
-#
-# loo <- dag_loo()
-# print(loo)
-# plot(loo)
+nycTicketsDF = ticketsDF %>%
+  group_by(date) %>%
+  summarize(numTickets = sum(daily_tickets)) %>%
+  mutate(dayOfWeek = lubridate::wday(date, label = TRUE))
+
+graph = dag_create() %>%
+  dag_node("# of tickets","K",
+           rhs = poisson(lambda),
+           data = nycTicketsDF$numTickets) %>%
+  dag_node("Exp Number of Tickets","lambda",
+           rhs = normal(4500,2000,truncation = c(0,Inf)),
+           child = "K") %>%
+  dag_plate("Day of The Week","day",
+            nodeLabels = "lambda",
+            data = nycTicketsDF$dayOfWeek,
+            addDataNode = TRUE)
+graph %>% dag_render()
+graph %>% dag_greta(mcmc = TRUE)
+
+loo <- dag_loo()
+print(loo)
+plot(loo)
 
 ###
 
