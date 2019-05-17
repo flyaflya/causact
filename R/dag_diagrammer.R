@@ -26,16 +26,16 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   if(length(class_g) > 1){
     ## This specific case is hard-coded as it has occured often in early use by the author
     if(class_g[1] == chr("grViz") && class_g[2]=="htmlwidget"){
-      errorMessage <- paste0("A rendered Causact Graph assigned to ",deparse(substitute(graph)),". Check the declaration for a dag_render() call.")
+      errorMessage <- paste0("Given rendered Causact Graph. Check the declaration for a dag_render() call.")
     }
     else {
-      errorMessage <- paste0("Cannot convert ",deparse(substitute(graph))," to a Diagrammer object as it is not a Causact Graph.")
+      errorMessage <- paste0("Cannot convert given object to a Diagrammer object as it is not a Causact Graph.")
     }
     stop(errorMessage)
   }
   ## Now check the single class
   if(class_g != "causact_graph"){
-    errorMessage <- paste0("Cannot convert ",deparse(substitute(graph))," to a Diagrammer object as it is not a Causact Graph.")
+    errorMessage <- paste0("Cannot convert given object to a Diagrammer object as it is not a Causact Graph.")
     stop(errorMessage)
   }
 
