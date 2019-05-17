@@ -99,7 +99,6 @@ average= tidyDrawsDF%>%
   mutate(prob=1/(1+exp(-value)))%>% # Probability of every tank
   summarise(prob = median(prob)) # The median value of all probabilities
   
-  
 data=merge(d,Post,by="tank") # Merge probabilities  of posterior with the proportion of survival in the original data
 
 data=data%>%
@@ -137,5 +136,4 @@ tibble(x = p) %>% ggplot(aes(x = x)) +
   geom_density(fill = "cadetblue1",color ="cadetblue1") + 
   xlab("probability of survival ")
 
-  
 ```
