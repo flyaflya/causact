@@ -558,6 +558,7 @@ getLevelNames = function(dataNode) {
   return(nameVector)
 }
 
+
 ##function to make diagonal matrix given vector of diagonal elements
 makeDiagMatrix = function(diagVec) {
 
@@ -569,4 +570,3 @@ makeDiagMatrix = function(diagVec) {
     diagMatrix[cbind(i, i)] <- diagVec
     return(diagMatrix)
   }
-
