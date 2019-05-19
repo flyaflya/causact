@@ -130,3 +130,9 @@ drawsDF%>%ggplot(aes(x = sigma_b)) +
 
 
 ```
+Other way to plot the posterior distributions is to use dag_render from Causact package
+```{r prob_3, fig.cap = "Posterior Distributions",fig.width=12, fig.height=8}
+ 
+
+drawsDF %>% dagp_plot()
+```
