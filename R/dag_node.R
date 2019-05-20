@@ -75,6 +75,25 @@ dag_node <- function(graph,
   if(numArgs == 1) {descr = "Type ?dag_node"
                     label = "to START MODELLING"}
 
+  ## Validate that the first argument is indeed a causact_graph
+  class_g <- class(graph)
+  ## Any causact_graph will have class length of 1
+  if(length(class_g) > 1){
+    ## This specific case is hard-coded as it has occured often in early use by the author
+    if(class_g[1] == chr("grViz") && class_g[2]=="htmlwidget"){
+      errorMessage <- paste0("Given rendered Causact Graph.Check the declaration for a dag_render() call.")
+    }
+    else {
+      errorMessage <- paste0("Cannot add dag_node() to given object as it is not a Causact Graph.")
+    }
+    stop(errorMessage)
+  }
+  ## Now check the single class
+  if(class_g != "causact_graph"){
+    errorMessage <- paste0("Cannot add dag_node() to given object as it is not a Causact Graph.")
+    stop(errorMessage)
+  }
+
   # capture data as quosure and rhs as expression
   dataQuo = rlang::enquo(data) ##capture as quosure to get env
   dataString = ifelse(is.null(data),NA,rlang::quo_name(dataQuo))
