@@ -66,7 +66,7 @@ set.seed(123)
 rbern(n=7,prob=0.5)
 ```
 
-## Learning ggplot2
+## Learning causact
 
 If you are new to causact you are better off starting with a systematic introduction. The book from Dr.Adam Fleischhacke named __The Business Analyst's Guide To Business Analytics__ could give you more help on the whole workflow and the usage of the package.
 
