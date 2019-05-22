@@ -4,8 +4,10 @@ Title: Accelerated business analytics workflows
 Version: 0.1.0
 Authors@R: person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre"))
 Maintainer: Adam Fleischhacker <ajf@udel.edu>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Causact is user friendly package disigned with the purpuse of facilitate the implementation of Bayesian
+models. The packages uses a Directe Acyclic Graph (DAG) representation of the model that alows the user to easily 
+understand relations between variables.    Causact is a graphical bridge between the matheatical and statistical
+models and the user.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -23,3 +25,6 @@ Imports:
     stringr,
     cowplot
 RoxygenNote: 6.1.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
