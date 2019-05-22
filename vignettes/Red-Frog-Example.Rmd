@@ -25,8 +25,7 @@ library(stringr)
 
 ```
 
-
-We want to explore the Red frog tadpole mortality probability in 48 tanks, we have the original the original number of tadpole in the tank and t the number of survivors. The Bayesian model correspond to the next DAG (Directed Acyclic Graph).
+We want to explore the Red frog tadpole mortality probability in 48 tanks, we have the original number of the tadpole in the tank and t the number of survivors. The Bayesian model corresponds to the next DAG (Directed Acyclic Graph).
 
 $s_{i} \sim$Binomial}$(n_{i},p_{i})$
 
@@ -40,6 +39,7 @@ $\sigma \sim$ HalfCauchy (0,1)
 
 
 
+The first step is to import the data and create a tank number for every observation.
  
 ```{r red_model, fig.keep='all', fig.cap = "Directed Acyclic Graph (DAG) obtained using Causact that represents the model"}
 
@@ -48,7 +48,76 @@ d = reedfrogs
 
 d=d%>%
   mutate(tank=row_number()) #make every observation a tank
+```
 
+
+Now we will start building the Directed Acyclic Graph. First with `dag_create` we indicate the beginning of the DAG, then with dag_node we add the first node to our model, the argument in appearance order is: `description`, is a long label that should describe the outcome of the node; `label`, with this short character we will refer to the node;
+the right-hand side (`rhs`), assigns a distribution for the outcome of the node either based in constants or in other variables and `data`  is a vector or data frame with observed outcomes for the node. With `dag_render` we can visualize the model, the argument `shortlabel = FALSE` (default option) shows the name and variable for the distribution assigned for the node.
+
+
+```{r red_model_1node, fig.keep='all', fig.cap = "Directed Acyclic Graph (DAG) obtained using Causact that represents the model"}
+graph = dag_create() %>%
+  dag_node("Tadpole Mortality","s", 
+           rhs = binomial(n,p), #Give the node a distribution
+           data = d$surv)  # Add data to the node
+  
+dag_render(graph ,shortLabel = FALSE)
+
+```
+Now we are ready to build the second layer of the model. In the first node, we give to the probability of survival a distribution that depends on 2 variables n (number of frog in the tank) and p (probability of survival in the tank $i$), as a consequence this 2 variables should be parents of our node Tadpole Mortality. To achieve this goal we use our previous graph and the `dag_node` command again, but now we are going to use the argument `child='p'` to indicate the label of the node's child. In these cases, Tadpole Mortality (s) is the child of the number of frog in the tank (n) and the probability of survival in the tank $i$ (p).
+
+```{r red_model_2node, fig.keep='all', fig.cap = "Directed Acyclic Graph (DAG) obtained using Causact that represents the model"}
+
+graph=  dag_node(graph,"Number of frogs","n",
+           data = d$density, 
+           child = "s")%>% # Indicate the childs of the node 
+  dag_node("Probability of survive","p",
+           rhs = ilogit(alpha), 
+           child = "s")
+
+graph %>% dag_render(shortLabel = FALSE)
+
+```
+
+In a similar way, we will add the parent node to the probability of survival.
+
+```{r red_model_3node, fig.keep='all', fig.cap = "Directed Acyclic Graph (DAG) obtained using Causact that represents the model"}
+graph = dag_node(graph,"logaritmic odds tank","alpha",
+           child = "p",
+           rhs = normal(a,b))
+  
+
+graph %>% dag_render(shortLabel = FALSE) # Plot the model
+
+```
+Now we need to parent nodes for the logarithmic odds of the the tank i, we follow a the same workflow from the two previous steps:
+
+```{r red_model_4node, fig.keep='all', fig.cap = "Directed Acyclic Graph (DAG) obtained using Causact that represents the model"}
+graph = dag_node(graph,"Average","a",
+            rhs = normal(0,1), 
+            child = ("alpha"))%>%
+  dag_node("Deviation","b",
+            rhs = cauchy(0,1,truncation = c(0,Inf)),
+            child = ("alpha")) 
+ 
+graph %>% dag_render(shortLabel = FALSE) # Plot the model
+
+```
+
+Finally, we want to indicate that each tank has its own logarithmic odds of survival. In this step we use the `dag_plate` command with arguments: `description`, as we did we the node the plate need a clear description that captures the meaning of the cluster; `label`, a short name to use as an index; `data`, a vector that represents the categorical data whose unique values become the cluster (plate) index and `nodeLabels` a character vector that indicates the nodes that are affected by the cluster.
+
+```{r red_model_5node, fig.keep='all', fig.cap = "Directed Acyclic Graph (DAG) obtained using Causact that represents the model"}
+graph = dag_plate(graph,"tank", "i",
+            data = d$tank,
+            nodeLabels = c("alpha")) #Indicate the number of tanks 
+
+graph %>% dag_render(shortLabel = FALSE) # Plot the model
+```
+
+
+The construction of the graph doesn't need to be done step by step it can be made in just one step as is shown in the next chunk. We set the shortLabel=TRUE in the dag render to make the DAG simpler.
+
+```{r red_model_6node, fig.keep='all', fig.cap = "Directed Acyclic Graph (DAG) obtained using Causact that represents the model"}
 graph = dag_create() %>%
   dag_node("Tadpole Mortality","s", 
            rhs = binomial(n,p), #Give the node a distribution
@@ -72,14 +141,29 @@ graph = dag_create() %>%
             data = d$tank,
             nodeLabels = c("alpha")) #Indicate the number of tanks 
 
-graph %>% dag_render(shortLabel = FALSE) # Plot the model
-graph %>% dag_greta(mcmc=TRUE) # generate greta code and run mcmc to get the the posteroirs
+graph %>% dag_render(shortLabel = TRUE) # Plot the model
 
 
 ```
 
 
-The prevoius lines show the greta code generated by Causact
+The command `dag_greta` will first generate the greta code that represents the model in our graph, setting `mcmc = TRUE` runs the Markov chain Monte Carlo (mcmc) in the model to generate posterior distributions based in the observed data.
+
+```{r greta, fig.keep='all', fig.cap = "Directed Acyclic Graph (DAG) obtained using Causact that represents the model"}
+graph %>% dag_greta(mcmc=TRUE) # generate greta code and run mcmc to get the the posteroirs
+```
+
+
+The previous lines show the greta code generated by Causact
+
+
+Running `dag_greta(mcmc=TRUE)` will generate three different data frame draws, drawsDF and tidyDrawsDF. The first data frame is a large mcmc list, the second one has every variable as a column and the observations as a row the last one make drawsDF a tidy frame with two columns.
+
+In the next lines, we will extract some information to observe the results of the example.
+
+In this part first, we use tidyDrawsDF to extract the information about the logarithmic odds ($\alpha_{tank}$), then using the logistic function we compute the probabilities of survival in every tank with the help of functions from `dplyr`. with `ggplot2` We plot the probability and the original proportion of survival for every tank.
+
+In the second part of the code, we plot the first 100 Gaussian generated for the logistic odds using the information from drawsDF.
 
 ```{r Prob_surb_1, fig.cap="", fig.show='hold'}
 
@@ -106,7 +190,7 @@ data=data%>%
   gather(Method,Probability,Data,Posterior) # Get Tidy data
 
 
-## Make a nice plot with the posterior probabilities and the original proportions divide as small tanks, median tanks and large tanks
+## Make a nice plot with the posterior probabilities and the original proportions divide as small tanks, medium tanks, and large tanks
 
 data%>%ggplot(aes(x=tank,y=Probability, colour="Method"))+ 
   geom_point(aes(color=Method))+
@@ -124,8 +208,9 @@ for (i in 1:100)
 
 ```
 
-Left: Probability of survival in each tank. Right: Infered population of survibal across tanks
+Left: Probability of survival in each tank. Right: Inferred population of survival across tanks
 
+In the last example, we will generate the probability of survival for 8000 simulated tanks using the information from drawsDF. We use the `rnomr` command from the r base and the median and standard deviation obtained in the mcmc procedure, with `ggplot2` we plot a nice density function as a function of the probability of survival.
 ```{r prob, fig.cap = "Probability of survival for 8000 new simulated tanks", fig.align='center', include=TRUE}
  
 sim_tanks = rnorm(8000,drawsDF$a,drawsDF$b) # Generate 8000 simulated tank
