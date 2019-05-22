@@ -1,11 +1,3 @@
----
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## Overview
 Causact is a package to accelerate business analytics workflows.You provide the data, tell Causact what is the logic for the workflow, and it takes care of the details. It draws the beautiful graph to show the whole analytics workflow clearly.
 
