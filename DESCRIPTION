@@ -4,9 +4,8 @@ Title: Accelerated business analytics workflows
 Version: 0.1.0
 Authors@R: person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre"))
 Maintainer: Adam Fleischhacker <ajf@udel.edu>
-Description: Causact is user friendly package disigned with the purpuse of facilitate the implementation of Bayesian
-models. The packages uses a Directe Acyclic Graph (DAG) representation of the model that alows the user to easily 
-understand relations between variables.    Causact is a graphical bridge between the matheatical and statistical
+Description: Causact is a user-friendly package designed with the purpose of facilitating the implementation of Bayesian
+models. The package uses a Directed Acyclic Graph (DAG) representation of the model that allows the user to easily understand relations between variables.   Causact is a graphical bridge between the mathematical and statistical
 models and the user.
 License: MIT + file LICENSE
 Encoding: UTF-8
