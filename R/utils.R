@@ -103,7 +103,7 @@ rhsDecompFormula = function(rhs) {
   formString = as.character(formExpr)
   argName = all.vars(formExpr)
   argValue = argName ##populate both with same value for now...might change
-  fnName = deparse(formExpr)
+  fnName = rlang::deparse(formExpr)
   paramDF = data.frame(argName = argName,
                        argValue = argValue,
                        stringsAsFactors = FALSE)
