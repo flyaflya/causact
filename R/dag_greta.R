@@ -40,10 +40,10 @@
 #' @importFrom greta mcmc model as_data
 #' @export
 dag_greta <- function(graph,
-                      mcmc = FALSE,
-                      meaningfulLabels = TRUE,
-                      ...) {
-
+                          mcmc = FALSE,
+                          meaningfulLabels = TRUE,
+                          ...) {
+  meaningfulLabels_global <<- meaningfulLabels    # Make meaningfulLabels becone Global Variable
   ###get dimension information
   graph = graph %>% dag_dim()
 
@@ -99,10 +99,10 @@ dag_greta <- function(graph,
     dplyr::filter(obs == TRUE | !is.na(data)) %>%
     dplyr::filter(!(label %in% plateDF$indexLabel)) %>%
     dplyr::mutate(codeLine = paste0(auto_label,
-                             " <- ",
-                             "as_data(",
-                             data,
-                             ")")) %>%
+                                    " <- ",
+                                    "as_data(",
+                                    data,
+                                    ")")) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #DATA"))
 
   ###Aggregate Code Statements for DATA
@@ -112,29 +112,29 @@ dag_greta <- function(graph,
   }
 
   ###DIM:  Create code for plate dimensions
-    plateDimDF = plateDF %>% dplyr::filter(!is.na(dataNode))
-    if (nrow(plateDimDF) > 0) {
-      plateDataStatements = paste(paste0(
-        abbrevLabelPad(paste0(plateDimDF$indexLabel,
-                              "    ")),# four spaces to have invis _dim
-                              " <- ",
-                              "as.factor(",
-                              plateDimDF$dataNode,
-                              ")   #DIM"
-                                         ),
-                              sep = "\n")
+  plateDimDF = plateDF %>% dplyr::filter(!is.na(dataNode))
+  if (nrow(plateDimDF) > 0) {
+    plateDataStatements = paste(paste0(
+      abbrevLabelPad(paste0(plateDimDF$indexLabel,
+                            "    ")),# four spaces to have invis _dim
+      " <- ",
+      "as.factor(",
+      plateDimDF$dataNode,
+      ")   #DIM"
+    ),
+    sep = "\n")
     ###make labels for dim variables = to label_dim
-      dimStatements = paste(
-        paste0(abbrevLabelPad(paste0(plateDimDF$indexLabel,
-                                "_dim")),
-               " <- ",
-               "length(unique(",
-               plateDimDF$indexLabel,
-               "))   #DIM"
-               ),
-        sep = "\n"
-      )
-      }
+    dimStatements = paste(
+      paste0(abbrevLabelPad(paste0(plateDimDF$indexLabel,
+                                   "_dim")),
+             " <- ",
+             "length(unique(",
+             plateDimDF$indexLabel,
+             "))   #DIM"
+      ),
+      sep = "\n"
+    )
+  }
 
   ### Prior, Operations, and Likelihood Get Sorted by Topological Order
 
@@ -147,8 +147,8 @@ dag_greta <- function(graph,
   lhsNodesDF = nodeDF %>%
     dplyr::filter(distr == TRUE & obs == FALSE) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(auto_label),
-                             " <- ",
-                             auto_rhs)) %>%
+                                    " <- ",
+                                    auto_rhs)) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #PRIOR"))
 
   ###Aggregate Code Statements for PRIOR
@@ -163,8 +163,8 @@ dag_greta <- function(graph,
   lhsNodesDF = nodeDF %>%
     dplyr::filter(!is.na(rhs) & distr == FALSE) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(auto_label),
-                             " <- ",
-                             auto_rhs)) %>%
+                                    " <- ",
+                                    auto_rhs)) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #OPERATION"))
 
   ###Aggregate Code Statements for OPERATION
@@ -227,8 +227,8 @@ dag_greta <- function(graph,
   extraArgList = list(...)
   extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
   mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))
-  posteriorStatement = paste0("draws       <- mcmc(",mcmcArgs,")   #POSTERIOR\ndraws       <- replaceLabels(draws)   #POSTERIOR\ndrawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\ntidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
-    addPriorGroups()   #POSTERIOR\n")
+  posteriorStatement = paste0("draws       <- mcmc(",mcmcArgs,")   #POSTERIOR\nif(meaningfulLabels_global==TRUE){draws       <- replaceLabels(draws)}   #Make meaningfulLabels = FALSE argument work\ndrawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\nprint('drawsDF')\ntidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
+                              addPriorGroups()   #POSTERIOR\nprint('drawsDF')\n")
 
   ##########################################
   ###Aggregate all code
@@ -255,3 +255,4 @@ dag_greta <- function(graph,
   ###return code
   return(invisible())
 }
+
