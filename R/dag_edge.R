@@ -24,9 +24,24 @@ dag_edge <- function(graph,
   ## if no edges, simply return graph
   if(numberOfEdges == 0) {return(graph)}
 
+  ## Check whether all Nodes is defined
+  all_label <- graph$nodes_df$label     # Gets all defined nodeID in graph
+  if(!all(from %in% all_label)){     # Check whether all from_Nodes is defined
+    Undefined_from <- from[!from %in% all_label]   # Find out undefined Node  in 'from'
+    Undefined_from_error <- paste0('Undefined Node in \'from\': ',paste(Undefined_from, sep = ' ,'))
+    stop(Undefined_from_error)    #Return useful Error
+  }
+  if(!all(to %in% all_label)){     # Check whether all to_Nodes is defined
+    Undefined_to <- to[!to %in% all_label]    # Find out undefined Node in 'to'
+    Undefined_to_error <- paste0('Undefined Node in \'to\': ',paste(Undefined_to, sep = ' ,'))
+    stop(Undefined_to_error)    #Return useful Error
+  }
+
   ## extract nodeIDs
   fromIDs = findNodeID(graph,from)
   toIDs = findNodeID(graph,to)
+
+
 
   ## initialize edgeDF info for this edge(s)
   edgeIDstart = max(graph$edges_df$id,0) + 1
