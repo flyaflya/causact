@@ -239,15 +239,15 @@ dag_posterior = function(){
 #
 # graph %>% dag_render()
 
-# graph %>% dag_greta_20190522(mcmc = T)
+# graph %>% dag_greta(mcmc = T)
 # post_check <- dag_posterior()
 #
-# graph %>% dag_greta_20190522(mcmc = T,extraPara=c('mu'))
+# graph %>% dag_greta(mcmc = T,extraPara=c('mu'))
 # post_check <- dag_posterior()
 
 
-# graph %>% dag_greta_20190522
-# graph %>% dag_greta_20190522(extraPara=c('mu'))
+# graph %>% dag_greta
+# graph %>% dag_greta(extraPara=c('mu'))
 #
 #
 
