@@ -23,7 +23,9 @@ dag_render <- function(graph,
   graph = graph
   sLabel = shortLabel
   ww = wrapWidth
-
+  #Validate that causact_graph is passed to dag_ functions
+  if(class(graph)!="causact_graph")
+  {stop('For all dag_functions, the class of the first argument should be verified as a valid causact_graph')}
   ## code to give output even if no nodes are added
   if (nrow(graph$nodes_df) == 0) {
     graph = graph %>% dag_node("START MODELLING", label = "use dag_node()")

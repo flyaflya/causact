@@ -18,7 +18,9 @@ dag_edge <- function(graph,
                      from,
                      to,
                      type = as.character(NA)) {
-
+  #Validate that causact_graph is passed to dag_ functions
+  if(class(graph)!="causact_graph")
+  {stop('For all dag_functions, the class of the first argument should be verified as a valid causact_graph')}
   ## get number of edges
   numberOfEdges = max(length(from),length(to))
   ## if no edges, simply return graph

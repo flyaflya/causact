@@ -8,7 +8,9 @@
 #' @importFrom igraph graph_from_data_frame topo_sort
 
 dag_dim <- function(graph) {
-
+  #Validate that causact_graph is passed to dag_ functions
+  if(class(graph)!="causact_graph")
+  {stop('For all dag_functions, the class of the first argument should be verified as a valid causact_graph')}
   ###retrieve nodeDF,edgeDF,argDF,plateIndexDF, and plateNodeDF
   nodeDF = graph$nodes_df
   edgeDF = graph$edges_df

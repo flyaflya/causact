@@ -227,8 +227,14 @@ dag_greta <- function(graph,
   extraArgList = list(...)
   extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
   mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))
-  posteriorStatement = paste0("draws       <- mcmc(",mcmcArgs,")   #POSTERIOR\ndraws       <- replaceLabels(draws)   #POSTERIOR\ndrawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\ntidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
-    addPriorGroups()   #POSTERIOR\n")
+  # Make meaningfulLabels = FALSE argument work
+  # In this change, the line "draws <- replaceLabels(draws)" is ignored when meaningfulLabels = FALSE
+  # Use <<- make draws drawDF and tidyDrawsDF be global variables
+  posteriorStatement = posteriorStatement = paste0("draws      <- mcmc(",mcmcArgs,")
+            #POSTERIOR\nif(meaningfulLabels==TRUE){draws
+            <<- replaceLabels(draws)}   #Make meaningfulLabels = FALSE argument work\ndrawsDF
+            <<- draws %>% as.matrix() %>% dplyr::as_tibble()    #POSTERIOR\ntidyDrawsDF
+            <<- drawsDF %>% tidyr::gather() %>% addPriorGroups()  #POSTERIOR\n")
 
   ##########################################
   ###Aggregate all code
@@ -250,7 +256,7 @@ dag_greta <- function(graph,
   codeExpr = parse(text = codeStatements)
 
   ##eval expression
-  if(mcmc == TRUE) {eval(codeExpr, envir = globalenv())}
+  if(mcmc == TRUE) {eval(codeExpr, envir = c(globalenv(),meaningfulLabels))} # Include meaningfulLabels into envir for eval()
 
   ###return code
   return(invisible())

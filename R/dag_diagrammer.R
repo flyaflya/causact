@@ -19,6 +19,9 @@
 #' @importFrom DiagrammeR create_node_df create_graph add_node_df create_edge_df
 
 dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
+  #Validate that causact_graph is passed to dag_ functions
+  if(class(graph)!="causact_graph")
+    {stop('For all dag_functions, the class of the first argument should be verified as a valid causact_graph')}
   # add dimension labels
   graph = graph %>% dag_dim()
 
