@@ -66,7 +66,7 @@ dag_node <- function(graph,
                      obs = FALSE,
                      keepAsDF = FALSE,
                      extract = as.logical(NA)) {
-
+  if(class(graph)!="causact_graph"){stop('For all dag_functions, the class of the first argument should be verified as a valid causact_graph')} #Validate that causact_graph is passed to dag_ functions
   # handle blank entry -- user enters zero arguments
   numArgs = length(match.call())-1
   if(numArgs == 0) {graph = dag_create()
