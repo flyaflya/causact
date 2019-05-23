@@ -1,0 +1,11 @@
+{
+  "nodes" : [
+    {"id": "Yiren", "x": "100", "y": "150" , "width":"100","height":"70" },
+    {"id": "Adam", "x": "180", "y": "250" ,"width":"100","height":"70" },
+    {"id": "Rachel", "x": "260", "y": "150" ,"width":"100","height":"70" }
+],
+  "links" : [
+    { "source": "Yiren", "target": "Adam"},
+    { "source": "Rachel", "target": "Adam"}
+]
+}

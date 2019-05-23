@@ -1,0 +1,12 @@
+
+{
+  "nodes": [
+    {"id": "bernoulli(theta)"},
+    {"id": "beta(theta)"},
+    {"id": "alpha(theta)"}
+    ],
+  "links": [
+    {"source": "bernoulli(theta)", "target": "alpha(theta)"},
+    {"source": "beta(theta)", "target": "alpha(theta)"}
+    ]
+}
