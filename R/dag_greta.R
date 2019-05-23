@@ -227,8 +227,8 @@ dag_greta <- function(graph,
   extraArgList = list(...)
   extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
   mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))
-  posteriorStatement = paste0("draws       <- mcmc(",mcmcArgs,")   #POSTERIOR\nif(meaningfulLabels_global==TRUE){draws       <- replaceLabels(draws)}   #Make meaningfulLabels = FALSE argument work\ndrawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\nprint('drawsDF')\ntidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
-                              addPriorGroups()   #POSTERIOR\nprint('drawsDF')\n")
+  posteriorStatement = paste0("draws       <- mcmc(",mcmcArgs,")   #POSTERIOR\nif(meaningfulLabels_global==TRUE){draws       <- replaceLabels(draws)}   #Make meaningfulLabels = FALSE argument work\ndrawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR\ntidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
+                              addPriorGroups()   #POSTERIOR\n")
 
   ##########################################
   ###Aggregate all code
