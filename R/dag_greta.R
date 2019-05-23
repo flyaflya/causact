@@ -40,9 +40,9 @@
 #' @importFrom greta mcmc model as_data
 #' @export
 dag_greta <- function(graph,
-                          mcmc = FALSE,
-                          meaningfulLabels = TRUE,
-                          ...) {
+                      mcmc = FALSE,
+                      meaningfulLabels = TRUE,
+                      ...) {
   meaningfulLabels_global <<- meaningfulLabels    # Make meaningfulLabels becone Global Variable
   ###get dimension information
   graph = graph %>% dag_dim()
@@ -255,4 +255,3 @@ dag_greta <- function(graph,
   ###return code
   return(invisible())
 }
-
