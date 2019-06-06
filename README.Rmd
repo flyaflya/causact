@@ -1,0 +1,104 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "graphics",
+  dpi = 600,
+  fig.asp = 0.618,
+  fig.width = 6
+)
+```
+
+# causact
+
+_Accelerate Bayesian analytics workflows_ in R through interactive modelling, visualization, and inference.  Uses probabilistic graphical models as a unifying language for business stakeholders, statisticians, and programmers. 
+
+Future goals are two-fold: 
+
+1. For _mathy_ people to label this the easiest front-end language into universal probablistic programming, and 
+2. for _all_ people to compel change using data-driven insight generated with assistance from this package.
+
+Using the `causact` package for Bayesian inference is featured in `The Business Analyst's Guide to Business Analytics` available at http://causact.updog.co/.
+
+## Installation
+
+```
+install.packages("remotes")
+remotes::install_github("flyaflya/causact")
+```
+`causact` relies on the very sleek and elegant `greta` package for Bayesain updating.  `greta` provides a simple interface to Tensorflow from R. Install `greta` using the instructions avaliable here: http://causact.updog.co/install-greta.html 
+
+## Usage 
+
+Example from http://causact.updog.co/graphical-models.html.
+
+### Create beautiful model visualizations.
+
+```{r defineGraph, results = "hide", echo = FALSE}
+library(causact)
+graph = dag_create() %>%
+  dag_node(descr = "Get Card",label = "y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node(descr = "Card Probability",label = "theta",
+           rhs = beta(2,2),
+           child = "y") %>%
+  dag_plate(descr = "Car Model", label = "x",  
+            data = carModelDF$carModel,  
+            nodeLabels = "theta",  
+            addDataNode = TRUE)
+```
+
+```{r cardP, eval = FALSE}
+library(causact)
+graph = dag_create() %>%
+  dag_node("Get Card","y",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node(descr = "Card Probability",label = "theta",
+           rhs = beta(2,2),
+           child = "y") %>%
+  dag_plate(descr = "Car Model", label = "x",  
+            data = carModelDF$carModel,  
+            nodeLabels = "theta",  
+            addDataNode = TRUE)  
+graph %>% dag_render()
+```
+
+```{r cardPlatePlot, out.width = "60%", echo = FALSE}
+knitr::include_graphics("cardPlot.png")
+```
+
+### Hide model complexity, as appropriate, from domain experts and other less statistically minded stakeholders.
+
+```{r cardPSL, eval = FALSE}
+graph %>% dag_render(shortLabel = TRUE)
+```
+
+```{r cardPlateSLPlot, out.width = "50%", echo = FALSE}
+knitr::include_graphics("cardPlotShortLabel.png")
+```
+
+
+### Run statistical inference using `greta`
+
+```{r greta, warning = FALSE, message = FALSE}
+library(greta)
+graph %>% dag_greta(mcmc = TRUE)
+```
+
+### Get quick view of posterior distribution
+
+```{r gretaPost, fig.cap = "Credible interval plots.", fig.width = 7, fig.height = 4, out.width = "70%"}
+tidyDrawsDF %>% dagp_plot()
+```
+
+## Further Usage
+
+For more info, see `The Business Analyst's Guide to Business Analytics` available at http://causact.updog.co/.

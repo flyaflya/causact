@@ -109,7 +109,7 @@ dagp_plot = function(drawsDataFrame,alphaSort = FALSE) { # case where untidy pos
 
     }
 
-    nCol <- floor(1 + sqrt(numPriorGroups))
+    nCol <- ifelse(numPriorGroups==1,1,floor(1 + sqrt(numPriorGroups)))
     cowplot::plot_grid(plotlist = plotList, ncol = nCol)
   }
 }
