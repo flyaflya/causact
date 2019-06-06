@@ -36,7 +36,9 @@ remotes::install_github("flyaflya/causact")
 
 ## Usage 
 
-Example from http://causact.updog.co/graphical-models.html.
+Example from http://causact.updog.co/graphical-models.html with `dag_foo()` functions described here:
+
+http://causact.updog.co/using-causact-dags-for-inference.html
 
 ### Create beautiful model visualizations.
 

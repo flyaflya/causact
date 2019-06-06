@@ -31,7 +31,10 @@ from R. Install `greta` using the instructions avaliable here:
 
 ## Usage
 
-Example from <http://causact.updog.co/graphical-models.html>.
+Example from <http://causact.updog.co/graphical-models.html> with
+`dag_foo()` functions described here:
+
+<http://causact.updog.co/using-causact-dags-for-inference.html>
 
 ### Create beautiful model visualizations.
 
