@@ -8,7 +8,9 @@ modelling, visualization, and inference. Uses probabilistic graphical
 models as a unifying language for business stakeholders, statisticians,
 and programmers.
 
-Currently, package relies on the sleek and elegant `greta` package for
+<img src="graphics/causactDemo.gif" width="45%" style="display: block; margin: auto;" />
+
+This package relies on the sleek and elegant `greta` package for
 Bayesian inference. `greta`, in turn, is an interface into tensorflow
 from R. Future iterations of the `causact` package will aim to be a
 front-end into several universal probablistic programming languages
@@ -91,7 +93,7 @@ graph %>% dag_greta(mcmc = TRUE)
 tidyDrawsDF %>% dagp_plot()
 ```
 
-<img src="graphicsgretaPost-1.png" title="Credible interval plots." alt="Credible interval plots." width="70%" />
+<img src="graphics/gretaPost-1.png" title="Credible interval plots." alt="Credible interval plots." width="70%" />
 
 ## Further Usage
 
@@ -210,7 +212,7 @@ graph %>% dag_greta(mcmc = TRUE)
 tidyDrawsDF %>% dagp_plot()
 ```
 
-<img src="graphicschimpsGraphPost-1.png" width="100%" />
+<img src="graphics/chimpsGraphPost-1.png" width="100%" />
 
 ## Eight Schools Example from Bayesian Data Analysis
 
@@ -284,4 +286,4 @@ graph %>% dag_greta(mcmc = TRUE)
 tidyDrawsDF %>% dagp_plot()
 ```
 
-<img src="graphicseightschoolsGraphPost-1.png" width="100%" />
+<img src="graphics/eightschoolsGraphPost-1.png" width="100%" />

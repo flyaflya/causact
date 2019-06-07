@@ -8,7 +8,7 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "graphics",
+  fig.path = "graphics/",
   dpi = 600,
   fig.asp = 0.618,
   fig.width = 6
@@ -18,6 +18,10 @@ knitr::opts_chunk$set(
 # causact
 
 _Accelerate Bayesian analytics workflows_ in R through interactive modelling, visualization, and inference.  Uses probabilistic graphical models as a unifying language for business stakeholders, statisticians, and programmers.  
+
+```{r demoGif, out.width = "45%", echo = FALSE, fig.align = "center"}
+knitr::include_graphics("graphics/causactDemo.gif")
+```
 
 This package relies on the sleek and elegant `greta` package for Bayesian inference. `greta`, in turn, is an interface into tensorflow from R.  Future iterations of the `causact` package will aim to be a front-end into several universal probablistic programming languages (e.g. Stan, Turing, Gen, etc.). 
 
