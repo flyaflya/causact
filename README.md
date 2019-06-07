@@ -8,7 +8,7 @@ modelling, visualization, and inference. Uses probabilistic graphical
 models as a unifying language for business stakeholders, statisticians,
 and programmers.
 
-<img src="graphics/causactDemo.gif" width="45%" style="display: block; margin: auto;" />
+<img src="graphics/causactDemo.gif" width="40%" style="display: block; margin: auto;" />
 
 This package relies on the sleek and elegant `greta` package for
 Bayesian inference. `greta`, in turn, is an interface into tensorflow
@@ -58,7 +58,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="cardPlot.png" width="60%" />
+<img src="graphics/cardPlot.png" width="60%" />
 
 ### Hide model complexity, as appropriate, from domain experts and other less statistically minded stakeholders.
 
@@ -66,7 +66,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 ```
 
-<img src="cardPlotShortLabel.png" width="50%" />
+<img src="graphics/cardPlotShortLabel.png" width="50%" />
 
 ### Run statistical inference using `greta`
 
@@ -168,7 +168,7 @@ graph = dag_create() %>%
 graph %>% dag_render(width = 2000, height = 800)
 ```
 
-<img src="chimpStat.png" width="120%" />
+<img src="graphics/chimpStat.png" width="120%" />
 
 ### See graph without stats
 
@@ -176,7 +176,7 @@ graph %>% dag_render(width = 2000, height = 800)
 graph %>% dag_render(shortLabel = TRUE)
 ```
 
-<img src="chimpStatSL.png" width="100%" />
+<img src="graphics/chimpStatSL.png" width="100%" />
 
 ### Compute posterior
 
@@ -257,7 +257,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="eightSchoolStat.png" width="100%" />
+<img src="graphics/eightSchoolStat.png" width="100%" />
 
 ### Compute posterior
 

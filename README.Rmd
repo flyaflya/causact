@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 _Accelerate Bayesian analytics workflows_ in R through interactive modelling, visualization, and inference.  Uses probabilistic graphical models as a unifying language for business stakeholders, statisticians, and programmers.  
 
-```{r demoGif, out.width = "45%", echo = FALSE, fig.align = "center"}
+```{r demoGif, out.width = "40%", echo = FALSE, fig.align = "center"}
 knitr::include_graphics("graphics/causactDemo.gif")
 ```
 
@@ -78,7 +78,7 @@ graph %>% dag_render()
 ```
 
 ```{r cardPlatePlot, out.width = "60%", echo = FALSE}
-knitr::include_graphics("cardPlot.png")
+knitr::include_graphics("graphics/cardPlot.png")
 ```
 
 ### Hide model complexity, as appropriate, from domain experts and other less statistically minded stakeholders.
@@ -88,7 +88,7 @@ graph %>% dag_render(shortLabel = TRUE)
 ```
 
 ```{r cardPlateSLPlot, out.width = "50%", echo = FALSE}
-knitr::include_graphics("cardPlotShortLabel.png")
+knitr::include_graphics("graphics/cardPlotShortLabel.png")
 ```
 
 
@@ -176,7 +176,7 @@ graph %>% dag_render(width = 2000, height = 800)
 ```
 
 ```{r chimpsGraphRenderPlot, out.width = "120%", echo = FALSE}
-knitr::include_graphics("chimpStat.png")
+knitr::include_graphics("graphics/chimpStat.png")
 ```
 
 ### See graph without stats
@@ -186,7 +186,7 @@ graph %>% dag_render(shortLabel = TRUE)
 ```
 
 ```{r chimpsGraphRenderPlotSL, out.width = "100%", echo = FALSE}
-knitr::include_graphics("chimpStatSL.png")
+knitr::include_graphics("graphics/chimpStatSL.png")
 ```
 
 ### Compute posterior
@@ -244,7 +244,7 @@ graph %>% dag_render()
 ```
 
 ```{r eightschoolsGraphRenderPlot, out.width = "100%", echo = FALSE}
-knitr::include_graphics("eightSchoolStat.png")
+knitr::include_graphics("graphics/eightSchoolStat.png")
 ```
 
 ### Compute posterior
