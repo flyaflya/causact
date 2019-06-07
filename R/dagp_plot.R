@@ -105,7 +105,7 @@ dagp_plot = function(drawsDataFrame,alphaSort = FALSE) { # case where untidy pos
         theme_minimal(12) +
         labs(y = element_blank(),
              x = "parameter value",
-             caption = ifelse(i == numPriorGroups,"90% (light blue) & 10% (dark blue) Credible Intervals - Transparent fill used for high uncertainty intervals.",""))
+             caption = ifelse(i == numPriorGroups,"Credible Intervals - 10% (dark) & 90% (light)",""))
 
     }
 
