@@ -21,5 +21,9 @@ Imports:
     tidyr,
     igraph,
     stringr,
-    cowplot
+    cowplot,
+    coda,
+    forcats,
+    htmlwidgets,
+    rstudioapi
 RoxygenNote: 6.1.1

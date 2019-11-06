@@ -4,17 +4,19 @@
 #' @param drawsDataFrame one of the two posterior data frame objects created by \code{dag_greta()}.  If \code{drawsDataFrame=drawsDF}, each parameter gets its own density plot.  If \code{drawsDataFrame=tidyDrawsDF} (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
 #' @return a credible interval plot of all latent posterior distribution parameters.
 #' @examples
+#' library(greta)
 #' # Create a 2 node graph
-#' graph2 = dag_create() %>%
+#' graph = dag_create() %>%
 #'   dag_node("Get Card","y",
 #'          rhs = bernoulli(theta),
 #'          data = carModelDF$getCard) %>%
 #'   dag_node(descr = "Card Probability by Car",label = "theta",
 #'            rhs = beta(2,2),
 #'            child = "y")
-#' graph2 %>% dag_render()
-#' drawsDF %>% dag_plot()
-#' tidyDrawsDF %>% dag_plot()
+#' graph %>% dag_render()
+#' graph %>% dag_greta(mcmc=TRUE)
+#' drawsDF %>% dagp_plot()
+#' tidyDrawsDF %>% dagp_plot()
 #'
 #' # multiple plate example
 #' library(dplyr)
@@ -53,6 +55,7 @@
 #' @export
 #' @import ggplot2 tidyr
 #' @importFrom cowplot plot_grid
+#' @importFrom stats quantile
 #' @export
 
 dagp_plot = function(drawsDataFrame,alphaSort = FALSE) { # case where untidy posterior draws are provided
@@ -85,15 +88,15 @@ dagp_plot = function(drawsDataFrame,alphaSort = FALSE) { # case where untidy pos
       # }
 
       plotList[[i]] = df %>% group_by(key) %>%
-        summarize(q05 = quantile(value,0.05),
-                  q25 = quantile(value,0.55),
-                  q45 = quantile(value,0.45),
-                  q50 = quantile(value,0.50),
-                  q55 = quantile(value,0.55),
-                  q75 = quantile(value,0.75),
-                  q95 = quantile(value,0.95)) %>%
+        summarize(q05 = stats::quantile(value,0.05),
+                  q25 = stats::quantile(value,0.55),
+                  q45 = stats::quantile(value,0.45),
+                  q50 = stats::quantile(value,0.50),
+                  q55 = stats::quantile(value,0.55),
+                  q75 = stats::quantile(value,0.75),
+                  q95 = stats::quantile(value,0.95)) %>%
         mutate(credIQR = q75 - q25) %>%
-        mutate(reasonableIntervalWidth = 1.5 * quantile(credIQR,0.75)) %>%
+        mutate(reasonableIntervalWidth = 1.5 * stats::quantile(credIQR,0.75)) %>%
         mutate(alphaLevel = ifelse(credIQR > reasonableIntervalWidth, 0.3,1)) %>%
         arrange(alphaLevel,q50) %>%
         mutate(key = factor(key, levels = key)) %>%

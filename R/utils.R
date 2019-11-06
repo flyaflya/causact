@@ -462,14 +462,14 @@ updateExtractEdges = function(graphWithDim) {
       dplyr::select(from,indexID) %>%
       dplyr::distinct() %>%
       dplyr::group_by(from) %>%
-      tidyr::nest(indexID,.key = "fromPlateIndices")
+      tidyr::nest(fromPlateIndices = indexID)
     ### plate indices for all to nodes
     edgeDFTo = edgeDF %>%
       dplyr::left_join(graph$plate_node_df, by = c("to" = "nodeID"))  %>%
       dplyr::select(to,indexID) %>%
       dplyr::distinct() %>%
       dplyr::group_by(to) %>%
-      tidyr::nest(indexID,.key = "toPlateIndices")
+      tidyr::nest(toPlateIndices = indexID)
     ### for all edges have column of plateIndices for from an to
     extractCandidateDF = edgeDF
 

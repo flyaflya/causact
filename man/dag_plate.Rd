@@ -81,6 +81,4 @@ graph = dag_create() \%>\%
             data = poolTimeGymDF$gymID,
             addDataNode = TRUE)
 graph \%>\% dag_render()
-graph \%>\% dag_greta(mcmc=TRUE)
-tidyDrawsDF \%>\% dagp_plot()
 }

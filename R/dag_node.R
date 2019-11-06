@@ -12,6 +12,7 @@
 #' @param extract a logical value.  When TRUE, child nodes will try to extract an indexed value from this node.  When FALSE, the entire random object (e.g. scalar, vector, matrix) is passed to children nodes.  Only use this argument when overriding default behavior seen using \code{dag_render()}.
 #' @return a graph object of class \code{causact_graph}.
 #' @examples
+#' library(greta)
 #' # Create an empty graph and add 2 nodes by using
 #' # the `dag_node()` function twice
 #' graph2 = dag_create() %>%

@@ -13,6 +13,7 @@
 #' }
 #'
 #' @examples
+#' library(greta)
 #' graph = dag_create() %>%
 #'   dag_node("Get Card","y",
 #'            rhs = bernoulli(theta),

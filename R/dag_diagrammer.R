@@ -17,6 +17,7 @@
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_replace
 #' @importFrom DiagrammeR create_node_df create_graph add_node_df create_edge_df
+#' @export
 
 dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   # add dimension labels

@@ -62,10 +62,9 @@
 #'             data = poolTimeGymDF$gymID,
 #'             addDataNode = TRUE)
 #' graph %>% dag_render()
-#' graph %>% dag_greta(mcmc=TRUE)
-#' tidyDrawsDF %>% dagp_plot()
 #' @importFrom dplyr mutate
 #' @importFrom rlang enquo get_expr UQ
+#' @importFrom utils head
 #' @export
 
 dag_plate <- function(graph,

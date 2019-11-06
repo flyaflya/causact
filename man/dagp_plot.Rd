@@ -16,17 +16,19 @@ a credible interval plot of all latent posterior distribution parameters.
 The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
+library(greta)
 # Create a 2 node graph
-graph2 = dag_create() \%>\%
+graph = dag_create() \%>\%
   dag_node("Get Card","y",
          rhs = bernoulli(theta),
          data = carModelDF$getCard) \%>\%
   dag_node(descr = "Card Probability by Car",label = "theta",
            rhs = beta(2,2),
            child = "y")
-graph2 \%>\% dag_render()
-drawsDF \%>\% dag_plot()
-tidyDrawsDF \%>\% dag_plot()
+graph \%>\% dag_render()
+graph \%>\% dag_greta(mcmc=TRUE)
+drawsDF \%>\% dagp_plot()
+tidyDrawsDF \%>\% dagp_plot()
 
 # multiple plate example
 library(dplyr)

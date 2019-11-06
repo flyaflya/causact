@@ -34,6 +34,7 @@ a graph object of class \code{causact_graph}.
 The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
+library(greta)
 # Create an empty graph and add 2 nodes by using
 # the `dag_node()` function twice
 graph2 = dag_create() \%>\%
