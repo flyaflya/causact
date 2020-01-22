@@ -44,12 +44,20 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
                     abbreviate(minlength = wrapWidth)
 
   ###section for adding dimension to description
+  ###only DO this for nodes that are not on plates
+  nodesOnPlates = unique(plateNodeDF$nodeID)
   dimLabelDF = dimDF %>%
-    dplyr::filter(dimValue > 1 & dimType != "plate") %>%
+    dplyr::filter(dimValue > 1 &
+                    dimType != "plate" &
+                    !(nodeID %in% nodesOnPlates)) %>%
     dplyr::group_by(nodeID) %>%
     dplyr::summarize(dimLabel = paste0(dimValue, collapse = "\U00D7")) %>%
     dplyr::mutate(dimLabel = paste0(" [",dimLabel,"]"))
 
+  ###BELOW CODE ###
+  ###IT ADDS DIMENSION AFTER NODE DESCRIPTION###
+  ###LIKE CAR MODEL [1000]###
+  ###ONLY DO THIS IF NODE NOT ON PLATE###
   nodeDF = nodeDF %>%
     dplyr::left_join(dimLabelDF,by = c("id" = "nodeID")) %>%
     dplyr::mutate(dimLabel = tidyr::replace_na(dimLabel,"")) %>%
@@ -107,6 +115,19 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
 
   ### create nodeDF as DiagrammeR data frame
   ##create clusterNameDF to map nodes to plates
+  ##if plate has no data, assume it is an observation plate
+  ##use bottom observed node dimension to guess dimension of plate
+  plateWithNoDataNodesDF = plateDF %>% dplyr::filter(is.na(dataNode)) %>%
+    dplyr::left_join(plateNodeDF, by = "indexID") %>%
+    dplyr::left_join(dimDF, by = "nodeID") %>%
+    dplyr::filter(dimType == "row" & dimValue > 1) %>%
+    dplyr::select(indexID, dimValue) %>%
+    dplyr::distinct()
+  plateDF = plateDF %>%
+    dplyr::left_join(plateWithNoDataNodesDF, by = "indexID") %>%
+    dplyr::mutate(indexDisplayName = ifelse(is.na(dimValue),
+                                            indexDisplayName,
+                                            paste0(indexDisplayName," [",dimValue,"]")))
   clusterNameDF = plateNodeDF %>%
     dplyr::left_join(plateDF, by = "indexID") %>%
     dplyr::select(id = nodeID, cluster = indexDisplayName, clusterShortLabel = indexDisplayName)

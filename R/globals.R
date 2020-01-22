@@ -1,0 +1,3 @@
+utils::globalVariables(c("alphaLevel","argDimLabels","argID","argList","argName","argNameWithDim","argType","argValue","auto_descr","auto_label","auto_rhs","bigLabel","candidate","childID","codeLine","credIQR","data","dataNode","descLine","dimLabel","dimType","dimValue","distr","eqLine","fillcolor","from","fromLabel","indexDisplayName","indexID","indexLabel","key","label","minRowID","newArgName","newNames","nodeID","nodeOrder","obs","oldNames","orderID","peripheries","position","priorGroup","prior_rhs","q05","q25","q45","q50","q55","q75","q95
+reasonableIntervalWidth","rhs","rhsID","rootLabel","statement","textToCollapse","to","type","value","x11_hex"))
+
