@@ -31,14 +31,13 @@ Business Analyst's Introduction to Business Analytics` available at
 
 `causact` requires the `greta` package for Bayesian updating. Install
 `greta` using the instructions available here:
-<http://causact.updog.co/install-greta.html>
+<https://www.causact.com/install-tensorflow-and-greta.html#install-tensorflow-and-greta>
 
 ## Usage
 
-Example taken from <http://causact.updog.co/graphical-models.html> with
-the pacakges `dag_foo()` functions futher described here:
+Example taken from <https://www.causact.com/causact-quick-inference-with-generative-dags.html#the-credit-card-example-revisited>
+ using the pacakges `dag_foo()` functions:
 
-<https://www.causact.com/causact-quick-inference-with-generative-dags.html#the-credit-card-example-revisited>
 
 ### Create beautiful model visualizations.
 
