@@ -16,8 +16,8 @@ from R. Future iterations of the `causact` package will aim to be a
 front-end into several universal probablistic programming languages
 (e.g. Stan, Turing, Gen, etc.).
 
-Using the `causact` package for Bayesian inference is featured in `The
-Business Analyst's Guide to Business Analytics` available at
+Using the `causact` package for Bayesian inference is featured in `A
+Business Analyst's Introduction to Business Analytics` available at
 <http://causact.com/>.
 
 > NOTE: Package is very “alpha” and under active development. Breaking
@@ -38,7 +38,7 @@ Business Analyst's Guide to Business Analytics` available at
 Example taken from <http://causact.updog.co/graphical-models.html> with
 the pacakges `dag_foo()` functions futher described here:
 
-<http://causact.updog.co/using-causact-dags-for-inference.html>
+<https://www.causact.com/causact-quick-inference-with-generative-dags.html#the-credit-card-example-revisited>
 
 ### Create beautiful model visualizations.
 
@@ -98,7 +98,7 @@ tidyDrawsDF %>% dagp_plot()
 ## Further Usage
 
 For more info, see `The Business Analyst's Guide to Business Analytics`
-available at <http://causact.updog.co/>. Two additional examples shown
+available at <http://causact.com/>. Two additional examples shown
 below.
 
 ## Prosocial Chimpanzees Example from Statistical Rethinking
