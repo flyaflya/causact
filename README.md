@@ -18,7 +18,7 @@ front-end into several universal probablistic programming languages
 
 Using the `causact` package for Bayesian inference is featured in `The
 Business Analyst's Guide to Business Analytics` available at
-<http://causact.updog.co/>.
+<http://causact.com/>.
 
 > NOTE: Package is very “alpha” and under active development. Breaking
 > changes are to be expected. Feedback and encouragement is appreciated
