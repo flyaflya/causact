@@ -63,6 +63,7 @@ setDirectedGraphTheme = function(dgrGraph) {
   tempGR$nodes_df$fillcolor = rep("aliceblue", n_nodes)
   tempGR$nodes_df$fillcolor[tempGR$nodes_df$type == "obs"] = "cadetblue"
   tempGR$nodes_df$fillcolor[tempGR$nodes_df$type == "censObs"] = "aliceblue;0.5:cadetblue"
+  tempGR$nodes_df$shape[tempGR$nodes_df$shape == "rect"] = "rect"
 
   ## correct for fontcolor bug
   tempGR$nodes_df$fontcolor = "black"

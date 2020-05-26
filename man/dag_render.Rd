@@ -4,8 +4,13 @@
 \alias{dag_render}
 \title{Render the graph as an htmlwidget}
 \usage{
-dag_render(graph, shortLabel = FALSE, wrapWidth = 24, width = NULL,
-  height = NULL)
+dag_render(
+  graph,
+  shortLabel = FALSE,
+  wrapWidth = 24,
+  width = NULL,
+  height = NULL
+)
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph}.}

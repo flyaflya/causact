@@ -5,7 +5,8 @@
 \alias{houseDF}
 \title{Dataframe of 1,460 observations of home sales in Ames, Iowa.  Known as The Ames Housing dataset, it was compiled by Dean De Cock for use in data science education.
 Each observation is a home sale.  See \code{houseDFDescr} for more info.}
-\format{A data frame with 1,460 rows and 37 variables:
+\format{
+A data frame with 1,460 rows and 37 variables:
 \describe{
   \item{SalePrice}{the property's sale price in dollars. This is the target variable}
   \item{MSSubClass}{The building class}
@@ -45,7 +46,8 @@ Each observation is a home sale.  See \code{houseDFDescr} for more info.}
   \item{YrSold}{Year Sold}
   \item{SaleType}{Type of sale}
   \item{SaleCondition}{Condition of sale}
-}}
+}
+}
 \source{
 \url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 }

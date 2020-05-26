@@ -4,12 +4,14 @@
 \name{carModelDF}
 \alias{carModelDF}
 \title{Dataframe of 1000 (fake) observations of whether certain car buyers were willing to get information on a credit card speciailizing in rewards for adventure travellers.}
-\format{A data frame with 1000 rows and 3 variables:
+\format{
+A data frame with 1000 rows and 3 variables:
 \describe{
   \item{customerID}{a unique id of a potential credit card customer.  They just bought a car and are asked if they want information on the credit card.}
   \item{carModel}{The model of car purchased.}
   \item{getCard}{Whether the customer expressed interest in hearing more about the card.}
-}}
+}
+}
 \usage{
 carModelDF
 }

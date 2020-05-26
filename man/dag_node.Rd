@@ -4,9 +4,19 @@
 \alias{dag_node}
 \title{Add a node to an existing graph object}
 \usage{
-dag_node(graph, descr = as.character(NA), label = as.character(NA),
-  rhs = NA, child = as.character(NA), data = NULL, obs = FALSE,
-  keepAsDF = FALSE, extract = as.logical(NA))
+dag_node(
+  graph,
+  descr = as.character(NA),
+  label = as.character(NA),
+  rhs = NA,
+  child = as.character(NA),
+  data = NULL,
+  obs = FALSE,
+  keepAsDF = FALSE,
+  extract = as.logical(NA),
+  dec = FALSE,
+  det = FALSE
+)
 }
 \arguments{
 \item{graph}{a graph object of class \code{causact_graph} created using \code{dag_create()}.}
@@ -24,6 +34,10 @@ dag_node(graph, descr = as.character(NA), label = as.character(NA),
 \item{keepAsDF}{a logical value indicating whether the \code{data} argument should be split into one random varaible node per column or kept together as a random matrix for matrix computation.  Defaults to creating one node per column of the data frame.}
 
 \item{extract}{a logical value.  When TRUE, child nodes will try to extract an indexed value from this node.  When FALSE, the entire random object (e.g. scalar, vector, matrix) is passed to children nodes.  Only use this argument when overriding default behavior seen using \code{dag_render()}.}
+
+\item{dec}{a logical value indicating whether the node is a decision node.  Used to show nodes as rectangles instead of ovals when using \code{dag_render()}.}
+
+\item{det}{a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using \code{dag_render()}.}
 
 \item{description}{a longer more descriptive character label for the node.}
 }

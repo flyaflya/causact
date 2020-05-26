@@ -9,8 +9,6 @@ dagp_plot(drawsDataFrame, alphaSort = FALSE)
 dagp_plot(drawsDataFrame, alphaSort = FALSE)
 }
 \arguments{
-\item{drawsDataFrame}{one of the two posterior data frame objects created by \code{dag_greta()}.  If \code{drawsDataFrame=drawsDF}, each parameter gets its own density plot.  If \code{drawsDataFrame=tidyDrawsDF} (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.}
-
 \item{drawsDataFrame}{one of the two posterior data frame objects created by \code{dag_greta()}.  This will be either \code{drawsDataFrame=drawsDF}, or \code{drawsDataFrame=tidyDrawsDF}.}
 }
 \value{

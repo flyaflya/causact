@@ -5,11 +5,13 @@
 \alias{houseDFDescr}
 \title{Dataframe of 523 descriptions of data values from "The Ames Housing dataset", compiled by Dean De Cock for use in data science education.
 Each observation is a possible value from a varaible in the \code{houseDF} dataset.}
-\format{A data frame with 260 rows and 2 variables:
+\format{
+A data frame with 260 rows and 2 variables:
 \describe{
   \item{varName}{the name and description of a variable stored in the \code{houseDF} dataset}
   \item{varValueDescr}{The value and accompanying interpretation for values in the \code{houseDF} dataset}
-}}
+}
+}
 \source{
 \url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 }

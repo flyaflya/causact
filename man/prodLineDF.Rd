@@ -4,12 +4,14 @@
 \name{prodLineDF}
 \alias{prodLineDF}
 \title{Product line and product category assignments for 12,026 partID's.}
-\format{A data frame (tibble) with 117,790 rows and 5 variables:
+\format{
+A data frame (tibble) with 117,790 rows and 5 variables:
 \describe{
   \item{partID}{unique part identifier}
   \item{productLine}{a product line associated with the partID}
   \item{prodCategory}{a product category associated with the partID}
-}}
+}
+}
 \source{
 Adam Fleischhacker
 }

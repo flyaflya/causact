@@ -19,6 +19,6 @@ A vector of 0's and 1's representing failure and success.
 Density, distribution function, quantile function and random generation for the benoulli distribution with parameter \code{prob}.
 }
 \examples{
-#Return a random result of a Bernoulli trial given \\code{prob}.
+#Return a random result of a Bernoulli trial given \code{prob}.
 rbern(n =1, prob = 0.5)
 }

@@ -1,0 +1,36 @@
+digraph {
+
+graph [layout = 'dot',
+       outputorder = 'edgesfirst',
+       bgcolor = 'white',
+       labelloc = 'b',
+       labeljust = 'r']
+
+node [fontname = 'Helvetica',
+      fontsize = '10',
+      shape = 'ellipse',
+      fixedsize = 'false',
+      width = '0.9',
+      style = 'filled',
+      fillcolor = 'AliceBlue',
+      color = 'gray20',
+      fontcolor = 'black',
+      height = '0.5',
+      margin = '0.05,0.05']
+
+edge [fontname = 'Helvetica',
+     fontsize = '8',
+     len = '1.5',
+     color = 'gray20',
+     arrowsize = '0.5',
+     fontcolor = 'black']
+
+  '1' [label = 'Revenue
+x = revFunction(custLoc = y, bathLoc = z)', shape = 'ellipse', peripheries = '2', fillcolor = 'aliceblue', fontcolor = 'black']
+  '2' [label = 'Beachgoer Location
+y ~ normal(70,15)', shape = 'ellipse', peripheries = '1', fillcolor = 'aliceblue', fontcolor = 'black']
+  '3' [label = 'Bathhouse Location
+z', shape = 'rect', peripheries = '1', fillcolor = 'cadetblue', fontcolor = 'black']
+'2'->'1' [style = 'solid']
+'3'->'1' [style = 'solid']
+}

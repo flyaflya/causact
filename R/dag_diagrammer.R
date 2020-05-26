@@ -135,10 +135,11 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   nodeDF = nodeDF %>%
     dplyr::left_join(eqDF, by = "id") %>%
     dplyr::mutate(type = ifelse(obs == TRUE,"obs","latent"),
-           peripheries = ifelse(distr == TRUE | is.na(rhs),1,2),
-           fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
+    shape = ifelse(dec == TRUE, "rect", "ellipse"),
+    peripheries = ifelse((distr == TRUE | is.na(rhs)) & det == FALSE,1,2),
+    fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
            label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine))) %>%  ###poor man's version of shortLabel
-    dplyr::select(id,label,type,peripheries,fillcolor,auto_descr) %>%
+    dplyr::select(id,label,type,shape,peripheries,fillcolor,auto_descr) %>%
     dplyr::left_join(clusterNameDF, by = "id")
 
   ###just use description if shortLabel = TRUE
@@ -157,6 +158,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
     id = nodeDF$id,
     label = nodeDF$label,
     type = nodeDF$type,
+    shape = nodeDF$shape,
     peripheries = nodeDF$peripheries,
     fillcolor = nodeDF$fillcolor,
     cluster = nodeDF$cluster

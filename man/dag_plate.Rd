@@ -4,8 +4,15 @@
 \alias{dag_plate}
 \title{Create a plate representation for repeated nodes.}
 \usage{
-dag_plate(graph, descr, label, nodeLabels, data = as.character(NA),
-  addDataNode = FALSE, rhs = NA)
+dag_plate(
+  graph,
+  descr,
+  label,
+  nodeLabels,
+  data = as.character(NA),
+  addDataNode = FALSE,
+  rhs = NA
+)
 }
 \arguments{
 \item{graph}{a graph object of class \code{dgr_graph} created using \code{dag_create()}.}

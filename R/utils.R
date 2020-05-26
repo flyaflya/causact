@@ -129,7 +129,7 @@ rhsDecompFormula = function(rhs) {
 ## read in expression as a quosure
 rhsDecomp = function(rhs) {
   distExpr = rlang::enexpr(rhs)
-  oneWordEquation = FALSE  ## assume complex expression
+  simpleRHS = FALSE  ## assume complex expression
 
   ## handle cases where just distribution name is supplied
   ## if function in greta namespace, then assume distr
@@ -145,7 +145,7 @@ rhsDecomp = function(rhs) {
       distExpr = rlang::parse_expr(fnName)
       if (!(fnName %in% getNamespaceExports("greta") &
           !(fnName %in% notDistrFunctions))) {
-      oneWordEquation = TRUE } ##expression is not complex
+      simpleRHS = TRUE } ##expression is not complex
     }
   }
 
@@ -159,11 +159,16 @@ rhsDecomp = function(rhs) {
     }
   }
 
+  ## handle cases where simple numeric constant is used
+  if(is.numeric(distExpr)) {
+    simpleRHS = TRUE
+    fnName = NA}
+
   ## standardize the call
-  if(!oneWordEquation) {distExpr = rlang::call_standardise(distExpr)}
+  if(!simpleRHS) {distExpr = rlang::call_standardise(distExpr)}
 
   ## return function name
-  if(!oneWordEquation) {fnName = rlang::call_name(distExpr)}
+  if(!simpleRHS) {fnName = rlang::call_name(distExpr)}
 
   if (fnName %in% getNamespaceExports("greta") &
       !(fnName %in% notDistrFunctions)) {
