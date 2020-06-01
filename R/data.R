@@ -149,3 +149,10 @@
 #'   \item{getCard}{Whether the customer expressed interest in hearing more about the card.}
 #' }
 "carModelDF"
+
+#' A representative sample from a random variable that represents the annual number of beach goers to Ocean City, MD beaches on hot days.  Think of this representative sample as coming from either a prior or posterior distribution.  An example using this sample is can be found in The Business Analyst's Guide To Business Analytics at http://causact.com.
+#' @format A 4,000 element vector.
+#' \describe{
+#'   \item{totalBeachgoersRepSample}{a draw from a representative sample of total beachgoers to Ocean City, MD.}
+#' }
+"totalBeachgoersRepSample"
