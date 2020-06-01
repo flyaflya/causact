@@ -156,3 +156,13 @@
 #'   \item{totalBeachgoersRepSample}{a draw from a representative sample of total beachgoers to Ocean City, MD.}
 #' }
 "totalBeachgoersRepSample"
+
+#' Dataframe where each row represents data about one of the 26 mile markers (fake) from mile 0 to mile 2.5 along the Ocean City, MD beach/boardwalk.
+#' @format A data frame with 26 rows and 3 variables:
+#' \describe{
+#'   \item{mileMarker}{a number representing a location on the Ocean City beach/boardwalk.}
+#'   \item{beachgoerProb }{The probability of any Ocean City, MD beachgoer (during the hot swimming days) exiting the beach at that mile marker.}
+#'   \item{expenseEst}{The estimated annual expenses of running a business at that location on the beach.  It is assumed a large portion of the expense is based on commercial rental rates at that location.  More populated locations tend to have higher expenses.}
+#' }
+"beachLocDF"
+
