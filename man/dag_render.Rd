@@ -22,8 +22,6 @@ dag_render(
 \item{width}{a numeric value.  an optional parameter for specifying the width of the resulting graphic in pixels.}
 
 \item{height}{a numeric value.  an optional parameter for specifying the height of the resulting graphic in pixels.}
-
-\item{...}{arguments that can be passed onto \code{Diagrammer::render_graph()}.}
 }
 \description{
 Using a \code{causact_graph} object, render the graph in the RStudio Viewer.

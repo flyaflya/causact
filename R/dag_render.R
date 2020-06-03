@@ -6,7 +6,6 @@
 #' @param wrapWidth a numeric value.  Used to restrict width of nodes.  Default is wrap text after 24 characters.
 #' @param width a numeric value.  an optional parameter for specifying the width of the resulting graphic in pixels.
 #' @param height a numeric value.  an optional parameter for specifying the height of the resulting graphic in pixels.
-#' @param ... arguments that can be passed onto \code{Diagrammer::render_graph()}.
 #' @examples
 #' # Render an  empty graph
 #' dag_create() %>%

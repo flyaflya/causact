@@ -51,14 +51,15 @@
 #' graph %>% dag_greta(mcmc=TRUE)
 #' tidyDrawsDF %>% dagp_plot()
 #' @importFrom dplyr bind_rows filter
-#' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy
+#' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy .data
 #' @export
 #' @import ggplot2 tidyr
 #' @importFrom cowplot plot_grid
 #' @importFrom stats quantile
 #' @export
 
-dagp_plot = function(drawsDataFrame,alphaSort = FALSE) { # case where untidy posterior draws are provided
+dagp_plot = function(drawsDataFrame) { # case where untidy posterior draws are provided
+  ..scaled.. <- q95 <- reasonableIntervalWidth <- credIQR <- shape <- NULL ## place holder to pass devtools::check
   if (!("priorGroup" %in% colnames(drawsDataFrame))) {
     plot = drawsDataFrame %>% gather() %>%
       ggplot(aes(x = value, y = ..scaled..)) +
@@ -76,17 +77,9 @@ dagp_plot = function(drawsDataFrame,alphaSort = FALSE) { # case where untidy pos
     numPriorGroups = length(priorGroups)
     for (i in 1:numPriorGroups) {
       df = drawsDataFrame %>% filter(priorGroup == priorGroups[i])
-      # df$key = factor(df$key)
-      # ## reorder levels using character sort from stringr
-      # if (alphaSort == FALSE) {
-      #   df$key = forcats::fct_reorder(df$key,df$value)
-      # } else {
-      #   df$key = forcats::fct_relevel(df$key,
-      #                                 stringr::str_sort(levels(df$key),
-      #                                                   numeric = TRUE,
-      #                                                   decreasing = TRUE))
-      # }
 
+      # create one plot per group
+      # groups defined as params with same prior
       plotList[[i]] = df %>% group_by(key) %>%
         summarize(q05 = stats::quantile(value,0.05),
                   q25 = stats::quantile(value,0.55),
@@ -97,8 +90,8 @@ dagp_plot = function(drawsDataFrame,alphaSort = FALSE) { # case where untidy pos
                   q95 = stats::quantile(value,0.95)) %>%
         mutate(credIQR = q75 - q25) %>%
         mutate(reasonableIntervalWidth = 1.5 * stats::quantile(credIQR,0.75)) %>%
-        mutate(alphaLevel = ifelse(credIQR > reasonableIntervalWidth, 0.3,1)) %>%
-        arrange(alphaLevel,q50) %>%
+        mutate(alphaLevel = ifelse(.data$credIQR > .data$reasonableIntervalWidth, 0.3,1)) %>%
+        arrange(alphaLevel,.data$q50) %>%
         mutate(key = factor(key, levels = key)) %>%
         ggplot(aes(y = key, yend = key)) +
         geom_segment(aes(x = q05, xend = q95, alpha = alphaLevel), size = 4, color = "#5f9ea0") +

@@ -4,3 +4,7 @@
 \R\testingDAG.R
 ^R/testingDAG\.R$
 ^\.httr-oauth$
+README.Rmd
+gretaExamples.R
+eightSchools.R
+^graphics.*$

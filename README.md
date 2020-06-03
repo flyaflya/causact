@@ -16,13 +16,13 @@ from R. Future iterations of the `causact` package will aim to be a
 front-end into several universal probablistic programming languages
 (e.g. Stan, Turing, Gen, etc.).
 
-Using the `causact` package for Bayesian inference is featured in `A
-Business Analyst's Introduction to Business Analytics` available at
+Using the `causact` package for Bayesian inference is featured in `The
+Business Analyst's Guide to Business Analytics` available at
 <http://causact.com/>.
 
-> NOTE: Package is very “alpha” and under active development. Breaking
-> changes are to be expected. Feedback and encouragement is appreciated
-> via github issues or Twitter (<https://twitter.com/preposterior>).
+> NOTE: Package is under active development. Breaking changes are to be
+> expected. Feedback and encouragement is appreciated via github issues
+> or Twitter (<https://twitter.com/preposterior>).
 
 ## Installation
 
@@ -31,13 +31,15 @@ Business Analyst's Introduction to Business Analytics` available at
 
 `causact` requires the `greta` package for Bayesian updating. Install
 `greta` using the instructions available here:
-<https://www.causact.com/install-tensorflow-and-greta.html#install-tensorflow-and-greta>
+<http://causact.com/install-greta.html>
 
 ## Usage
 
-Example taken from <https://www.causact.com/causact-quick-inference-with-generative-dags.html#the-credit-card-example-revisited>
- using the pacakges `dag_foo()` functions:
+Example taken from
+<https://www.causact.com/graphical-models-tell-joint-distribution-stories.html#graphical-models-tell-joint-distribution-stories>
+with the packages `dag_foo()` functions further described here:
 
+<https://www.causact.com/causact-quick-inference-with-generative-dags.html#causact-quick-inference-with-generative-dags>
 
 ### Create beautiful model visualizations.
 
@@ -92,13 +94,23 @@ graph %>% dag_greta(mcmc = TRUE)
 tidyDrawsDF %>% dagp_plot()
 ```
 
-<img src="graphics/gretaPost-1.png" title="Credible interval plots." alt="Credible interval plots." width="70%" />
+<div class="figure">
+
+<img src="graphics/gretaPost-1.png" alt="Credible interval plots." width="70%" />
+
+<p class="caption">
+
+Credible interval plots.
+
+</p>
+
+</div>
 
 ## Further Usage
 
 For more info, see `The Business Analyst's Guide to Business Analytics`
-available at <http://causact.com/>. Two additional examples shown
-below.
+available at <https://www.causact.com>. Two additional examples are
+shown below.
 
 ## Prosocial Chimpanzees Example from Statistical Rethinking
 
@@ -190,11 +202,11 @@ graph %>% dag_greta(mcmc = TRUE)
 #> blk_dim   <- length(unique(blk))   #DIM
 #> trtmt_dim <- length(unique(trtmt))   #DIM
 #> beta        <- normal(mean = 0, sd = 0.5, dim = trtmt_dim)                #PRIOR
-#> sigma_gamma <- exponential(rate = 1)                                      #PRIOR
-#> sigma_alpha <- exponential(rate = 1)                                      #PRIOR
 #> alphaBar    <- normal(mean = 0, sd = 1.5)                                 #PRIOR
-#> gamma       <- normal(mean = 0, sd = sigma_gamma, dim = blk_dim)          #PRIOR
+#> sigma_alpha <- exponential(rate = 1)                                      #PRIOR
+#> sigma_gamma <- exponential(rate = 1)                                      #PRIOR
 #> alpha       <- normal(mean = alphaBar, sd = sigma_alpha, dim = act_dim)   #PRIOR
+#> gamma       <- normal(mean = 0, sd = sigma_gamma, dim = blk_dim)          #PRIOR
 #> p      <- ilogit(x = alpha[act] + gamma[blk] + beta[trtmt])   #OPERATION
 #> distribution(L) <- bernoulli(prob = p)   #LIKELIHOOD
 #> gretaModel <- model(alpha,gamma,beta,alphaBar,sigma_alpha,sigma_gamma)   #MODEL

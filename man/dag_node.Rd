@@ -2,7 +2,7 @@
 % Please edit documentation in R/dag_node.R
 \name{dag_node}
 \alias{dag_node}
-\title{Add a node to an existing graph object}
+\title{Add a node to an existing \code{causact_graph} object}
 \usage{
 dag_node(
   graph,
@@ -19,7 +19,9 @@ dag_node(
 )
 }
 \arguments{
-\item{graph}{a graph object of class \code{causact_graph} created using \code{dag_create()}.}
+\item{graph}{a graph object of class \code{causact_graph}.  An initial object gets created using \code{dag_create()}.}
+
+\item{descr}{a longer more descriptive character label for the node.}
 
 \item{label}{a shorter character label for referencing the node (e.g. "X","beta").}
 
@@ -37,9 +39,7 @@ dag_node(
 
 \item{dec}{a logical value indicating whether the node is a decision node.  Used to show nodes as rectangles instead of ovals when using \code{dag_render()}.}
 
-\item{det}{a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using \code{dag_render()}.}
-
-\item{description}{a longer more descriptive character label for the node.}
+\item{det}{a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using \code{dag_render()}.  Assumed to be \code{TRUE} when \code{rhs} is a formula.}
 }
 \value{
 a graph object of class \code{causact_graph}.

@@ -25,9 +25,9 @@ knitr::include_graphics("graphics/causactDemo.gif")
 
 This package relies on the sleek and elegant `greta` package for Bayesian inference. `greta`, in turn, is an interface into tensorflow from R.  Future iterations of the `causact` package will aim to be a front-end into several universal probablistic programming languages (e.g. Stan, Turing, Gen, etc.). 
 
-Using the `causact` package for Bayesian inference is featured in `The Business Analyst's Guide to Business Analytics` available at http://causact.updog.co/.
+Using the `causact` package for Bayesian inference is featured in `The Business Analyst's Guide to Business Analytics` available at http://causact.com/.
 
-> NOTE: Package is very "alpha" and under active development. Breaking changes are to be expected.  Feedback and encouragement is appreciated via github issues or Twitter (https://twitter.com/preposterior).
+> NOTE: Package is under active development. Breaking changes are to be expected.  Feedback and encouragement is appreciated via github issues or Twitter (https://twitter.com/preposterior).
 
 ## Installation
 
@@ -35,13 +35,13 @@ Using the `causact` package for Bayesian inference is featured in `The Business 
 install.packages("remotes")
 remotes::install_github("flyaflya/causact")
 ```
-`causact` requires the `greta` package for Bayesian updating.  Install `greta` using the instructions available here: http://causact.updog.co/install-greta.html 
+`causact` requires the `greta` package for Bayesian updating.  Install `greta` using the instructions available here: http://causact.com/install-greta.html 
 
 ## Usage 
 
-Example taken from http://causact.updog.co/graphical-models.html with the pacakges `dag_foo()` functions futher described here:
+Example taken from https://www.causact.com/graphical-models-tell-joint-distribution-stories.html#graphical-models-tell-joint-distribution-stories with the packages `dag_foo()` functions further described here:
 
-http://causact.updog.co/using-causact-dags-for-inference.html
+https://www.causact.com/causact-quick-inference-with-generative-dags.html#causact-quick-inference-with-generative-dags
 
 
 ### Create beautiful model visualizations.
@@ -107,7 +107,7 @@ tidyDrawsDF %>% dagp_plot()
 
 ## Further Usage
 
-For more info, see `The Business Analyst's Guide to Business Analytics` available at http://causact.updog.co/.  Two additional examples shown below.
+For more info, see `The Business Analyst's Guide to Business Analytics` available at https://www.causact.com.  Two additional examples are shown below.
 
 ## Prosocial Chimpanzees Example from Statistical Rethinking
 

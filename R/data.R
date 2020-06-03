@@ -96,7 +96,6 @@
 #'   \item{LotArea}{Lot size in square feet}
 #'   \item{Street}{Type of road access}
 #'   \item{LotShape}{General shape of property}
-#'   \item{LandContour}{Flatness of the property}
 #'   \item{Utilities}{Type of utilities available}
 #'   \item{LotConfig}{Lot configuration}
 #'   \item{Neighborhood}{Physical locations within Ames city limits}

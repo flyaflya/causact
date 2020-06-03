@@ -17,9 +17,11 @@
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_replace
 #' @importFrom DiagrammeR create_node_df create_graph add_node_df create_edge_df
+#' @importFrom rlang .data
 #' @export
 
 dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
+  shape <- NULL ## place holder to pass devtools::check
   # add dimension labels
   graph = graph %>% dag_dim()
 
@@ -135,11 +137,11 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   nodeDF = nodeDF %>%
     dplyr::left_join(eqDF, by = "id") %>%
     dplyr::mutate(type = ifelse(obs == TRUE,"obs","latent"),
-    shape = ifelse(dec == TRUE, "rect", "ellipse"),
+    shape = ifelse(.data$dec == TRUE, "rect", "ellipse"),
     peripheries = ifelse((distr == TRUE | is.na(rhs)) & det == FALSE,1,2),
     fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
            label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine))) %>%  ###poor man's version of shortLabel
-    dplyr::select(id,label,type,shape,peripheries,fillcolor,auto_descr) %>%
+    dplyr::select(id,label,type,.data$shape,peripheries,fillcolor,auto_descr) %>%
     dplyr::left_join(clusterNameDF, by = "id")
 
   ###just use description if shortLabel = TRUE

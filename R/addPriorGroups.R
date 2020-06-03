@@ -1,3 +1,7 @@
+#' Add a column to tidy dataframe of draws that groups parameters by their prior distribution.  All parameters with the same prior distribution recieve the same index.
+#' @param tidyDraws a tidy version of the drawsDF dataframe created by  \code{dag_greta()} where each row represents one draw of MCMC output.  Two columns are expected, \code{key} - the parameter name, \code{value} - the realized value, and a third column, \code{priorGroup}, is appended as an integer grouping parameters by their prior distributions. The data for this third column is stored in an environment called \code{cacheEnv} when the \code{dag_greta()} function is called.  Any parameters with the same prior end up in the same prior group.  Used by \code{dagp_plot()} to group parameters when plotted.
+#' @return a tidy dataframe.
+#'
 #' @importFrom dplyr select left_join bind_rows arrange
 #' @export
 

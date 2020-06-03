@@ -2,11 +2,13 @@
 % Please edit documentation in R/dag_edge.R
 \name{dag_edge}
 \alias{dag_edge}
-\title{Add an edge between nodes in a graph object.}
+\title{Add an edge (or edges) between nodes in a graph object.}
 \usage{
 dag_edge(graph, from, to, type = as.character(NA))
 }
 \arguments{
+\item{graph}{a graph object of class \code{causact_graph}.}
+
 \item{from}{a character vector representing the parent nodes label or description from which the edge is connected.}
 
 \item{to}{the child node label or description from which the edge is connected.}
