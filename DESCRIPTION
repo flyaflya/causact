@@ -1,8 +1,12 @@
 Package: causact
 Type: Package
-Title: Accelerated business analytics workflows with Bayesian inference and DAGs.
+Title: Accelerated business analytics workflows with Bayesian inference and DAGs
 Version: 0.1.0
-Authors@R: person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre"))
+Authors@R: c(person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre")),
+    person("Daniela", "Dapena", role = "ctb"),
+    person("Rose", "Nguyen", role = "ctb"),
+    person("Jared", "Shapiro", role = "ctb")
+    )
 Maintainer: Adam Fleischhacker <ajf@udel.edu>
 Description: Accelerate Bayesian analytics workflows in R through interactive modelling,
     visualization, and inference. Uses probabilistic graphical models (DAGs) as a unifying
@@ -10,6 +14,9 @@ Description: Accelerate Bayesian analytics workflows in R through interactive mo
     relies on the sleek and elegant greta package for Bayesian inference. greta, in turn, 
     is an interface into TensorFlow from R. See http://github.com/flyaflya/causact or 
     http://causact.com for more documentation and examples.
+License: MIT + file LICENSE
+URL: https://causact.com
+BugReports: https://github.com/flyaflya/issues
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.2.0)
