@@ -1,29 +1,32 @@
 Package: causact
 Type: Package
-Title: Accelerated business analytics workflows
+Title: Accelerated business analytics workflows with Bayesian inference and DAGs.
 Version: 0.1.0
 Authors@R: person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre"))
 Maintainer: Adam Fleischhacker <ajf@udel.edu>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: MIT + file LICENSE
+Description: Accelerate Bayesian analytics workflows in R through interactive modelling,
+    visualization, and inference. Uses probabilistic graphical models (DAGs) as a unifying
+    language for business stakeholders, statisticians, and programmers. This package
+    relies on the sleek and elegant greta package for Bayesian inference. greta, in turn, 
+    is an interface into TensorFlow from R. See http://github.com/flyaflya/causact or 
+    http://causact.com for more documentation and examples.
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.2.0)
 Imports:
-    DiagrammeR (>= 1.0.0),
+    DiagrammeR (>= 1.0.6),
     dplyr (>= 0.7.4),
     magrittr (>= 1.5),
-    ggplot2,
-    rlang,
-    greta,
-    purrr,
-    tidyr,
-    igraph,
-    stringr,
-    cowplot,
-    coda,
-    forcats,
-    htmlwidgets,
-    rstudioapi
+    ggplot2 (>=3.3.0),
+    rlang (>=0.4.6),
+    greta (>=0.3.1),
+    purrr (>=0.3.4),
+    tidyr (>=1.0.3),
+    igraph (>=1.2.5),
+    stringr (>=1.4.0),
+    cowplot (>=1.0.0),
+    coda (>=0.19.3),
+    forcats (>=0.5.0),
+    htmlwidgets (>=1.5.1),
+    rstudioapi (>=0.11)
 RoxygenNote: 7.1.0
