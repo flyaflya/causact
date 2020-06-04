@@ -8,3 +8,4 @@ README.Rmd
 gretaExamples.R
 eightSchools.R
 ^graphics.*$
+^cran-comments\.md$

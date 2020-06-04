@@ -165,3 +165,28 @@
 #' }
 "beachLocDF"
 
+#' Data from behavior trials in a captive group of chimpanzees, housed in Lousiana. From Silk et al. 2005. Nature 437:1357-1359 and further popularized in McElreath, Richard. Statistical rethinking: A Bayesian course with examples in R and Stan. CRC press, 2020.  Experiment
+#' @format A data frame with 504 rows and 9 variables:
+#' \describe{
+#'   \item{actor}{name of actor}
+#'   \item{recipient}{name of recipient (NA for partner absent condition)}
+#'   \item{condition}{partner absent (0), partner present (1)}
+#'   \item{block}{block of trials (each actor x each recipient 1 time)}
+#'   \item{trial}{trial number (by chimp = ordinal sequence of trials for each chimp, ranges from 1-72; partner present trials were interspersed with partner absent trials)}
+#'   \item{prosoc_left}{prosocial_left : 1 if prosocial (1/1) option was on left}
+#'   \item{chose_prosoc}{choice chimp made (0 = 1/0 option, 1 = 1/1 option)}
+#'   \item{pulled_left}{which side did chimp pull (1 = left, 0 = right)}
+#'   \item{treatment}{narrative description combining condition and prosoc_left that describes the side the prosical food option was on and whether a partner was present}
+#' }
+#' @source Silk et al. 2005. Nature 437:1357-1359..
+"chimpanzeesDF"
+
+#' This example, often referred to as 8-schools, was popularized by its inclusion in Bayesian Data Analysis (Gelman, Carlin, & Rubin 1997).
+#' @format A data frame with 8 rows and 3 variables:
+#' \describe{
+#'   \item{y}{estimated treatment effect at a particular school}
+#'   \item{sigma}{standard error of the treamtment effect estimate}
+#'   \item{schoolName}{an identifier for the school represented by this row}
+#'   }
+"schoolsDF"
+

@@ -118,24 +118,16 @@ shown below.
 > examples in R and Stan. Chapman and Hall/CRC, 2018.
 
 ``` r
-library(rethinking)
 library(greta)
 library(tidyverse)
 library(causact)
 
-data("chimpanzees")
-chimpanzeesDF = chimpanzees %>%
-  mutate(treatment = dplyr::case_when(
-    prosoc_left == 0 & condition == 0 ~"Food Right - No Partner",
-    prosoc_left == 1 & condition == 0 ~"Food Left - No Partner",
-    prosoc_left == 0 & condition == 1 ~"Food Right - With Partner",
-    prosoc_left == 1 & condition == 1 ~"Food Left - With Partner",
-    TRUE ~ "Unknown"))
+# data object used below, chimpanzeesDF, is built-in to causact package
 
 graph = dag_create() %>%
   dag_node("Pull Left Handle","L",
            rhs = bernoulli(p),
-           data = chimpanzeesDF$pulled_left) %>%
+           data = causact::chimpanzeesDF$pulled_left) %>%
   dag_node("Probability of Pull", "p",
            rhs = ilogit(alpha + gamma + beta),
            child = "L") %>%
@@ -194,7 +186,7 @@ graph %>% dag_render(shortLabel = TRUE)
 ``` r
 graph %>% dag_greta(mcmc = TRUE)
 #> ## The specified DAG corresponds to the following greta code: 
-#> L <- as_data(chimpanzeesDF$pulled_left)   #DATA
+#> L <- as_data(causact::chimpanzeesDF$pulled_left)   #DATA
 #> act       <- as.factor(chimpanzeesDF$actor)   #DIM
 #> blk       <- as.factor(chimpanzeesDF$block)   #DIM
 #> trtmt     <- as.factor(chimpanzeesDF$treatment)   #DIM
@@ -236,15 +228,14 @@ library(greta)
 library(tidyverse)
 library(causact)
 
-schools_dat <- data.frame(y = c(28,  8, -3,  7, -1,  1, 18, 12),
-                          sigma = c(15, 10, 16, 11,  9, 11, 10, 18), schoolName = paste0("School",1:8))
+# data object used below, schoolDF, is built-in to causact package
 
 graph = dag_create() %>%
   dag_node("Treatment Effect","y",
            rhs = normal(theta, sigma),
-           data = schools_dat$y) %>%
+           data = causact::schoolsDF$y) %>%
   dag_node("Std Error of Effect Estimates","sigma",
-           data = schools_dat$sigma,
+           data = causact::schoolsDF$sigma,
            child = "y") %>%
   dag_node("Exp. Treatment Effect","theta",
            child = "y",
@@ -258,7 +249,7 @@ graph = dag_create() %>%
   dag_plate("Observation","i",nodeLabels = c("sigma","y","theta")) %>%
   dag_plate("School Name","school",
             nodeLabels = "schoolEffect",
-            data = schools_dat$schoolName,
+            data = causact::schoolsDF$schoolName,
             addDataNode = TRUE)
 ```
 
@@ -275,9 +266,9 @@ graph %>% dag_render()
 ``` r
 graph %>% dag_greta(mcmc = TRUE)
 #> ## The specified DAG corresponds to the following greta code: 
-#> sigma <- as_data(schools_dat$sigma)   #DATA
-#> y <- as_data(schools_dat$y)           #DATA
-#> school     <- as.factor(schools_dat$schoolName)   #DIM
+#> sigma <- as_data(causact::schoolsDF$sigma)   #DATA
+#> y <- as_data(causact::schoolsDF$y)           #DATA
+#> school     <- as.factor(causact::schoolsDF$schoolName)   #DIM
 #> school_dim <- length(unique(school))   #DIM
 #> schoolEffect <- normal(mean = 0, sd = 30, dim = school_dim)   #PRIOR
 #> avgEffect    <- normal(mean = 0, sd = 30)                     #PRIOR

@@ -114,24 +114,16 @@ For more info, see `The Business Analyst's Guide to Business Analytics` availabl
 > McElreath, Richard. Statistical rethinking: A Bayesian course with examples in R and Stan. Chapman and Hall/CRC, 2018.
 
 ```{r chimpsGraph, results ="hide", warning = FALSE, message = FALSE}
-library(rethinking)
 library(greta)
 library(tidyverse)
 library(causact)
 
-data("chimpanzees")
-chimpanzeesDF = chimpanzees %>%
-  mutate(treatment = dplyr::case_when(
-    prosoc_left == 0 & condition == 0 ~"Food Right - No Partner",
-    prosoc_left == 1 & condition == 0 ~"Food Left - No Partner",
-    prosoc_left == 0 & condition == 1 ~"Food Right - With Partner",
-    prosoc_left == 1 & condition == 1 ~"Food Left - With Partner",
-    TRUE ~ "Unknown"))
+# data object used below, chimpanzeesDF, is built-in to causact package
 
 graph = dag_create() %>%
   dag_node("Pull Left Handle","L",
            rhs = bernoulli(p),
-           data = chimpanzeesDF$pulled_left) %>%
+           data = causact::chimpanzeesDF$pulled_left) %>%
   dag_node("Probability of Pull", "p",
            rhs = ilogit(alpha + gamma + beta),
            child = "L") %>%
@@ -211,15 +203,14 @@ library(greta)
 library(tidyverse)
 library(causact)
 
-schools_dat <- data.frame(y = c(28,  8, -3,  7, -1,  1, 18, 12),
-                          sigma = c(15, 10, 16, 11,  9, 11, 10, 18), schoolName = paste0("School",1:8))
+# data object used below, schoolDF, is built-in to causact package
 
 graph = dag_create() %>%
   dag_node("Treatment Effect","y",
            rhs = normal(theta, sigma),
-           data = schools_dat$y) %>%
+           data = causact::schoolsDF$y) %>%
   dag_node("Std Error of Effect Estimates","sigma",
-           data = schools_dat$sigma,
+           data = causact::schoolsDF$sigma,
            child = "y") %>%
   dag_node("Exp. Treatment Effect","theta",
            child = "y",
@@ -233,7 +224,7 @@ graph = dag_create() %>%
   dag_plate("Observation","i",nodeLabels = c("sigma","y","theta")) %>%
   dag_plate("School Name","school",
             nodeLabels = "schoolEffect",
-            data = schools_dat$schoolName,
+            data = causact::schoolsDF$schoolName,
             addDataNode = TRUE)
 ```
 
