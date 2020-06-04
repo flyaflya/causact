@@ -1,7 +1,7 @@
 Package: causact
 Type: Package
 Title: Accelerated Business Analytics Workflows with Bayesian Inference and DAGs
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre")),
     person("Daniela", "Dapena", role = "ctb"),
     person("Rose", "Nguyen", role = "ctb"),
