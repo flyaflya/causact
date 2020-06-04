@@ -20,14 +20,50 @@ dag_edge <- function(graph,
                      to,
                      type = as.character(NA)) {
 
+  ## First validate that the first argument is indeed a causact_graph
+  class_g <- class(graph)
+  ## Any causact_graph will have class length of 1
+  if(length(class_g) > 1){
+    ## This specific case is hard-coded as it has occured often in early use by the author
+    if(class_g[1] == chr("grViz") && class_g[2]=="htmlwidget"){
+      errorMessage <- paste0("Given rendered Causact Graph. Check the declaration for a dag_render() call.")
+    }
+    else {
+      errorMessage <- paste0("Cannot add dag_edge() to given object as it is not a Causact Graph.")
+    }
+    stop(errorMessage)
+  }
+  ## Now check the single class
+  if(class_g != "causact_graph"){
+    errorMessage <- paste0("Cannot add dag_edge() to given object as it is not a Causact Graph.")
+    stop(errorMessage)
+  }
+
+  ## Check that we maintain a DAG
+  ## That that the edge being created is not to the same node.
+  if(anyDuplicated(c(from,to))){
+    errorMessage <- paste("You have attempted to connect", c(from,to)[anyDuplicated(c(from,to))],"to itself, but this would create a cycle and is not a Directed Acyclic Graph. You cannot connect a node to itself in a DAG.")
+    stop(errorMessage)
+  }
+
+  ## extract nodeIDs
+  ## checking that the 'from' and 'to' nodes exist in the graph.
+  fromIDs = findNodeID(graph,from)
+  if(anyNA(fromIDs)){
+    errorMessage <- paste("Node",from,"does not exist. Check for spelling errors. Check the order the nodes were created!")
+    stop(errorMessage)
+  }
+
+  toIDs = findNodeID(graph,to)
+  if(anyNA(toIDs)){
+    errorMessage <- paste("Node",to,"does not exist. Check for spelling errors. Check the order the nodes were created!")
+    stop(errorMessage)
+  }
+
   ## get number of edges
   numberOfEdges = max(length(from),length(to))
   ## if no edges, simply return graph
   if(numberOfEdges == 0) {return(graph)}
-
-  ## extract nodeIDs
-  fromIDs = findNodeID(graph,from)
-  toIDs = findNodeID(graph,to)
 
   ## initialize edgeDF info for this edge(s)
   edgeIDstart = max(graph$edges_df$id,0) + 1
