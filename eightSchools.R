@@ -1,6 +1,7 @@
  # Create an empty graph and add 2 nodes by using
  # the `dag_node()` function twice
 library(causact)
+library(greta)
  # The Eight Schools Example from Gelman et al.:
 
  schools_dat <- data.frame(y = c(28,  8, -3,  7, -1,  1, 18, 12),
