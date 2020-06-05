@@ -14,6 +14,7 @@
 #' }
 #'
 #' @examples
+#' \dontrun{
 #' library(greta)
 #' graph = dag_create() %>%
 #'   dag_node("Get Card","y",
@@ -34,6 +35,7 @@
 #' graph %>% dag_render(shortLabel = TRUE)
 #' graph %>% dag_greta(mcmc=TRUE)
 #' tidyDrawsDF %>% dagp_plot()
+#' }
 #' @importFrom dplyr bind_rows tibble left_join select add_row as_tibble
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
 #' @importFrom rlang enquo expr_text .data

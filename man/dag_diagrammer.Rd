@@ -20,10 +20,12 @@ a graph object of class \code{dgr_graph}.
 The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
+\dontrun{
 dag_create() \%>\%
 dag_node("Get Card","y",
          rhs = bernoulli(theta),
          data = carModelDF$getCard) \%>\%
   dag_diagrammer() \%>\%
   DiagrammeR::render_graph(title = "DiagrammeR Version of causact_graph")
+  }
 }

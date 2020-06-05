@@ -6,13 +6,14 @@
 #' @param shortLabel a longer more descriptive character label for the node.
 #' @return a graph object of class \code{dgr_graph}.
 #' @examples
+#' \dontrun{
 #' dag_create() %>%
 #' dag_node("Get Card","y",
 #'          rhs = bernoulli(theta),
 #'          data = carModelDF$getCard) %>%
 #'   dag_diagrammer() %>%
 #'   DiagrammeR::render_graph(title = "DiagrammeR Version of causact_graph")
-
+#'   }
 #' @importFrom dplyr select filter group_by summarize mutate left_join
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_replace

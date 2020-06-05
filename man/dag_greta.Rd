@@ -27,6 +27,7 @@ If \code{mcmc=TRUE}, running \code{dag_greta} populates the global envirnment wi
 The input graph object should be of class \code{causact_graph} and created using \code{dag_create()}.  The specification of a completely consistent joint distribution is left to the user.  Helpful error messages are scheduled for future versions of the \code{causact} package.
 }
 \examples{
+\dontrun{
 library(greta)
 graph = dag_create() \%>\%
   dag_node("Get Card","y",
@@ -47,4 +48,5 @@ graph \%>\% dag_greta()
 graph \%>\% dag_render(shortLabel = TRUE)
 graph \%>\% dag_greta(mcmc=TRUE)
 tidyDrawsDF \%>\% dagp_plot()
+}
 }

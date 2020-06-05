@@ -206,7 +206,7 @@ rhsPriorComposition = function(graph) {
     dplyr::filter(distr == TRUE) %>%
     select(id,rhs,rhsID)
 
-  ## retireve non-NA argument list
+  ## retrieve non-NA argument list
   argDF = graph$arg_df %>%
     dplyr::filter(!is.na(argValue))
 
@@ -506,7 +506,7 @@ updateExtractEdges = function(graphWithDim) {
   ### 1) Create extract edge in edgeDF
   ### 2) Update argDimDF
   extractNodes = extractCandidateDF %>%
-    dplyr::filter(.data$candidate == TRUE) %>%
+    dplyr::filter(candidate == TRUE) %>%
     dplyr::pull(id)
 
   edgeDF$type[edgeDF$id %in% extractNodes] <- "extract"

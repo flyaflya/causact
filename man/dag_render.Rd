@@ -27,7 +27,9 @@ dag_render(
 Using a \code{causact_graph} object, render the graph in the RStudio Viewer.
 }
 \examples{
+\dontrun{
 # Render an  empty graph
 dag_create() \%>\%
   dag_render()
+  }
 }

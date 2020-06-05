@@ -2,11 +2,13 @@
 #'
 #' Generates a \code{causact_graph} graph object that is set-up for drawing DAG graphs.
 #' @examples
+#' \dontrun{
 #' # With `dag_create()` we can
 #' # simply create an empty graph and
 #' # add in nodes and edges later
 #' # with other functions.
 #' dag_create() %>% dag_render()
+#' }
 #' @export
 dag_create <- function() {
   # Create an empty node data frame (`ndf`)

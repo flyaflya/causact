@@ -19,6 +19,7 @@ Generates a \code{causact_graph} graph object that is set-up for drawing DAG gra
 from multiple provided graphs.
 }
 \examples{
+\dontrun{
 # With `dag_merge()` we
 # reset the node ID's and all other item ID's,
 # bind together the rows of all given graphs, and
@@ -59,5 +60,5 @@ dag_node("Total Profit", "TP",
   dag_edge(from=c("pA","pB"), to=c("TP"))
 
 dag_render(g_merged)
-
+}
 }

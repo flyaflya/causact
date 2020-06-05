@@ -10,6 +10,7 @@
 #' @param rhs Optional \code{rhs} expression for when \code{addDataNode = TRUE}.  This can be either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.
 #' @return a graph object of class \code{dgr_graph}.
 #' @examples
+#' \dontrun{
 #' # create small DF
 #' dag_create() %>%
 #'     dag_node("House Prices","Y") %>%
@@ -62,6 +63,7 @@
 #'             data = poolTimeGymDF$gymID,
 #'             addDataNode = TRUE)
 #' graph %>% dag_render()
+#' }
 #' @importFrom dplyr mutate
 #' @importFrom rlang enquo get_expr UQ
 #' @importFrom utils head

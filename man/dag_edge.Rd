@@ -22,10 +22,12 @@ a graph object of class \code{dgr_graph}.
 With a graph object of class \code{causact_graph} created from \code{dag_create}, add an edge between nodes in the graph.  Vector recycling is used for all arguments.
 }
 \examples{
+\dontrun{
 # Create a graph with 2 connected nodes
 dag_create() \%>\%
   dag_node("X") \%>\%
   dag_node("Y") \%>\%
   dag_edge(from = "X", to = "Y") \%>\%
   dag_render(shortLabel = TRUE)
+  }
 }

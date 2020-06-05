@@ -16,6 +16,7 @@ a credible interval plot of all latent posterior distribution parameters.
 The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
+\dontrun{
 library(greta)
 # Create a 2 node graph
 graph = dag_create() \%>\%
@@ -62,4 +63,5 @@ graph = dag_create() \%>\%
 graph \%>\% dag_render()
 graph \%>\% dag_greta(mcmc=TRUE)
 tidyDrawsDF \%>\% dagp_plot()
+}
 }

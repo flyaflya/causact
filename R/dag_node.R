@@ -14,6 +14,7 @@
 #' @param det a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using \code{dag_render()}.  Assumed to be \code{TRUE} when \code{rhs} is a formula.
 #' @return a graph object of class \code{causact_graph}.
 #' @examples
+#' \dontrun{
 #' library(greta)
 #' # Create an empty graph and add 2 nodes by using
 #' # the `dag_node()` function twice
@@ -56,6 +57,7 @@
 #' graph %>% dag_render()
 #' graph %>% dag_greta(mcmc=TRUE)
 #' tidyDrawsDF %>% dagp_plot()
+#' }
 #' @importFrom dplyr bind_rows filter
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy
 #' @importFrom greta uniform normal lognormal bernoulli binomial beta_binomial negative_binomial hypergeometric poisson gamma inverse_gamma weibull exponential pareto student laplace beta cauchy chi_squared logistic f multivariate_normal wishart lkj_correlation multinomial categorical dirichlet dirichlet_multinomial

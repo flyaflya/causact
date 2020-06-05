@@ -17,7 +17,9 @@ An updated version of \code{dgrGraph} with good defaults for
 \code{setDirectedGraph} returns a graph with good defaults.
 }
 \examples{
+\dontrun{
 library(DiagrammeR)
 create_graph() \%>\% add_node() \%>\% render_graph()  # default DiagrammeR aesthetics
 create_graph() \%>\% add_node() \%>\% setDirectedGraphTheme() \%>\% render_graph() ## causact aesthetics
+}
 }

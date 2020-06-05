@@ -6,9 +6,11 @@
 #' @return An updated version of \code{dgrGraph} with good defaults for
 #'   graphical models.
 #' @examples
+#' \dontrun{
 #' library(DiagrammeR)
 #' create_graph() %>% add_node() %>% render_graph()  # default DiagrammeR aesthetics
 #' create_graph() %>% add_node() %>% setDirectedGraphTheme() %>% render_graph() ## causact aesthetics
+#' }
 #' @importFrom DiagrammeR add_global_graph_attrs
 #' @export
 

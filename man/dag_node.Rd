@@ -48,6 +48,7 @@ a graph object of class \code{causact_graph}.
 The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
+\dontrun{
 library(greta)
 # Create an empty graph and add 2 nodes by using
 # the `dag_node()` function twice
@@ -90,4 +91,5 @@ graph = dag_create() \%>\%
 graph \%>\% dag_render()
 graph \%>\% dag_greta(mcmc=TRUE)
 tidyDrawsDF \%>\% dagp_plot()
+}
 }

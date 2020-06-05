@@ -4,6 +4,7 @@
 #' @param drawsDataFrame one of the two posterior data frame objects created by \code{dag_greta()}.  If \code{drawsDataFrame=drawsDF}, each parameter gets its own density plot.  If \code{drawsDataFrame=tidyDrawsDF} (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
 #' @return a credible interval plot of all latent posterior distribution parameters.
 #' @examples
+#' \dontrun{
 #' library(greta)
 #' # Create a 2 node graph
 #' graph = dag_create() %>%
@@ -50,6 +51,7 @@
 #' graph %>% dag_render()
 #' graph %>% dag_greta(mcmc=TRUE)
 #' tidyDrawsDF %>% dagp_plot()
+#' }
 #' @importFrom dplyr bind_rows filter
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy .data
 #' @export

@@ -36,6 +36,7 @@ a graph object of class \code{dgr_graph}.
 Given a graph object of class \code{causact_graph}, create collections of nodes that should be repeated i.e. represent multiple instances of a random variable, random vector, or random matrix.  When nodes are on more than one plate, graph rendering will treat each unique combination of plates as separate plates.
 }
 \examples{
+\dontrun{
 # create small DF
 dag_create() \%>\%
     dag_node("House Prices","Y") \%>\%
@@ -88,4 +89,5 @@ graph = dag_create() \%>\%
             data = poolTimeGymDF$gymID,
             addDataNode = TRUE)
 graph \%>\% dag_render()
+}
 }

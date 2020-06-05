@@ -7,9 +7,11 @@
 #' @param width a numeric value.  an optional parameter for specifying the width of the resulting graphic in pixels.
 #' @param height a numeric value.  an optional parameter for specifying the height of the resulting graphic in pixels.
 #' @examples
+#' \dontrun{
 #' # Render an  empty graph
 #' dag_create() %>%
 #'   dag_render()
+#'   }
 #' @importFrom dplyr select rename mutate filter left_join
 #' @importFrom dplyr case_when as_tibble as_data_frame
 #' @export
