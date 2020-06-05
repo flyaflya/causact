@@ -17,14 +17,25 @@
   
 These examples are long because they showcase operations that use TensorFlow.  They cannot be shortened further without eliminating the demonstration of this important functionality.
 
-## rhub::check_for_cran() fails
+## rhub::check_for_cran() fails wtih default values only
 
-This installations fails with the following error:
+The installation using `rhub::check_for_cran()` fails with the following error:
 
 > Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
   namespace 'vctrs' 0.2.4 is being loaded, but >= 0.3.0 is required
 
 The only package I use with a `vctrs` dependency is `dplyr`.  It requires `vctrs (>= 0.3.0)` (see here: <https://github.com/tidyverse/dplyr/blob/master/DESCRIPTION>).  However, `rhub::check_for_cran()` insists on installing `vctrs (= 0.2.4)` even if I try to override it.  Version 0.3.0 is available via CRAN.
+
+If I run this check instead:
+
+```
+rhub::check(
+  platform="windows-x86_64-devel",
+  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = "always"))
+```
+
+it runs without error.
+
 
 ## Possibly mis-spelled words in DESCRIPTION:
      DAGs (4:13, 12:72)
@@ -32,5 +43,5 @@ The only package I use with a `vctrs` dependency is `dplyr`.  It requires `vctrs
      Workflows (3:39)
      greta (14:37, 14:75)
      workflows (11:44)
-All of the above words are spelled correctly.  DAGs is an acronym for directed acyclig graphs.
+All of the above words are spelled correctly.  DAGs is a fairly well-knwon acronym for directed acyclic graphs.
 
