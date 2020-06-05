@@ -1,7 +1,7 @@
 Package: causact
 Type: Package
 Title: Accelerated Business Analytics Workflows with Bayesian Inference and DAGs
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: c(person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre")),
     person("Daniela", "Dapena", role = "ctb"),
     person("Rose", "Nguyen", role = "ctb"),
@@ -16,7 +16,7 @@ Description: Accelerate Bayesian analytics workflows in R through interactive mo
 License: MIT + file LICENSE
 URL: https://causact.com
 BugReports: https://github.com/flyaflya/causact/issues
-SystemRequirements:  Python and TensorFlow are needed for Bayesian inference computations; 
+SystemRequirements: Python and TensorFlow are needed for Bayesian inference computations; 
     Python (>= 2.7.0) with header files and shared library;
     TensorFlow (v1.14; https://www.tensorflow.org/);
     TensorFlow Probability (v0.7.0; https://www.tensorflow.org/probability/)Encoding: UTF-8
