@@ -81,7 +81,7 @@
 #' }
 #' @source \url{http://www.transparency.org/cpi} CPI data available from www.transparency.org/cpi.  Accessed Oct 1, 2018. Consumer Perception Index 2017 by Transparency International is licensed under CC-BY- ND 4.0.
 #' @source \url{http://hdr.undp.org/en/content/human-development-index-hdi} HDA data accessed on Oct 1, 2018.
-#' @source \url{https://data.worldbank.org/indicator/sp.pop.totl} Population data accessed on Oct 1, 2018.
+#' @source \url{https://data.worldbank.org/} Population data accessed on Oct 1, 2018.
 "corruptDF"
 
 

@@ -506,7 +506,7 @@ updateExtractEdges = function(graphWithDim) {
   ### 1) Create extract edge in edgeDF
   ### 2) Update argDimDF
   extractNodes = extractCandidateDF %>%
-    dplyr::filter(candidate == TRUE) %>%
+    dplyr::filter(.data$candidate == TRUE) %>%
     dplyr::pull(id)
 
   edgeDF$type[edgeDF$id %in% extractNodes] <- "extract"

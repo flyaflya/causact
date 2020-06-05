@@ -23,7 +23,7 @@ A data frame with 174 rows and 7 variables:
 
 \url{http://hdr.undp.org/en/content/human-development-index-hdi} HDA data accessed on Oct 1, 2018.
 
-\url{https://data.worldbank.org/indicator/sp.pop.totl} Population data accessed on Oct 1, 2018.
+\url{https://data.worldbank.org/} Population data accessed on Oct 1, 2018.
 }
 \usage{
 corruptDF

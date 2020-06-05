@@ -8,7 +8,7 @@
 #' @param engine string for the Graphviz layout engine; can be \code{dot}
 #'   (default), \code{neato}, \code{circo}, or \code{twopi}. For more
 #'   information see
-#'   \href{viz.js Usage}{https://github.com/mdaines/viz.js#usage}.
+#'   \href{https://github.com/mdaines/viz.js}{viz.js usage}.
 #' @param allow_subst a boolean that enables/disables substitution
 #'   functionality.
 #' @param options parameters supplied to the htmlwidgets framework.

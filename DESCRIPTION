@@ -5,13 +5,13 @@ Version: 0.2.0
 Authors@R: c(person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre")),
     person("Daniela", "Dapena", role = "ctb"),
     person("Rose", "Nguyen", role = "ctb"),
-    person("Jared", "Shapiro", role = "ctb")
+    person("Jared", "Sharpe", role = "ctb")
     )
 Description: Accelerate Bayesian analytics workflows in R through interactive modelling,
     visualization, and inference. Uses probabilistic graphical models (DAGs) as a unifying
     language for business stakeholders, statisticians, and programmers. This package
-    relies on the sleek and elegant greta package for Bayesian inference. greta, in turn, 
-    is an interface into TensorFlow from R. See <http://github.com/flyaflya/causact> or 
+    relies on the sleek and elegant 'greta' package for Bayesian inference. 'greta', in turn, 
+    is an interface into 'TensorFlow' from R. See <http://github.com/flyaflya/causact> or 
     <http://causact.com> for more documentation and examples.
 License: MIT + file LICENSE
 URL: https://causact.com
