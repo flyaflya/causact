@@ -16,7 +16,10 @@ Description: Accelerate Bayesian analytics workflows in R through interactive mo
 License: MIT + file LICENSE
 URL: https://causact.com
 BugReports: https://github.com/flyaflya/causact/issues
-Encoding: UTF-8
+SystemRequirements:  Python and TensorFlow are needed for Bayesian inference computations; 
+    Python (>= 2.7.0) with header files and shared library;
+    TensorFlow (v1.14; https://www.tensorflow.org/);
+    TensorFlow Probability (v0.7.0; https://www.tensorflow.org/probability/)Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.2.0)
 Imports:
