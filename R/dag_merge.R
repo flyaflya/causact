@@ -5,9 +5,8 @@
 #'
 #' @param graph1 A causact_graph objects to be merged with
 #' @param ...    As many causact_graph's as wish to be merged
-#' @return a merged graph object of class \code{dgr_graph}.
+#' @return a merged graph object of class \code{causact_graph}.  Useful for creating simple graphs and then merging them into a more complex structure.
 #' @examples
-#' \dontrun{
 #' # With `dag_merge()` we
 #' # reset the node ID's and all other item ID's,
 #' # bind together the rows of all given graphs, and
@@ -48,7 +47,6 @@
 #'   dag_edge(from=c("pA","pB"), to=c("TP"))
 #'
 #' dag_render(g_merged)
-#' }
 #' @export
 
 dag_merge <- function(graph1,...){

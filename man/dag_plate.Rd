@@ -30,13 +30,12 @@ dag_plate(
 \item{rhs}{Optional \code{rhs} expression for when \code{addDataNode = TRUE}.  This can be either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.}
 }
 \value{
-a graph object of class \code{dgr_graph}.
+an expansion of the input \code{causact_graph} object with an added plate representing the repetition of \code{nodeLabels} for each unique value of \code{data}.
 }
 \description{
 Given a graph object of class \code{causact_graph}, create collections of nodes that should be repeated i.e. represent multiple instances of a random variable, random vector, or random matrix.  When nodes are on more than one plate, graph rendering will treat each unique combination of plates as separate plates.
 }
 \examples{
-\dontrun{
 # create small DF
 dag_create() \%>\%
     dag_node("House Prices","Y") \%>\%
@@ -57,7 +56,7 @@ dag_node("Get Card","y",
   dag_plate("Car Model","x",
             data = carModelDF$carModel,
             nodeLabels = "theta")
-#' graph \%>\% dag_render()
+graph \%>\% dag_render()
 
 # multiple plate example
 library(dplyr)
@@ -89,5 +88,4 @@ graph = dag_create() \%>\%
             data = poolTimeGymDF$gymID,
             addDataNode = TRUE)
 graph \%>\% dag_render()
-}
 }

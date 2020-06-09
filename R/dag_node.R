@@ -12,9 +12,8 @@
 #' @param extract a logical value.  When TRUE, child nodes will try to extract an indexed value from this node.  When FALSE, the entire random object (e.g. scalar, vector, matrix) is passed to children nodes.  Only use this argument when overriding default behavior seen using \code{dag_render()}.
 #' @param dec a logical value indicating whether the node is a decision node.  Used to show nodes as rectangles instead of ovals when using \code{dag_render()}.
 #' @param det a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using \code{dag_render()}.  Assumed to be \code{TRUE} when \code{rhs} is a formula.
-#' @return a graph object of class \code{causact_graph}.
+#' @return a graph object of class \code{causact_graph} with an additional node(s).
 #' @examples
-#' \dontrun{
 #' library(greta)
 #' # Create an empty graph and add 2 nodes by using
 #' # the `dag_node()` function twice
@@ -55,6 +54,7 @@
 #'             data = schools_dat$schoolName,
 #'             addDataNode = TRUE)
 #' graph %>% dag_render()
+#' \dontrun{
 #' graph %>% dag_greta(mcmc=TRUE)
 #' tidyDrawsDF %>% dagp_plot()
 #' }

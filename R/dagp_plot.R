@@ -1,9 +1,18 @@
 #' Plot posterior distribution of latent parameters in \code{causact_graph} model.
 #'
 #' The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
-#' @param drawsDataFrame one of the two posterior data frame objects created by \code{dag_greta()}.  If \code{drawsDataFrame=drawsDF}, each parameter gets its own density plot.  If \code{drawsDataFrame=tidyDrawsDF} (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
+#' @param drawsDF the dataframe output of \code{dag_greta(mcmc=TRUE)} where each column is a parameter and each row a single draw from a representative sample.
+#' @param densityPlot If \code{TRUE}, each parameter gets its own density plot.  If \code{FALSE} (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
 #' @return a credible interval plot of all latent posterior distribution parameters.
 #' @examples
+#' # A simple example
+#' posteriorDF = data.frame(x = rnorm(100),
+#' y = rexp(100),
+#' z = runif(100))
+#' posteriorDF %>%
+#' dagp_plot(densityPlot = TRUE)
+#'
+#' # More complicated example requiring 'greta'
 #' \dontrun{
 #' library(greta)
 #' # Create a 2 node graph
@@ -15,11 +24,12 @@
 #'            rhs = beta(2,2),
 #'            child = "y")
 #' graph %>% dag_render()
-#' graph %>% dag_greta(mcmc=TRUE)
-#' drawsDF %>% dagp_plot()
-#' tidyDrawsDF %>% dagp_plot()
 #'
-#' # multiple plate example
+#' drawsDF = graph %>% dag_greta(mcmc=TRUE)
+#' drawsDF %>% dagp_plot()
+#' }
+#'
+#' # A multiple plate example
 #' library(dplyr)
 #' poolTimeGymDF = gymDF %>%
 #' mutate(stretchType = ifelse(yogaStretch == 1,
@@ -49,21 +59,23 @@
 #'             data = poolTimeGymDF$gymID,
 #'             addDataNode = TRUE)
 #' graph %>% dag_render()
-#' graph %>% dag_greta(mcmc=TRUE)
-#' tidyDrawsDF %>% dagp_plot()
+#' \dontrun{
+#' drawsDF = graph %>% dag_greta(mcmc=TRUE)
+#' drawsDF %>% dagp_plot()
 #' }
-#' @importFrom dplyr bind_rows filter
+#' @importFrom dplyr bind_rows filter group_by
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy .data
 #' @export
-#' @import ggplot2 tidyr
+#' @importFrom ggplot2 ggplot geom_density facet_wrap aes theme_minimal theme scale_alpha_continuous guides labs geom_segment element_blank
+#' @importFrom tidyr gather
 #' @importFrom cowplot plot_grid
 #' @importFrom stats quantile
 #' @export
 
-dagp_plot = function(drawsDataFrame) { # case where untidy posterior draws are provided
-  ..scaled.. <- q95 <- reasonableIntervalWidth <- credIQR <- shape <- NULL ## place holder to pass devtools::check
-  if (!("priorGroup" %in% colnames(drawsDataFrame))) {
-    plot = drawsDataFrame %>% gather() %>%
+dagp_plot = function(drawsDF,densityPlot = FALSE) { # case where untidy posterior draws are provided
+  ..scaled.. <- q95 <- reasonableIntervalWidth <- credIQR <- shape <- param <- NULL ## place holder to pass devtools::check
+  if (densityPlot == TRUE) {
+    plot = drawsDF %>% gather() %>%
       ggplot(aes(x = value, y = ..scaled..)) +
       geom_density(aes(fill = key)) +
       facet_wrap( ~ key, scales = "free_x") +
@@ -74,15 +86,18 @@ dagp_plot = function(drawsDataFrame) { # case where untidy posterior draws are p
   } else { # case where tidy posterior draws are provided
     plotList = list()
     ## filter out NA's like from LKJ prior (we do not know how to plot this)
-    drawsDataFrame = drawsDataFrame %>% dplyr::filter(!is.na(priorGroup))
-    priorGroups = unique(drawsDataFrame$priorGroup)
+    tryCatch({
+      drawsDF = drawsDF %>%
+      addPriorGroups() %>%
+      dplyr::filter(!is.na(priorGroup))
+    priorGroups = unique(drawsDF$priorGroup)
     numPriorGroups = length(priorGroups)
     for (i in 1:numPriorGroups) {
-      df = drawsDataFrame %>% filter(priorGroup == priorGroups[i])
+      df = drawsDF %>% filter(priorGroup == priorGroups[i])
 
       # create one plot per group
       # groups defined as params with same prior
-      plotList[[i]] = df %>% group_by(key) %>%
+      plotList[[i]] = df %>% group_by(param) %>%
         summarize(q05 = stats::quantile(value,0.05),
                   q25 = stats::quantile(value,0.55),
                   q45 = stats::quantile(value,0.45),
@@ -94,8 +109,8 @@ dagp_plot = function(drawsDataFrame) { # case where untidy posterior draws are p
         mutate(reasonableIntervalWidth = 1.5 * stats::quantile(credIQR,0.75)) %>%
         mutate(alphaLevel = ifelse(.data$credIQR > .data$reasonableIntervalWidth, 0.3,1)) %>%
         arrange(alphaLevel,.data$q50) %>%
-        mutate(key = factor(key, levels = key)) %>%
-        ggplot(aes(y = key, yend = key)) +
+        mutate(param = factor(param, levels = param)) %>%
+        ggplot(aes(y = param, yend = param)) +
         geom_segment(aes(x = q05, xend = q95, alpha = alphaLevel), size = 4, color = "#5f9ea0") +
         geom_segment(aes(x = q45, xend = q55, alpha = alphaLevel), size = 4, color = "#11114e") +
         scale_alpha_continuous(range = c(0.6,1))  +
@@ -109,5 +124,7 @@ dagp_plot = function(drawsDataFrame) { # case where untidy posterior draws are p
 
     nCol <- ifelse(numPriorGroups==1,1,floor(1 + sqrt(numPriorGroups)))
     cowplot::plot_grid(plotlist = plotList, ncol = nCol)
-  }
-}
+    },
+    error = function(c) dagp_plot(drawsDF, densityPlot = T)) # end try
+  } # end else
+} # end function

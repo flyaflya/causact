@@ -23,13 +23,22 @@ dag_render(
 
 \item{height}{a numeric value.  an optional parameter for specifying the height of the resulting graphic in pixels.}
 }
+\value{
+Returns an object of class \code{grViz} and \code{htmlwidget} that is also rendered in the RStudio viewer for interactive buidling of graphical models.
+}
 \description{
 Using a \code{causact_graph} object, render the graph in the RStudio Viewer.
 }
 \examples{
-\dontrun{
-# Render an  empty graph
+# Render a simple graph
 dag_create() \%>\%
+  dag_node("Demand","X") \%>\%
+  dag_node("Price","Y", child = "X") \%>\%
   dag_render()
-  }
+
+# Hide the mathematical details of a graph
+dag_create() \%>\%
+  dag_node("Demand","X") \%>\%
+  dag_node("Price","Y", child = "X") \%>\%
+  dag_render(shortLabel = TRUE)
 }

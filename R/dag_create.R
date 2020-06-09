@@ -2,13 +2,11 @@
 #'
 #' Generates a \code{causact_graph} graph object that is set-up for drawing DAG graphs.
 #' @examples
-#' \dontrun{
-#' # With `dag_create()` we can
-#' # simply create an empty graph and
-#' # add in nodes and edges later
-#' # with other functions.
-#' dag_create() %>% dag_render()
-#' }
+#' # With `dag_create()` we can create an empty graph and
+#' # add in nodes (`dag_node()`), add edges (`dag_edge`), and
+#' # view the graph with `dag_render()`.
+#' dag_create()
+#' @return a list object of class `causact_graph` consisting of 6 dataframes.  Each data frame is responsible for storing information about nodes, edges, plates, and the relationships among them.
 #' @export
 dag_create <- function() {
   # Create an empty node data frame (`ndf`)

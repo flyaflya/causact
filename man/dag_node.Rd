@@ -42,13 +42,12 @@ dag_node(
 \item{det}{a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using \code{dag_render()}.  Assumed to be \code{TRUE} when \code{rhs} is a formula.}
 }
 \value{
-a graph object of class \code{causact_graph}.
+a graph object of class \code{causact_graph} with an additional node(s).
 }
 \description{
 The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
-\dontrun{
 library(greta)
 # Create an empty graph and add 2 nodes by using
 # the `dag_node()` function twice
@@ -89,6 +88,7 @@ graph = dag_create() \%>\%
             data = schools_dat$schoolName,
             addDataNode = TRUE)
 graph \%>\% dag_render()
+\dontrun{
 graph \%>\% dag_greta(mcmc=TRUE)
 tidyDrawsDF \%>\% dagp_plot()
 }

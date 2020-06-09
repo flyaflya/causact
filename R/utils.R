@@ -204,7 +204,7 @@ rhsPriorComposition = function(graph) {
   ## get nodes which have prior information
   nodeDF = graph$nodes_df %>%
     dplyr::filter(distr == TRUE) %>%
-    select(id,rhs,rhsID)
+    select(.data$id,rhs,rhsID)
 
   ## retrieve non-NA argument list
   argDF = graph$arg_df %>%
@@ -224,12 +224,12 @@ rhsPriorComposition = function(graph) {
                                                   paste0("cbind(", argDimLabels,")"),
                                                   argDimLabels),  ## use cbind for R indexing
                                            "]"))) %>% ## add extraction index to label
-    dplyr::group_by(id,rhsID,rhs) %>%
+    dplyr::group_by(.data$id,rhsID,rhs) %>%
     dplyr::summarize(args = paste0(argName," = ",argValue,collapse = ", ")) %>%
     dplyr::left_join(plateDimDF, by = c("id" = "nodeID")) %>%
     dplyr::mutate(indexLabel = ifelse(is.na(indexLabel) | indexLabel == "NA","",indexLabel)) %>%
     dplyr::mutate(indexLabel = ifelse(indexLabel == "","",paste0(indexLabel,"_dim"))) %>%
-    dplyr::group_by(id,rhsID,rhs,args) %>%
+    dplyr::group_by(.data$id,rhsID,rhs,args) %>%
     dplyr::summarize(indexLabel = paste0(indexLabel, collapse = ",")) %>%
     dplyr::mutate(indexLabel = ifelse(stringr::str_detect(indexLabel,","),
                                       paste0("c(",indexLabel,")"),
@@ -240,7 +240,7 @@ rhsPriorComposition = function(graph) {
                                            paste0(", dim = ",indexLabel)),
                                     ")")) %>%
     dplyr::ungroup() %>%
-    select(id,prior_rhs)
+    select(.data$id,prior_rhs)
 
   ##update graph with new label
   graph$nodes_df = graph$nodes_df %>% left_join(auto_rhsDF, by = "id") %>%
@@ -507,14 +507,14 @@ updateExtractEdges = function(graphWithDim) {
   ### 2) Update argDimDF
   extractNodes = extractCandidateDF %>%
     dplyr::filter(candidate == TRUE) %>%
-    dplyr::pull(id)
+    dplyr::pull(.data$id)
 
   edgeDF$type[edgeDF$id %in% extractNodes] <- "extract"
 
   graph$edges_df = graph$edges_df %>%  ### add back edges that are not extract candidates
     dplyr::union(edgeDF) %>%
     dplyr::arrange(type) %>%
-    dplyr::distinct(id,from,to,.keep_all = TRUE)  ##get rid of type = NA edges that were found to be extract candidates
+    dplyr::distinct(.data$id,from,to,.keep_all = TRUE)  ##get rid of type = NA edges that were found to be extract candidates
 
   return(graph)
 

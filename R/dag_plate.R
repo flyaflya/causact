@@ -8,9 +8,8 @@
 #' @param data a vector representing the categorical data whose unique values become the plate index.  To use with \code{addDataNode = TRUE}, this vector should represent observations of a variable that can be coerced to a factor.
 #' @param addDataNode a logical value.  When \code{addDataNode = TRUE}, the code attempts to add a node of observed data that is used as an index for extracting the correct parameter from parent nodes that are on the newly created plate.  Verify the graphical model using \code{dag_render()} to ensure correct behavior.
 #' @param rhs Optional \code{rhs} expression for when \code{addDataNode = TRUE}.  This can be either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.
-#' @return a graph object of class \code{dgr_graph}.
+#' @return an expansion of the input \code{causact_graph} object with an added plate representing the repetition of \code{nodeLabels} for each unique value of \code{data}.
 #' @examples
-#' \dontrun{
 #' # create small DF
 #' dag_create() %>%
 #'     dag_node("House Prices","Y") %>%
@@ -31,7 +30,7 @@
 #'   dag_plate("Car Model","x",
 #'             data = carModelDF$carModel,
 #'             nodeLabels = "theta")
-#' #' graph %>% dag_render()
+#' graph %>% dag_render()
 #'
 #' # multiple plate example
 #' library(dplyr)
@@ -63,7 +62,6 @@
 #'             data = poolTimeGymDF$gymID,
 #'             addDataNode = TRUE)
 #' graph %>% dag_render()
-#' }
 #' @importFrom dplyr mutate
 #' @importFrom rlang enquo get_expr UQ
 #' @importFrom utils head

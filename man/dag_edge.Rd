@@ -16,18 +16,16 @@ dag_edge(graph, from, to, type = as.character(NA))
 \item{type}{character string used to represent the DiagrammeR line type (e.g. \code{"solid"}).  Use \code{type = "extract"} to encourage causact to only pass indexed elements of the parent node to each instance of the child node.  Specify \code{type = "solid"} to override any automated extract behavior.}
 }
 \value{
-a graph object of class \code{dgr_graph}.
+a graph object of class \code{dgr_graph} with additional edges created by this function.
 }
 \description{
 With a graph object of class \code{causact_graph} created from \code{dag_create}, add an edge between nodes in the graph.  Vector recycling is used for all arguments.
 }
 \examples{
-\dontrun{
 # Create a graph with 2 connected nodes
 dag_create() \%>\%
   dag_node("X") \%>\%
   dag_node("Y") \%>\%
   dag_edge(from = "X", to = "Y") \%>\%
   dag_render(shortLabel = TRUE)
-  }
 }

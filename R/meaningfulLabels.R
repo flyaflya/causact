@@ -1,5 +1,7 @@
-#' @import dplyr rlang
+#' @importFrom dplyr filter left_join select pull as_tibble mutate_all bind_rows
+#' @import rlang
 #' @importFrom purrr map
+#' @importFrom tidyr unite
 meaningfulLabels = function(graphWithDimensions) {
 
   ## function makes an environment called cacheEnv where

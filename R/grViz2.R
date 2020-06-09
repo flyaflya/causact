@@ -21,7 +21,7 @@
 #'   R Markdown documents, and within Shiny output bindings.
 #' @importFrom rstudioapi isAvailable
 #' @importFrom htmlwidgets sizingPolicy
-#' @export
+
 grViz2 <- function(diagram = "",
                   engine = "dot",
                   allow_subst = TRUE,

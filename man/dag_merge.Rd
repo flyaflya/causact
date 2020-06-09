@@ -12,14 +12,13 @@ dag_merge(graph1, ...)
 \item{...}{As many causact_graph's as wish to be merged}
 }
 \value{
-a merged graph object of class \code{dgr_graph}.
+a merged graph object of class \code{causact_graph}.  Useful for creating simple graphs and then merging them into a more complex structure.
 }
 \description{
 Generates a \code{causact_graph} graph object that is set-up for drawing DAG graphs
 from multiple provided graphs.
 }
 \examples{
-\dontrun{
 # With `dag_merge()` we
 # reset the node ID's and all other item ID's,
 # bind together the rows of all given graphs, and
@@ -60,5 +59,4 @@ dag_node("Total Profit", "TP",
   dag_edge(from=c("pA","pB"), to=c("TP"))
 
 dag_render(g_merged)
-}
 }

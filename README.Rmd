@@ -23,7 +23,7 @@ _Accelerate Bayesian analytics workflows_ in R through interactive modelling, vi
 knitr::include_graphics("graphics/causactDemo.gif")
 ```
 
-This package relies on the sleek and elegant `greta` package for Bayesian inference. `greta`, in turn, is an interface into tensorflow from R.  Future iterations of the `causact` package will aim to be a front-end into several universal probablistic programming languages (e.g. Stan, Turing, Gen, etc.). 
+This package relies on the sleek and elegant `greta` package for Bayesian inference. `greta`, in turn, is an interface into `TensorFlow` from R.  Future iterations of the `causact` package will aim to be a front-end into several universal probablistic programming languages (e.g. Stan, Turing, Gen, etc.). 
 
 Using the `causact` package for Bayesian inference is featured in `The Business Analyst's Guide to Business Analytics` available at http://causact.com/.
 
@@ -91,18 +91,25 @@ graph %>% dag_render(shortLabel = TRUE)
 knitr::include_graphics("graphics/cardPlotShortLabel.png")
 ```
 
+### See useful `greta` code without executing it
 
-### Run statistical inference using `greta`
+```{r gretaCode, warning = FALSE, message = TRUE}
+library(greta)
+gretaCode = graph %>% dag_greta(mcmc = FALSE)
+```
+
+### Get posterior without worrying about `greta` code
 
 ```{r greta, warning = FALSE, message = FALSE}
 library(greta)
-graph %>% dag_greta(mcmc = TRUE)
+drawsDF = graph %>% dag_greta()
+drawsDF  ### see top of data frame
 ```
 
 ### Get quick view of posterior distribution
 
 ```{r gretaPost, fig.cap = "Credible interval plots.", fig.width = 6.5, fig.height = 4, out.width = "70%"}
-tidyDrawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot()
 ```
 
 ## Further Usage
@@ -184,13 +191,13 @@ knitr::include_graphics("graphics/chimpStatSL.png")
 ### Compute posterior
 
 ```{r chimpsGraphGreta, warning = FALSE, message = FALSE}
-graph %>% dag_greta(mcmc = TRUE)
+drawsDF = graph %>% dag_greta()
 ```
 
 ### Visualize posterior
 
 ```{r chimpsGraphPost, out.width = "100%", fig.width = 9, fig.height = 6, warning = FALSE, message = FALSE}
-tidyDrawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot()
 ```
 
 ## Eight Schools Example from Bayesian Data Analysis
@@ -241,11 +248,13 @@ knitr::include_graphics("graphics/eightSchoolStat.png")
 ### Compute posterior
 
 ```{r eightschoolsGraphGreta, warning = FALSE, message = FALSE}
-graph %>% dag_greta(mcmc = TRUE)
+drawsDF = graph %>% dag_greta()
 ```
 
 ### Visualize posterior
 
 ```{r eightschoolsGraphPost, out.width = "100%", fig.width = 9, fig.height = 6, warning = FALSE, message = FALSE}
-tidyDrawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot()
+```
+
 

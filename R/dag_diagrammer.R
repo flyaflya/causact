@@ -4,16 +4,14 @@
 #' @param graph a graph object of class \code{causact_graph} created using \code{dag_create()}.
 #' @param wrapWidth a required character label that describes the node.
 #' @param shortLabel a longer more descriptive character label for the node.
-#' @return a graph object of class \code{dgr_graph}.
+#' @return a graph object of class \code{dgr_graph}.  Useful for further customizing graph displays using the code{DiagrammeR} package.
 #' @examples
-#' \dontrun{
 #' dag_create() %>%
 #' dag_node("Get Card","y",
 #'          rhs = bernoulli(theta),
 #'          data = carModelDF$getCard) %>%
 #'   dag_diagrammer() %>%
 #'   DiagrammeR::render_graph(title = "DiagrammeR Version of causact_graph")
-#'   }
 #' @importFrom dplyr select filter group_by summarize mutate left_join
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_replace
@@ -130,12 +128,12 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   ## if rhs represents distribution, use "label ~ distribution(args)
   ## if rhs is blank, use "label"
   eqDF = nodeDF %>%
-    dplyr::select(id, auto_label, rhs, rhsID, distr) %>%
+    dplyr::select(.data$id, auto_label, rhs, rhsID, distr) %>%
     dplyr::left_join(eqLineDF, by = "rhsID") %>%
     dplyr::mutate(eqLine = ifelse(!distr & !is.na(rhs), paste0(auto_label," = ",rhs),
                            ifelse(is.na(rhs), auto_label,
                                   paste0(auto_label, " ~ ", rhs, "(", argList, ")")))) %>%
-    dplyr::select(id, eqLine)
+    dplyr::select(.data$id, eqLine)
 
   ### create nodeDF as DiagrammeR data frame
   ##create clusterNameDF to map nodes to plates
@@ -163,7 +161,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
     peripheries = ifelse((distr == TRUE | is.na(rhs)) & det == FALSE,1,2),
     fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
            label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine))) %>%  ###poor man's version of shortLabel
-    dplyr::select(id,label,type,.data$shape,peripheries,fillcolor,auto_descr) %>%
+    dplyr::select(.data$id,label,type,.data$shape,peripheries,fillcolor,auto_descr) %>%
     dplyr::left_join(clusterNameDF, by = "id")
 
   ###just use description if shortLabel = TRUE

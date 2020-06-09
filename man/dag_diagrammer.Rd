@@ -14,18 +14,16 @@ dag_diagrammer(graph, wrapWidth = 24, shortLabel = FALSE)
 \item{shortLabel}{a longer more descriptive character label for the node.}
 }
 \value{
-a graph object of class \code{dgr_graph}.
+a graph object of class \code{dgr_graph}.  Useful for further customizing graph displays using the code{DiagrammeR} package.
 }
 \description{
 The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
-\dontrun{
 dag_create() \%>\%
 dag_node("Get Card","y",
          rhs = bernoulli(theta),
          data = carModelDF$getCard) \%>\%
   dag_diagrammer() \%>\%
   DiagrammeR::render_graph(title = "DiagrammeR Version of causact_graph")
-  }
 }

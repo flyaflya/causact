@@ -7,13 +7,20 @@
 #' @param width a numeric value.  an optional parameter for specifying the width of the resulting graphic in pixels.
 #' @param height a numeric value.  an optional parameter for specifying the height of the resulting graphic in pixels.
 #' @examples
-#' \dontrun{
-#' # Render an  empty graph
+#' # Render a simple graph
 #' dag_create() %>%
+#'   dag_node("Demand","X") %>%
+#'   dag_node("Price","Y", child = "X") %>%
 #'   dag_render()
-#'   }
+#'
+#' # Hide the mathematical details of a graph
+#' dag_create() %>%
+#'   dag_node("Demand","X") %>%
+#'   dag_node("Price","Y", child = "X") %>%
+#'   dag_render(shortLabel = TRUE)
 #' @importFrom dplyr select rename mutate filter left_join
 #' @importFrom dplyr case_when as_tibble as_data_frame
+#' @return Returns an object of class \code{grViz} and \code{htmlwidget} that is also rendered in the RStudio viewer for interactive buidling of graphical models.
 #' @export
 dag_render <- function(graph,
                        shortLabel = FALSE,

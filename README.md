@@ -69,29 +69,64 @@ graph %>% dag_render(shortLabel = TRUE)
 
 <img src="graphics/cardPlotShortLabel.png" width="50%" />
 
-### Run statistical inference using `greta`
+### See useful `greta` code without executing it
 
 ``` r
 library(greta)
-graph %>% dag_greta(mcmc = TRUE)
-#> ## The specified DAG corresponds to the following greta code: 
+#> 
+#> Attaching package: 'greta'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     binomial, cov2cor, poisson
+#> The following objects are masked from 'package:base':
+#> 
+#>     %*%, apply, backsolve, beta, chol2inv, colMeans, colSums, diag,
+#>     eigen, forwardsolve, gamma, identity, rowMeans, rowSums, sweep,
+#>     tapply
+gretaCode = graph %>% dag_greta(mcmc = FALSE)
+#> ## The below greta code will return a posterior distribution 
+#> ## for the given DAG. Either copy and paste this code to use greta
+#> ## directly, evaluate the output object using 'eval', or 
+#> ## or (preferably) use dag_greta(mcmc=TRUE) to return a data frame of
+#> ## the posterior distribution: 
 #> y <- as_data(carModelDF$getCard)   #DATA
 #> x      <- as.factor(carModelDF$carModel)   #DIM
 #> x_dim  <- length(unique(x))   #DIM
 #> theta  <- beta(shape1 = 2, shape2 = 2, dim = x_dim)   #PRIOR
 #> distribution(y) <- bernoulli(prob = theta[x])   #LIKELIHOOD
-#> gretaModel <- model(theta)   #MODEL
-#> draws       <- mcmc(gretaModel)   #POSTERIOR
-#> draws       <- replaceLabels(draws)   #POSTERIOR
-#> drawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR
-#> tidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
-#>     addPriorGroups()   #POSTERIOR
+#> gretaModel  <- model(theta)   #MODEL
+#> draws       <- mcmc(gretaModel)              #POSTERIOR
+#> drawsDF     <- replaceLabels(draws) %>% as.matrix() %>%
+#>                 dplyr::as_tibble()           #POSTERIOR
+#> tidyDrawsDF <- drawsDF %>% addPriorGroups()  #POSTERIOR
+```
+
+### Get posterior without worrying about `greta` code
+
+``` r
+library(greta)
+drawsDF = graph %>% dag_greta()
+drawsDF  ### see top of data frame
+#> # A tibble: 4,000 x 4
+#>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
+#>             <dbl>          <dbl>          <dbl>          <dbl>
+#>  1          0.832          0.156          0.605          0.206
+#>  2          0.871          0.240          0.612          0.207
+#>  3          0.820          0.285          0.670          0.212
+#>  4          0.903          0.228          0.654          0.196
+#>  5          0.836          0.252          0.598          0.205
+#>  6          0.826          0.198          0.617          0.214
+#>  7          0.828          0.168          0.608          0.213
+#>  8          0.859          0.239          0.567          0.181
+#>  9          0.840          0.264          0.597          0.217
+#> 10          0.840          0.264          0.597          0.217
+#> # ... with 3,990 more rows
 ```
 
 ### Get quick view of posterior distribution
 
 ``` r
-tidyDrawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot()
 ```
 
 <div class="figure">
@@ -184,35 +219,13 @@ graph %>% dag_render(shortLabel = TRUE)
 ### Compute posterior
 
 ``` r
-graph %>% dag_greta(mcmc = TRUE)
-#> ## The specified DAG corresponds to the following greta code: 
-#> L <- as_data(causact::chimpanzeesDF$pulled_left)   #DATA
-#> act       <- as.factor(chimpanzeesDF$actor)   #DIM
-#> blk       <- as.factor(chimpanzeesDF$block)   #DIM
-#> trtmt     <- as.factor(chimpanzeesDF$treatment)   #DIM
-#> act_dim   <- length(unique(act))   #DIM
-#> blk_dim   <- length(unique(blk))   #DIM
-#> trtmt_dim <- length(unique(trtmt))   #DIM
-#> beta        <- normal(mean = 0, sd = 0.5, dim = trtmt_dim)                #PRIOR
-#> alphaBar    <- normal(mean = 0, sd = 1.5)                                 #PRIOR
-#> sigma_alpha <- exponential(rate = 1)                                      #PRIOR
-#> sigma_gamma <- exponential(rate = 1)                                      #PRIOR
-#> alpha       <- normal(mean = alphaBar, sd = sigma_alpha, dim = act_dim)   #PRIOR
-#> gamma       <- normal(mean = 0, sd = sigma_gamma, dim = blk_dim)          #PRIOR
-#> p      <- ilogit(x = alpha[act] + gamma[blk] + beta[trtmt])   #OPERATION
-#> distribution(L) <- bernoulli(prob = p)   #LIKELIHOOD
-#> gretaModel <- model(alpha,gamma,beta,alphaBar,sigma_alpha,sigma_gamma)   #MODEL
-#> draws       <- mcmc(gretaModel)   #POSTERIOR
-#> draws       <- replaceLabels(draws)   #POSTERIOR
-#> drawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR
-#> tidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
-#>     addPriorGroups()   #POSTERIOR
+drawsDF = graph %>% dag_greta()
 ```
 
 ### Visualize posterior
 
 ``` r
-tidyDrawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot()
 ```
 
 <img src="graphics/chimpsGraphPost-1.png" width="100%" />
@@ -264,28 +277,13 @@ graph %>% dag_render()
 ### Compute posterior
 
 ``` r
-graph %>% dag_greta(mcmc = TRUE)
-#> ## The specified DAG corresponds to the following greta code: 
-#> sigma <- as_data(causact::schoolsDF$sigma)   #DATA
-#> y <- as_data(causact::schoolsDF$y)           #DATA
-#> school     <- as.factor(causact::schoolsDF$schoolName)   #DIM
-#> school_dim <- length(unique(school))   #DIM
-#> schoolEffect <- normal(mean = 0, sd = 30, dim = school_dim)   #PRIOR
-#> avgEffect    <- normal(mean = 0, sd = 30)                     #PRIOR
-#> theta  <- avgEffect + schoolEffect[school]   #OPERATION
-#> distribution(y) <- normal(mean = theta, sd = sigma)   #LIKELIHOOD
-#> gretaModel <- model(avgEffect,schoolEffect)   #MODEL
-#> draws       <- mcmc(gretaModel)   #POSTERIOR
-#> draws       <- replaceLabels(draws)   #POSTERIOR
-#> drawsDF     <- draws %>% as.matrix() %>% dplyr::as_tibble()   #POSTERIOR
-#> tidyDrawsDF <- drawsDF %>% tidyr::gather() %>%
-#>     addPriorGroups()   #POSTERIOR
+drawsDF = graph %>% dag_greta()
 ```
 
 ### Visualize posterior
 
 ``` r
-tidyDrawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot()
 ```
 
 <img src="graphics/eightschoolsGraphPost-1.png" width="100%" />
