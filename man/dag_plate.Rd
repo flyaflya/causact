@@ -36,13 +36,7 @@ an expansion of the input \code{causact_graph} object with an added plate repres
 Given a graph object of class \code{causact_graph}, create collections of nodes that should be repeated i.e. represent multiple instances of a random variable, random vector, or random matrix.  When nodes are on more than one plate, graph rendering will treat each unique combination of plates as separate plates.
 }
 \examples{
-# create small DF
-dag_create() \%>\%
-    dag_node("House Prices","Y") \%>\%
-    dag_plate("Observation","i",nodeLabels = "Y") \%>\%
-    dag_render(shortLabel = TRUE)
-
-# bigger example
+# single plate example
 graph = dag_create() \%>\%
 dag_node("Get Card","y",
          rhs = bernoulli(theta),

@@ -10,13 +10,7 @@
 #' @param rhs Optional \code{rhs} expression for when \code{addDataNode = TRUE}.  This can be either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.
 #' @return an expansion of the input \code{causact_graph} object with an added plate representing the repetition of \code{nodeLabels} for each unique value of \code{data}.
 #' @examples
-#' # create small DF
-#' dag_create() %>%
-#'     dag_node("House Prices","Y") %>%
-#'     dag_plate("Observation","i",nodeLabels = "Y") %>%
-#'     dag_render(shortLabel = TRUE)
-#'
-#' # bigger example
+#' # single plate example
 #' graph = dag_create() %>%
 #' dag_node("Get Card","y",
 #'          rhs = bernoulli(theta),

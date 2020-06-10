@@ -4,14 +4,15 @@
 #' @param graph a graph object of class \code{causact_graph} created using \code{dag_create()}.
 #' @param wrapWidth a required character label that describes the node.
 #' @param shortLabel a longer more descriptive character label for the node.
-#' @return a graph object of class \code{dgr_graph}.  Useful for further customizing graph displays using the code{DiagrammeR} package.
+#' @return a graph object of class \code{dgr_graph}.  Useful for further customizing graph displays using the \code{DiagrammeR} package.
 #' @examples
+#' library("DiagrammeR")
 #' dag_create() %>%
 #' dag_node("Get Card","y",
 #'          rhs = bernoulli(theta),
 #'          data = carModelDF$getCard) %>%
 #'   dag_diagrammer() %>%
-#'   DiagrammeR::render_graph(title = "DiagrammeR Version of causact_graph")
+#'   render_graph(title = "DiagrammeR Version of causact_graph")
 #' @importFrom dplyr select filter group_by summarize mutate left_join
 #' @importFrom tidyr replace_na
 #' @importFrom stringr str_replace
@@ -174,17 +175,36 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
     nodeDF$cluster = nodeDF$clusterShortLabel
     }
 
-  ### use DIagrammeR::create_node_df
-  nodeDF = DiagrammeR::create_node_df(
-    n = nrow(nodeDF),
-    id = nodeDF$id,
-    label = nodeDF$label,
-    type = nodeDF$type,
-    shape = nodeDF$shape,
-    peripheries = nodeDF$peripheries,
-    fillcolor = nodeDF$fillcolor,
-    cluster = nodeDF$cluster
+
+  ### DiagrammeR checks for existence of cluster
+  ### column and sends error if all NA
+  ### so remove cluster column from DF if all NA
+  if (all(is.na(nodeDF$cluster))) {
+    ### use DIagrammeR::create_node_df
+    nodeDF = DiagrammeR::create_node_df(
+      n = nrow(nodeDF),
+      id = nodeDF$id,
+      label = nodeDF$label,
+      type = nodeDF$type,
+      shape = nodeDF$shape,
+      peripheries = nodeDF$peripheries,
+      fillcolor = nodeDF$fillcolor
     )
+  } else {
+    ### use DIagrammeR::create_node_df
+    ### change NA values to "" for DiagrammeR
+    nodeDF = DiagrammeR::create_node_df(
+      n = nrow(nodeDF),
+      id = nodeDF$id,
+      label = nodeDF$label,
+      type = nodeDF$type,
+      shape = nodeDF$shape,
+      peripheries = nodeDF$peripheries,
+      fillcolor = nodeDF$fillcolor,
+      cluster = nodeDF$cluster
+    )
+  }
+
 
 
   # create new graph

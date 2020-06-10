@@ -2,7 +2,7 @@
 % Please edit documentation in R/dag_merge.R
 \name{dag_merge}
 \alias{dag_merge}
-\title{Attempt to merge two graphs}
+\title{Merge two non-intersect \code{causact_graph} objects}
 \usage{
 dag_merge(graph1, ...)
 }
@@ -15,8 +15,7 @@ dag_merge(graph1, ...)
 a merged graph object of class \code{causact_graph}.  Useful for creating simple graphs and then merging them into a more complex structure.
 }
 \description{
-Generates a \code{causact_graph} graph object that is set-up for drawing DAG graphs
-from multiple provided graphs.
+Generates a single \code{causact_graph} graph object that combines the multiple provided graphs.
 }
 \examples{
 # With `dag_merge()` we
@@ -50,13 +49,9 @@ g2 <- dag_create() \%>\%
            rhs = min(sB,dB)) \%>\%
   dag_edge(from = c("dB","sB"),to = c("pB"))
 
-dag_render(g1)
-dag_render(g2)
-
-g_merged <- dag_merge(g1,g2) \%>\%
-dag_node("Total Profit", "TP",
+g1 \%>\% dag_merge(g2) \%>\%
+  dag_node("Total Profit", "TP",
            rhs = sum(pA,pB)) \%>\%
-  dag_edge(from=c("pA","pB"), to=c("TP"))
-
-dag_render(g_merged)
+  dag_edge(from=c("pA","pB"), to=c("TP")) \%>\%
+  dag_render()
 }

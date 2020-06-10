@@ -11,7 +11,7 @@ and programmers.
 <img src="graphics/causactDemo.gif" width="40%" style="display: block; margin: auto;" />
 
 This package relies on the sleek and elegant `greta` package for
-Bayesian inference. `greta`, in turn, is an interface into tensorflow
+Bayesian inference. `greta`, in turn, is an interface into `TensorFlow`
 from R. Future iterations of the `causact` package will aim to be a
 front-end into several universal probablistic programming languages
 (e.g. Stan, Turing, Gen, etc.).
@@ -110,16 +110,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.832          0.156          0.605          0.206
-#>  2          0.871          0.240          0.612          0.207
-#>  3          0.820          0.285          0.670          0.212
-#>  4          0.903          0.228          0.654          0.196
-#>  5          0.836          0.252          0.598          0.205
-#>  6          0.826          0.198          0.617          0.214
-#>  7          0.828          0.168          0.608          0.213
-#>  8          0.859          0.239          0.567          0.181
-#>  9          0.840          0.264          0.597          0.217
-#> 10          0.840          0.264          0.597          0.217
+#>  1          0.853          0.224          0.628          0.228
+#>  2          0.841          0.225          0.625          0.234
+#>  3          0.858          0.207          0.681          0.209
+#>  4          0.844          0.265          0.565          0.228
+#>  5          0.839          0.262          0.551          0.195
+#>  6          0.845          0.221          0.646          0.188
+#>  7          0.842          0.256          0.644          0.211
+#>  8          0.859          0.233          0.612          0.236
+#>  9          0.856          0.231          0.649          0.212
+#> 10          0.842          0.233          0.595          0.210
 #> # ... with 3,990 more rows
 ```
 

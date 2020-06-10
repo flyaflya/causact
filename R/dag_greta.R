@@ -240,7 +240,7 @@ dag_greta <- function(graph,
   # this code should be moved out of dag_greta at some point
   priorGroupDF = graphWithDim$nodes_df %>%
     dplyr::filter(obs == FALSE & distr == TRUE) %>%
-    dplyr::mutate(.data, priorGroup = dplyr::group_indices(., auto_rhs))
+    dplyr::mutate(priorGroup = group_indices(., auto_rhs))
   assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
 
   modelStatement = paste0("gretaModel  <- model(",

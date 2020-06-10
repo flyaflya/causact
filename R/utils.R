@@ -458,7 +458,8 @@ updateExtractEdges = function(graphWithDim) {
   ## get candidate edges for being extract edges
   edgeDF = graph$edges_df %>%
     dplyr::filter(is.na(type) | type == "extract")
-  extractCandidateDF = edgeDF
+  extractCandidateDF = edgeDF %>%
+    mutate(candidate = as.logical(NA))
   ## make df of plate indexes for each from and to edge
   if(nrow(edgeDF) > 0) {
     ### plate indices for all from nodes
@@ -475,11 +476,6 @@ updateExtractEdges = function(graphWithDim) {
       dplyr::distinct() %>%
       dplyr::group_by(to) %>%
       tidyr::nest(toPlateIndices = indexID)
-    ### for all edges have column of plateIndices for from an to
-    extractCandidateDF = edgeDF
-
-    ### initialize column to flag candidates
-    extractCandidateDF$candidate = as.logical(NA)
 
     ### compare plate indices for from and to
     if(nrow(extractCandidateDF) > 0) {
@@ -506,7 +502,7 @@ updateExtractEdges = function(graphWithDim) {
   ### 1) Create extract edge in edgeDF
   ### 2) Update argDimDF
   extractNodes = extractCandidateDF %>%
-    dplyr::filter(candidate == TRUE) %>%
+    dplyr::filter(.data$candidate == TRUE) %>%
     dplyr::pull(.data$id)
 
   edgeDF$type[edgeDF$id %in% extractNodes] <- "extract"

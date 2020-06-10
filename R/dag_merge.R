@@ -1,7 +1,6 @@
-#' Attempt to merge two graphs
+#' Merge two non-intersect \code{causact_graph} objects
 #'
-#' Generates a \code{causact_graph} graph object that is set-up for drawing DAG graphs
-#' from multiple provided graphs.
+#' Generates a single \code{causact_graph} graph object that combines the multiple provided graphs.
 #'
 #' @param graph1 A causact_graph objects to be merged with
 #' @param ...    As many causact_graph's as wish to be merged
@@ -38,15 +37,12 @@
 #'            rhs = min(sB,dB)) %>%
 #'   dag_edge(from = c("dB","sB"),to = c("pB"))
 #'
-#' dag_render(g1)
-#' dag_render(g2)
-#'
-#' g_merged <- dag_merge(g1,g2) %>%
-#' dag_node("Total Profit", "TP",
+#' g1 %>% dag_merge(g2) %>%
+#'   dag_node("Total Profit", "TP",
 #'            rhs = sum(pA,pB)) %>%
-#'   dag_edge(from=c("pA","pB"), to=c("TP"))
-#'
-#' dag_render(g_merged)
+#'   dag_edge(from=c("pA","pB"), to=c("TP")) %>%
+#'   dag_render()
+#' @importFrom dplyr bind_rows
 #' @export
 
 dag_merge <- function(graph1,...){
@@ -102,7 +98,7 @@ dag_merge <- function(graph1,...){
     ## And bind the rows of each df to the corresponding df in the final graph
     for  (df in 1:length(final)){
       graph[[df]][[1]] <- c(graph[[df]][[1]] + length(final[[df]][[1]]))
-      final[[df]] <- as.data.frame(bind_rows(final[df],graph[df]))
+      final[[df]] <- as.data.frame(bind_rows(final[[df]],graph[[df]]))
     }
   }
 

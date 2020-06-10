@@ -87,8 +87,9 @@ graph = dag_create() \%>\%
             nodeLabels = "schoolEffect",
             data = schools_dat$schoolName,
             addDataNode = TRUE)
-graph \%>\% dag_render()
+
 \dontrun{
+graph \%>\% dag_render()
 graph \%>\% dag_greta(mcmc=TRUE)
 tidyDrawsDF \%>\% dagp_plot()
 }

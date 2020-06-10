@@ -5,43 +5,53 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
-
-* This is a new release.
-
-* Examples with CPU (user + system) or elapsed time > 5s
-              user system elapsed
-  dagp_plot 125.59   5.31   62.75
-  dag_greta  80.16   4.01   38.21
-  dag_node   22.58   0.54   19.44
+> checking CRAN incoming feasibility ... NOTE
+  Maintainer: 'Adam Fleischhacker <ajf@udel.edu>'
   
-These examples are long because they showcase operations that use TensorFlow.  They cannot be shortened further without eliminating the demonstration of this important functionality.
+  New submission
 
-## rhub::check_for_cran() fails wtih default values only
-
-The installation using `rhub::check_for_cran()` fails with the following error:
-
-> Error in loadNamespace(i, c(lib.loc, .libPaths()), versionCheck = vI[[i]]) : 
-  namespace 'vctrs' 0.2.4 is being loaded, but >= 0.3.0 is required
-
-The only package I use with a `vctrs` dependency is `dplyr`.  It requires `vctrs (>= 0.3.0)` (see here: <https://github.com/tidyverse/dplyr/blob/master/DESCRIPTION>).  However, `rhub::check_for_cran()` insists on installing `vctrs (= 0.2.4)` even if I try to override it.  Version 0.3.0 is available via CRAN.
-
-If I run this check instead:
-
-```
-rhub::check(
-  platform="windows-x86_64-devel",
-  env_vars=c(R_COMPILE_AND_INSTALL_PACKAGES = "always"))
-```
-
-it runs without error.
+0 errors √ | 0 warnings √ | 1 note x
 
 
-## Possibly mis-spelled words in DESCRIPTION:
-     DAGs (4:13, 12:72)
-     TensorFlow (15:26)
-     Workflows (3:39)
-     greta (14:37, 14:75)
-     workflows (11:44)
-All of the above words are spelled correctly.  DAGs is a fairly well-knwon acronym for directed acyclic graphs.
+## rhub::check_for_cran() 
+
+Runs without error.
+
+
+## My Respone to Comments from Jelena Saf (CRAN) on causact 0.2.2 submission
+
+Thank you for taking the time to review the package and for making very concise and descriptive recommendations.  I have a addressed them all as documented below:
+
+* Please shorten the title to a maximum of 65 characters.
+    - RESPONSE:  Title shortened to 40 characters - "Accelerated Bayesian Analytics with DAGs"
+
+
+* Acronyms/Abbreviations can be used on their own in the title as long as they are explained in the description field.
+    - RESPONSE:  The DAG acronym in the title is described in the description field.
+
+* Please always write non-English usage, package names, software names and API names in *undirected* single quotes in title and description in the DESCRIPTION file. e.g. --> 'R'
+    - RESPONSE:  Fixed.  Thx.
+
+* \dontrun{} should be only used if the example really cannot be executed (e.g. because of missing additional software, missing API keys, ...) by the user. That's why wrapping examples in \dontrun{} adds the comment ("# Not run:") as a warning for the user.
+Please unwrap the examples if they are executable in < 5 sec, or create additionally small toy examples to allow automatic testing.
+    - RESPONSE:  Unwrapped all examples and wrapped only the parts which require TensorFlow installation or are sufficiently complex that they have been taking around 5 to 6 seconds.  For all long examples that are not run, a shorter example exists.
+
+* Please add \value to .Rd files regarding exported methods and explain the functions results in the documentation. Please write about the structure of the output (class) and also what the output means.
+(If a function does not return a value, please document that too, e.g. 
+\value{No return value, called for side effects} or similar)
+    - RESPONSE: All exported functions now have this description.  I also stopped exporting a couple of internal functions that were mistakenly tagged.
+
+* You write information messages to the console that cannot be easily suppressed.  It is more R like to generate objects that can be used to extract the information a user is interested in, and then print() that object.  Instead of print()/cat() rather use message()/warning()  or
+if(verbose)cat(..) if you really have to write text to the console.
+(except for print, summary, interactive functions)
+    - RESPONSE:  The `dag_greta` function was the offender.  It now outputs a message to the console instead of printing to the console when argument `mcmc=FALSE` (not the default).  Users can now assign output of this function to their own object instead of the global environment being changed.     
+
+* Please make sure you are not modifying the global environment.
+    - RESPONSE: Fixed. The `dag_greta` function did this, but no longer does.  Instead of modifying the global environment, it outputs a data frame and stores additional information for subsequent retrieval in an environment called `cacheEnv`.  Documentation also updated accordingly. 
+
+* You also seem to be a copyright holder [cph]. Please add this information to the Authors@R field.
+    - RESPONSE: Fixed.
+
+* Please fix and resubmit, and document what was changed in the submission comments. Best, Jelena Saf
+    - RESPONSE: Many thanks for the help.  This resubmission addresses all comments.
 
