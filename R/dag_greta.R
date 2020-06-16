@@ -32,7 +32,8 @@
 #' graph %>% dag_render()
 #' gretaCode = graph %>% dag_greta(mcmc=FALSE)
 #' \dontrun{
-#' ## easier and default method returns data frame
+#' ## default functionality returns a data frame
+#' # below requires Tensorflow installation
 #' drawsDF = graph %>% dag_greta()
 #' drawsDF %>% dagp_plot()
 #' }

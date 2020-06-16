@@ -54,8 +54,9 @@
 #'             data = schools_dat$schoolName,
 #'             addDataNode = TRUE)
 #'
-#' \dontrun{
 #' graph %>% dag_render()
+#' \dontrun{
+#' # below requires Tensorflow installation
 #' graph %>% dag_greta(mcmc=TRUE)
 #' tidyDrawsDF %>% dagp_plot()
 #' }

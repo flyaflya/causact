@@ -18,7 +18,17 @@
 Runs without error.
 
 
-## My Respone to Comments from Jelena Saf (CRAN) on causact 0.2.2 submission
+## My Respone to Comments from Martina Schmirl (CRAN) on causact 0.3.0 submission
+
+Thanks for all the work put into checking the package.  Here is the request and my response:
+
+* \dontrun{} should only be used if the example really cannot be executed (e.g. because of missing additional software, missing API keys, ...) by the user. That's why wrapping examples in \dontrun{} adds the comment ("# Not run:") as a warning for the user.  Please replace \dontrun with \donttest.
+
+    - RESPONSE:  There is a TensorFlow and Python dependency (i.e. missing additional software) for testing the dag_greta() calls.  The subsequent dagp_plot() calls need the output from dag_greta() so they are not run either.  I have left these within \dontrun{} as this is identical to what is done in the greta and tensorflow packages which have the exact same dependencies. There was one example in `replace_in_spec2()` wrapped in \dontrun{}.  This function should not have been exported, so I removed the example there entirely.  I did add a comment flagging the TensorFlow dependency to the \dontrun{} areas.
+
+Thanks again for the review.
+
+## OLDER RESPONSE: My Respone to Comments from Jelena Saf (CRAN) on causact 0.2.2 submission
 
 Thank you for taking the time to review the package and for making very concise and descriptive recommendations.  I have a addressed them all as documented below:
 

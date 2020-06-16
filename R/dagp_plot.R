@@ -25,6 +25,7 @@
 #'            child = "y")
 #' graph %>% dag_render()
 #'
+#' # below requires Tensorflow installation
 #' drawsDF = graph %>% dag_greta(mcmc=TRUE)
 #' drawsDF %>% dagp_plot()
 #' }
@@ -60,6 +61,7 @@
 #'             addDataNode = TRUE)
 #' graph %>% dag_render()
 #' \dontrun{
+#' # below requires Tensorflow installation
 #' drawsDF = graph %>% dag_greta(mcmc=TRUE)
 #' drawsDF %>% dagp_plot()
 #' }
