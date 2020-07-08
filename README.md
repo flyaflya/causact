@@ -117,16 +117,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.884          0.277          0.644          0.236
-#>  2          0.864          0.158          0.618          0.236
-#>  3          0.843          0.200          0.629          0.230
-#>  4          0.829          0.279          0.602          0.206
-#>  5          0.823          0.221          0.597          0.209
-#>  6          0.891          0.213          0.601          0.211
-#>  7          0.904          0.253          0.607          0.222
-#>  8          0.845          0.249          0.624          0.221
-#>  9          0.851          0.159          0.627          0.201
-#> 10          0.852          0.173          0.601          0.218
+#>  1          0.831          0.251          0.610          0.188
+#>  2          0.854          0.283          0.589          0.202
+#>  3          0.868          0.252          0.626          0.199
+#>  4          0.871          0.197          0.617          0.204
+#>  5          0.876          0.260          0.654          0.188
+#>  6          0.873          0.271          0.620          0.191
+#>  7          0.859          0.242          0.610          0.210
+#>  8          0.874          0.227          0.634          0.191
+#>  9          0.874          0.227          0.634          0.191
+#> 10          0.874          0.310          0.642          0.208
 #> # ... with 3,990 more rows
 ```
 
@@ -138,7 +138,7 @@ drawsDF %>% dagp_plot()
 
 <div class="figure">
 
-<img src="man/figuresgretaPost-1.png" alt="Credible interval plots." width="70%" />
+<img src="man/figures/gretaPost-1.png" alt="Credible interval plots." width="70%" />
 
 <p class="caption">
 
@@ -235,7 +235,7 @@ drawsDF = graph %>% dag_greta()
 drawsDF %>% dagp_plot()
 ```
 
-<img src="man/figureschimpsGraphPost-1.png" width="100%" />
+<img src="man/figures/chimpsGraphPost-1.png" width="100%" />
 
 ## Eight Schools Example from Bayesian Data Analysis
 
@@ -293,4 +293,4 @@ drawsDF = graph %>% dag_greta()
 drawsDF %>% dagp_plot()
 ```
 
-<img src="man/figureseightschoolsGraphPost-1.png" width="100%" />
+<img src="man/figures/eightschoolsGraphPost-1.png" width="100%" />
