@@ -164,7 +164,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
            label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine))) %>%  ###poor man's version of shortLabel
     dplyr::select(.data$id,label,type,.data$shape,peripheries,fillcolor,auto_descr) %>%
     dplyr::left_join(clusterNameDF, by = "id") %>%
-    dplyr::arrange(id)  ## id is not passed to create_node_df(), so this ensures proper order
+    dplyr::arrange(.data$id)  ## id is not passed to create_node_df(), so this ensures proper order
 
   ###just use description if shortLabel = TRUE
   if(shortLabel == TRUE) {
