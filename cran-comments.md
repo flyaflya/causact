@@ -1,6 +1,6 @@
-This is a patch release that fixes bugs introduced by breaking 
-changes in the release of 'dplyr' (v1.0).  The READMEM.md file
-was also updated so images appear in pictures.
+This is a patch release that fixes bugs introduced in 'causact' by 
+breaking changes in the release of 'dplyr' (v1.0).  The README.md 
+file was also updated so images appear in pictures.
 
 ## Test environments
 * local R installation, R 4.0.0
