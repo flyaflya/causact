@@ -240,10 +240,20 @@ dag_greta <- function(graph,
   #all nodes sharing the same prior will be graphed on the same scale
   # this code should be moved out of dag_greta at some point
   priorGroupDF = graphWithDim$nodes_df %>%
-    dplyr::filter(obs == FALSE & distr == TRUE) %>%
-    dplyr::group_by(auto_rhs) %>%
-    dplyr::mutate(priorGroup = group_indices(.)) %>%
-    dplyr::ungroup()
+    dplyr::filter(obs == FALSE & distr == TRUE)
+
+  ## replaced dependency on dplyr::group_indices
+  ## since its functionality changes fro 0.85 to v1.0
+  ## code returns unique group id's based on prior dist
+  grpIndexDF = priorGroupDF %>%
+    dplyr::select(auto_rhs) %>%
+    dplyr::distinct() %>%
+    dplyr::mutate(priorGroup = dplyr::row_number())
+
+  ## add priorGroup column
+  priorGroupDF = priorGroupDF %>%
+    dplyr::left_join(grpIndexDF, by = "auto_rhs")
+
   assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
 
   modelStatement = paste0("gretaModel  <- model(",
