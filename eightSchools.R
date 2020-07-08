@@ -10,9 +10,9 @@ library(greta)
  graph = dag_create() %>%
    dag_node("Treatment Effect","y",
             rhs = normal(theta, sigma),
-            data = schools_dat$y) %>%
+            data = schoolsDF$y) %>%
    dag_node("Std Error of Effect Estimates","sigma",
-            data = schools_dat$sigma,
+            data = schoolsDF$sigma,
             child = "y") %>%
    dag_node("Exp. Treatment Effect","theta",
             child = "y",
@@ -26,8 +26,8 @@ library(greta)
    dag_plate("Observation","i",nodeLabels = c("sigma","y","theta")) %>%
    dag_plate("School Name","school",
              nodeLabels = "schoolEffect",
-             data = schools_dat$schoolName,
+             data = schoolsDF$schoolName,
              addDataNode = TRUE)
  graph %>% dag_render()
- graph %>% dag_greta(mcmc=TRUE)
- tidyDrawsDF %>% dagp_plot()
+ drawsDF = graph %>% dag_greta()
+ drawsDF %>% dagp_plot()

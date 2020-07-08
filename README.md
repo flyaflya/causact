@@ -8,7 +8,7 @@ modelling, visualization, and inference. Uses probabilistic graphical
 models as a unifying language for business stakeholders, statisticians,
 and programmers.
 
-<img src="graphics/causactDemo.gif" width="40%" style="display: block; margin: auto;" />
+<img src="man/figures/causactDemo.gif" width="40%" style="display: block; margin: auto;" />
 
 This package relies on the sleek and elegant `greta` package for
 Bayesian inference. `greta`, in turn, is an interface into `TensorFlow`
@@ -26,11 +26,18 @@ Business Analyst's Guide to Business Analytics` available at
 
 ## Installation
 
+You can install the current release version of the package from CRAN:
+
+    install.packages("causact")
+
+or the development version from GitHub:
+
     install.packages("remotes")
     remotes::install_github("flyaflya/causact")
 
-`causact` requires the `greta` package for Bayesian updating. Install
-`greta` using the instructions available here:
+`causact` requires the `greta` package for Bayesian updating, which in
+turn, requires a specific version of `TensorFlow`. Install both `greta`
+and `TensorFlow` using the instructions available here:
 <http://causact.com/install-greta.html>
 
 ## Usage
@@ -59,7 +66,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="graphics/cardPlot.png" width="60%" />
+<img src="man/figures/cardPlot.png" width="60%" />
 
 ### Hide model complexity, as appropriate, from domain experts and other less statistically minded stakeholders.
 
@@ -67,7 +74,7 @@ graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 ```
 
-<img src="graphics/cardPlotShortLabel.png" width="50%" />
+<img src="man/figures/cardPlotShortLabel.png" width="50%" />
 
 ### See useful `greta` code without executing it
 
@@ -110,16 +117,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.807          0.210          0.689          0.226
-#>  2          0.807          0.202          0.708          0.220
-#>  3          0.820          0.275          0.683          0.182
-#>  4          0.873          0.178          0.562          0.180
-#>  5          0.865          0.290          0.540          0.218
-#>  6          0.829          0.197          0.667          0.214
-#>  7          0.865          0.260          0.547          0.196
-#>  8          0.829          0.220          0.675          0.240
-#>  9          0.825          0.227          0.682          0.194
-#> 10          0.827          0.230          0.676          0.197
+#>  1          0.884          0.277          0.644          0.236
+#>  2          0.864          0.158          0.618          0.236
+#>  3          0.843          0.200          0.629          0.230
+#>  4          0.829          0.279          0.602          0.206
+#>  5          0.823          0.221          0.597          0.209
+#>  6          0.891          0.213          0.601          0.211
+#>  7          0.904          0.253          0.607          0.222
+#>  8          0.845          0.249          0.624          0.221
+#>  9          0.851          0.159          0.627          0.201
+#> 10          0.852          0.173          0.601          0.218
 #> # ... with 3,990 more rows
 ```
 
@@ -131,7 +138,7 @@ drawsDF %>% dagp_plot()
 
 <div class="figure">
 
-<img src="graphics/gretaPost-1.png" alt="Credible interval plots." width="70%" />
+<img src="man/figuresgretaPost-1.png" alt="Credible interval plots." width="70%" />
 
 <p class="caption">
 
@@ -206,7 +213,7 @@ graph = dag_create() %>%
 graph %>% dag_render(width = 2000, height = 800)
 ```
 
-<img src="graphics/chimpStat.png" width="120%" />
+<img src="man/figures/chimpStat.png" width="120%" />
 
 ### See graph without stats
 
@@ -214,7 +221,7 @@ graph %>% dag_render(width = 2000, height = 800)
 graph %>% dag_render(shortLabel = TRUE)
 ```
 
-<img src="graphics/chimpStatSL.png" width="100%" />
+<img src="man/figures/chimpStatSL.png" width="100%" />
 
 ### Compute posterior
 
@@ -228,7 +235,7 @@ drawsDF = graph %>% dag_greta()
 drawsDF %>% dagp_plot()
 ```
 
-<img src="graphics/chimpsGraphPost-1.png" width="100%" />
+<img src="man/figureschimpsGraphPost-1.png" width="100%" />
 
 ## Eight Schools Example from Bayesian Data Analysis
 
@@ -272,7 +279,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="graphics/eightSchoolStat.png" width="100%" />
+<img src="man/figures/eightSchoolStat.png" width="100%" />
 
 ### Compute posterior
 
@@ -286,4 +293,4 @@ drawsDF = graph %>% dag_greta()
 drawsDF %>% dagp_plot()
 ```
 
-<img src="graphics/eightschoolsGraphPost-1.png" width="100%" />
+<img src="man/figureseightschoolsGraphPost-1.png" width="100%" />

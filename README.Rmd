@@ -8,7 +8,7 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "graphics/",
+  fig.path = "man/figures",
   dpi = 600,
   fig.asp = 0.618,
   fig.width = 6
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 _Accelerate Bayesian analytics workflows_ in R through interactive modelling, visualization, and inference.  Uses probabilistic graphical models as a unifying language for business stakeholders, statisticians, and programmers.  
 
 ```{r demoGif, out.width = "40%", echo = FALSE, fig.align = "center"}
-knitr::include_graphics("graphics/causactDemo.gif")
+knitr::include_graphics("man/figures/causactDemo.gif")
 ```
 
 This package relies on the sleek and elegant `greta` package for Bayesian inference. `greta`, in turn, is an interface into `TensorFlow` from R.  Future iterations of the `causact` package will aim to be a front-end into several universal probablistic programming languages (e.g. Stan, Turing, Gen, etc.). 
@@ -31,11 +31,20 @@ Using the `causact` package for Bayesian inference is featured in `The Business 
 
 ## Installation
 
+You can install the current release version of the package from CRAN:
+
+```
+install.packages("causact")
+```
+
+or the development version from GitHub:
+
 ```
 install.packages("remotes")
 remotes::install_github("flyaflya/causact")
 ```
-`causact` requires the `greta` package for Bayesian updating.  Install `greta` using the instructions available here: http://causact.com/install-greta.html 
+
+`causact` requires the `greta` package for Bayesian updating, which in turn, requires a specific version of `TensorFlow`.  Install both `greta` and `TensorFlow` using the instructions available here: http://causact.com/install-greta.html 
 
 ## Usage 
 
@@ -78,7 +87,7 @@ graph %>% dag_render()
 ```
 
 ```{r cardPlatePlot, out.width = "60%", echo = FALSE}
-knitr::include_graphics("graphics/cardPlot.png")
+knitr::include_graphics("man/figures/cardPlot.png")
 ```
 
 ### Hide model complexity, as appropriate, from domain experts and other less statistically minded stakeholders.
@@ -88,7 +97,7 @@ graph %>% dag_render(shortLabel = TRUE)
 ```
 
 ```{r cardPlateSLPlot, out.width = "50%", echo = FALSE}
-knitr::include_graphics("graphics/cardPlotShortLabel.png")
+knitr::include_graphics("man/figures/cardPlotShortLabel.png")
 ```
 
 ### See useful `greta` code without executing it
@@ -175,7 +184,7 @@ graph %>% dag_render(width = 2000, height = 800)
 ```
 
 ```{r chimpsGraphRenderPlot, out.width = "120%", echo = FALSE}
-knitr::include_graphics("graphics/chimpStat.png")
+knitr::include_graphics("man/figures/chimpStat.png")
 ```
 
 ### See graph without stats
@@ -185,7 +194,7 @@ graph %>% dag_render(shortLabel = TRUE)
 ```
 
 ```{r chimpsGraphRenderPlotSL, out.width = "100%", echo = FALSE}
-knitr::include_graphics("graphics/chimpStatSL.png")
+knitr::include_graphics("man/figures/chimpStatSL.png")
 ```
 
 ### Compute posterior
@@ -242,7 +251,7 @@ graph %>% dag_render()
 ```
 
 ```{r eightschoolsGraphRenderPlot, out.width = "100%", echo = FALSE}
-knitr::include_graphics("graphics/eightSchoolStat.png")
+knitr::include_graphics("man/figures/eightSchoolStat.png")
 ```
 
 ### Compute posterior
