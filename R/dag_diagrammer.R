@@ -163,7 +163,8 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
     fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
            label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine))) %>%  ###poor man's version of shortLabel
     dplyr::select(.data$id,label,type,.data$shape,peripheries,fillcolor,auto_descr) %>%
-    dplyr::left_join(clusterNameDF, by = "id")
+    dplyr::left_join(clusterNameDF, by = "id") %>%
+    dplyr::arrange(id)  ## id is not passed to create_node_df(), so this ensures proper order
 
   ###just use description if shortLabel = TRUE
   if(shortLabel == TRUE) {
@@ -183,7 +184,6 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
     ### use DIagrammeR::create_node_df
     nodeDF = DiagrammeR::create_node_df(
       n = nrow(nodeDF),
-      id = nodeDF$id,
       label = nodeDF$label,
       type = nodeDF$type,
       shape = nodeDF$shape,
@@ -195,7 +195,6 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
     ### change NA values to "" for DiagrammeR
     nodeDF = DiagrammeR::create_node_df(
       n = nrow(nodeDF),
-      id = nodeDF$id,
       label = nodeDF$label,
       type = nodeDF$type,
       shape = nodeDF$shape,
