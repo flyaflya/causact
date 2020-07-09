@@ -1,7 +1,7 @@
 Package: causact
 Type: Package
 Title: Accelerated Bayesian Analytics with DAGs
-Version: 0.3.2
+Version: 0.3.2.9000
 Authors@R: c(person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre","cph")),
     person("Daniela", "Dapena", role = "ctb"),
     person("Rose", "Nguyen", role = "ctb"),
