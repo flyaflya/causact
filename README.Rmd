@@ -44,7 +44,7 @@ install.packages("remotes")
 remotes::install_github("flyaflya/causact")
 ```
 
-`causact` requires the `greta` package for Bayesian updating, which in turn, requires a specific version of `TensorFlow`.  Install both `greta` and `TensorFlow` using the instructions available here: http://causact.com/install-greta.html 
+`causact` requires the `greta` package for Bayesian updating, which in turn, requires a specific version of `TensorFlow`.  Install both `greta` and `TensorFlow` using the instructions available here: https://www.causact.com/install-tensorflow-greta-and-causact.html 
 
 ## Usage 
 

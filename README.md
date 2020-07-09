@@ -38,7 +38,7 @@ or the development version from GitHub:
 `causact` requires the `greta` package for Bayesian updating, which in
 turn, requires a specific version of `TensorFlow`. Install both `greta`
 and `TensorFlow` using the instructions available here:
-<http://causact.com/install-greta.html>
+<https://www.causact.com/install-tensorflow-greta-and-causact.html>
 
 ## Usage
 
@@ -117,16 +117,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.831          0.251          0.610          0.188
-#>  2          0.854          0.283          0.589          0.202
-#>  3          0.868          0.252          0.626          0.199
-#>  4          0.871          0.197          0.617          0.204
-#>  5          0.876          0.260          0.654          0.188
-#>  6          0.873          0.271          0.620          0.191
-#>  7          0.859          0.242          0.610          0.210
-#>  8          0.874          0.227          0.634          0.191
-#>  9          0.874          0.227          0.634          0.191
-#> 10          0.874          0.310          0.642          0.208
+#>  1          0.840          0.271          0.582          0.188
+#>  2          0.835          0.248          0.580          0.190
+#>  3          0.886          0.235          0.623          0.201
+#>  4          0.862          0.261          0.576          0.193
+#>  5          0.843          0.272          0.656          0.195
+#>  6          0.842          0.263          0.570          0.195
+#>  7          0.824          0.229          0.607          0.203
+#>  8          0.811          0.260          0.631          0.208
+#>  9          0.831          0.279          0.642          0.202
+#> 10          0.842          0.311          0.652          0.203
 #> # ... with 3,990 more rows
 ```
 
