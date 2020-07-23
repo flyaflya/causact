@@ -532,16 +532,21 @@ updateExtractArguments = function(graphWithDim) {
     dplyr::left_join(graph$arg_df, by = c("rhsID" = "rhsID","fromLabel" = "argValue")) %>%
     select(rhsID,argName,argType,argValue = fromLabel,argDimLabels = dimLabel)  ##new dim label
 
-  graph$arg_df = dplyr::bind_rows(graph$arg_df,rowsToAddtoArgDF) %>%
-    dplyr::mutate(argID = row_number()) %>%  ## retain order of arguments
-    dplyr::group_by(rhsID,argName,argType,argValue) %>%
-    dplyr::summarize(argDimLabels = paste0(argDimLabels, collapse = ","),
-                     minRowID = min(argID)) %>%
-    dplyr::mutate(argDimLabels = gsub("NA,","",argDimLabels)) %>%
-    dplyr::mutate(argDimLabels = ifelse(argDimLabels=="NA",as.character(NA),argDimLabels)) %>%
-    dplyr::arrange(rhsID,minRowID) %>%
-    dplyr::select(-minRowID) %>%
-    as.data.frame()
+  ## update if nrow >= 1
+  if (nrow(graph$arg_df) >= 1) {
+    graph$arg_df = dplyr::bind_rows(graph$arg_df, rowsToAddtoArgDF) %>%
+      dplyr::mutate(argID = row_number()) %>%  ## retain order of arguments
+      dplyr::group_by(rhsID, argName, argType, argValue) %>%
+      dplyr::summarize(
+        argDimLabels = paste0(argDimLabels, collapse = ","),
+        minRowID = min(argID)
+      ) %>%
+      dplyr::mutate(argDimLabels = gsub("NA,", "", argDimLabels)) %>%
+      dplyr::mutate(argDimLabels = ifelse(argDimLabels == "NA", as.character(NA), argDimLabels)) %>%
+      dplyr::arrange(rhsID, minRowID) %>%
+      dplyr::select(-minRowID) %>%
+      as.data.frame()
+  }
 
   return(graph)
 }
