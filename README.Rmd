@@ -266,4 +266,7 @@ drawsDF = graph %>% dag_greta()
 drawsDF %>% dagp_plot()
 ```
 
+```{r eightschoolsGraphRenderPlot, out.width = "100%", echo = FALSE}
+knitr::include_graphics("man/figures/eightschoolsGraphPost-1.png")
+```
 
