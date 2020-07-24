@@ -2,7 +2,14 @@
 #' @import rlang
 #' @importFrom purrr map
 #' @importFrom tidyr unite
-meaningfulLabels = function(graphWithDimensions) {
+meaningfulLabels = function(graph) {
+
+  ###get dimension information
+  graphWithDimensions = graph %>% dag_dim()
+
+  ###update rhs information for labelling computer code
+  graphWithDimensions = rhsPriorComposition(graphWithDimensions)
+  graphWithDimensions = rhsOperationComposition(graphWithDimensions)
 
   ## function makes an environment called cacheEnv where
   ## it stores meaningful labels for all the plate parameters

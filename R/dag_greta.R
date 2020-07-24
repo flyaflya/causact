@@ -49,6 +49,10 @@ dag_greta <- function(graph,
                       meaningfulLabels = TRUE,
                       ...) {
 
+  ## get graph object name for label statement
+  graphName = rlang::as_name(rlang::ensym(graph))
+  if (graphName == ".") {graphName = get_name(graph)}
+
   . <- NULL ## place holder to pass devtools::check
 
   ## First validate that the first argument is indeed a causact_graph
@@ -261,7 +265,9 @@ dag_greta <- function(graph,
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
-  meaningfulLabels(graphWithDim)  ###assign meaningful labels in cacheEnv
+  labelStatement = paste0("meaningfulLabels(",
+                          graphName,
+                          ")") ###assign meaningful labels in cacheEnv
   extraArgList = list(...)
   extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
   mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))
@@ -275,6 +281,7 @@ dag_greta <- function(graph,
                      dimStatements,
                      priorOpLikeStatements,
                      modelStatement,
+                     labelStatement,
                      posteriorStatement)
 
   #codeStatements

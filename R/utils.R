@@ -1,5 +1,6 @@
 #' @importFrom forcats fct_relevel
 #' @importFrom stringr str_sort str_detect
+#' @importFrom rlang ensym as_name
 #### assume RHS is a distribution
 #### if distribution, isolate distribution name,
 #### parameter names/values, and argument names/values
@@ -576,5 +577,46 @@ makeDiagMatrix = function(diagVec) {
     diagMatrix[cbind(i, i)] <- diagVec
     return(diagMatrix)
   }
+
+# below two functions allow one to get objectName
+# that becomes argument in meaningfulLabels()
+# when using dag_greta(mcmc=FALSE)
+# see https://michaelbarrowman.co.uk/post/getting-a-variable-name-in-a-pipeline/
+get_lhs <- function(){
+  calls <- sys.calls()
+
+  #pull out the function or operator (e.g. the `%>%`)
+  call_firsts <- lapply(calls,`[[`,1)
+
+  #check which ones are equal to the pipe
+  pipe_calls <- vapply(call_firsts,identical,logical(1),quote(`%>%`))
+
+  #if we have no pipes, then get_lhs() was called incorrectly
+  if(all(!pipe_calls)){
+    NULL
+  } else {
+    #Get the most recent pipe, lowest on the
+    pipe_calls <- which(pipe_calls)
+    pipe_calls <- pipe_calls[length(pipe_calls)]
+
+    #Get the second element of the pipe call
+    this_call <- calls[[c(pipe_calls,2)]]
+
+    #We need to dig down into the call to find the original
+    while(is.call(this_call) && identical(this_call[[1]],quote(`%>%`))){
+      this_call <- this_call[[2]]
+    }
+    this_call
+
+  }
+}
+# see https://michaelbarrowman.co.uk/post/getting-a-variable-name-in-a-pipeline/
+get_name <- function(x){
+    lhs <- get_lhs()
+    if(is.null(lhs)){
+      lhs <- rlang::ensym(x)
+    }
+    rlang::as_name(lhs)
+}
 
 
