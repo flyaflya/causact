@@ -76,7 +76,7 @@ graph %>% dag_render(shortLabel = TRUE)
 
 <img src="man/figures/cardPlotShortLabel.png" width="50%" />
 
-### See useful `greta` code without executing it
+### See useful `greta` code without executing it (for debugging or learning)
 
 ``` r
 library(greta)
@@ -102,13 +102,14 @@ gretaCode = graph %>% dag_greta(mcmc = FALSE)
 #> theta  <- beta(shape1 = 2, shape2 = 2, dim = x_dim)   #PRIOR
 #> distribution(y) <- bernoulli(prob = theta[x])   #LIKELIHOOD
 #> gretaModel  <- model(theta)   #MODEL
+#> meaningfulLabels(graph)
 #> draws       <- mcmc(gretaModel)              #POSTERIOR
 #> drawsDF     <- replaceLabels(draws) %>% as.matrix() %>%
 #>                 dplyr::as_tibble()           #POSTERIOR
 #> tidyDrawsDF <- drawsDF %>% addPriorGroups()  #POSTERIOR
 ```
 
-### Get posterior without worrying about `greta` code
+### Get posterior while automatically running the underlying `greta` code
 
 ``` r
 library(greta)
@@ -117,16 +118,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.871          0.306          0.548          0.226
-#>  2          0.871          0.306          0.548          0.226
-#>  3          0.871          0.299          0.588          0.227
-#>  4          0.873          0.301          0.639          0.207
-#>  5          0.822          0.174          0.567          0.208
-#>  6          0.831          0.182          0.578          0.193
-#>  7          0.830          0.184          0.631          0.217
-#>  8          0.830          0.185          0.640          0.213
-#>  9          0.832          0.181          0.633          0.214
-#> 10          0.851          0.192          0.603          0.231
+#>  1          0.800          0.240          0.617          0.175
+#>  2          0.847          0.236          0.643          0.173
+#>  3          0.825          0.195          0.601          0.175
+#>  4          0.870          0.233          0.574          0.177
+#>  5          0.822          0.270          0.588          0.175
+#>  6          0.867          0.289          0.599          0.173
+#>  7          0.862          0.237          0.620          0.174
+#>  8          0.862          0.237          0.620          0.174
+#>  9          0.862          0.237          0.620          0.174
+#> 10          0.822          0.266          0.522          0.176
 #> # ... with 3,990 more rows
 ```
 
@@ -215,7 +216,7 @@ graph %>% dag_render(width = 2000, height = 800)
 
 <img src="man/figures/chimpStat.png" width="120%" />
 
-### See graph without stats
+### Communicate with stakeholders for whom the statistics might be distracting
 
 ``` r
 graph %>% dag_render(shortLabel = TRUE)
