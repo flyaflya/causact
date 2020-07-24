@@ -4,8 +4,12 @@
 #' @importFrom tidyr unite
 meaningfulLabels = function(graph) {
 
-  ###get dimension information
-  graphWithDimensions = graph %>% dag_dim()
+  ###get dimension information if not there
+  if (exists(graph$dimDF)) {
+    graphWithDimensions = graph}
+  else {
+    graphWithDimensions = graph %>% dag_dim()
+  }
 
   ###update rhs information for labelling computer code
   graphWithDimensions = rhsPriorComposition(graphWithDimensions)

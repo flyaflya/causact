@@ -265,9 +265,14 @@ dag_greta <- function(graph,
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
+  if (mcmc == TRUE) {
+    meaningfulLabels(graphWithDim)  ###assign meaningful labels in cacheEnv
+    labelStatement = NULL
+  } else {
   labelStatement = paste0("meaningfulLabels(",
                           graphName,
                           ")") ###assign meaningful labels in cacheEnv
+  }
   extraArgList = list(...)
   extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
   mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))
