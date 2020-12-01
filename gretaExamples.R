@@ -1,3 +1,10 @@
+### Script contains five examples from
+### https://greta-stats.org/articles/example_models.html
+
+library(greta)
+library(tidyverse)
+library(causact)
+
 ### greta example 0
 graph = dag_create() %>%
   dag_node("Sepal Length","y",
