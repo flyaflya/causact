@@ -62,7 +62,7 @@
 #' }
 #' @importFrom dplyr bind_rows filter
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy
-#' @importFrom greta uniform normal lognormal bernoulli binomial beta_binomial negative_binomial hypergeometric poisson gamma inverse_gamma weibull exponential pareto student laplace beta cauchy chi_squared logistic f multivariate_normal wishart lkj_correlation multinomial categorical dirichlet dirichlet_multinomial
+#' @importFrom greta uniform normal lognormal bernoulli binomial beta_binomial negative_binomial hypergeometric poisson gamma inverse_gamma weibull exponential pareto student laplace beta cauchy chi_squared logistic f multivariate_normal wishart lkj_correlation multinomial categorical dirichlet dirichlet_multinomial %*% apply backsolve chol2inv colMeans cov2cor colSums diag eigen forwardsolve identity rowMeans rowSums sweep tapply
 #' @export
 dag_node <- function(graph,
                      descr = as.character(NA),
