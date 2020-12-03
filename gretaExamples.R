@@ -100,6 +100,9 @@ graph = dag_create() %>%
   dag_node("Exp. Rating","mu",
            rhs = int + design %*% coefs,
            child = "y") %>%
+  dag_node("Intercept","int",
+           rhs = normal(0,10),
+           child = "mu") %>%
   dag_node("Std Dev of Ratings","sd",
            rhs = cauchy(0,3, truncation = c(0,Inf)),
            child = "y") %>%
