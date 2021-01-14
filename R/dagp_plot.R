@@ -69,7 +69,7 @@
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy .data
 #' @export
 #' @importFrom ggplot2 ggplot geom_density facet_wrap aes theme_minimal theme scale_alpha_continuous guides labs geom_segment element_blank
-#' @importFrom tidyr gather
+#' @importFrom tidyr gather replace_na
 #' @importFrom cowplot plot_grid
 #' @importFrom stats quantile
 #' @export
@@ -91,7 +91,9 @@ dagp_plot = function(drawsDF,densityPlot = FALSE) { # case where untidy posterio
     tryCatch({
       drawsDF = drawsDF %>%
       addPriorGroups() %>%
-      dplyr::filter(!is.na(priorGroup))
+        mutate(priorGroup = tidyr::replace_na(priorGroup,  ###line to try
+                          999999)) %>%
+      dplyr::filter(!is.na(priorGroup)) ##if try works, erase this line
     priorGroups = unique(drawsDF$priorGroup)
     numPriorGroups = length(priorGroups)
     for (i in 1:numPriorGroups) {

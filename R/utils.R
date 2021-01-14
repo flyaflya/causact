@@ -1,6 +1,6 @@
 #' @importFrom forcats fct_relevel
 #' @importFrom stringr str_sort str_detect
-#' @importFrom rlang ensym as_name
+#' @importFrom rlang ensym as_name call_standardise
 #### assume RHS is a distribution
 #### if distribution, isolate distribution name,
 #### parameter names/values, and argument names/values
@@ -124,6 +124,49 @@ rhsDecompFormula = function(rhs) {
   return(z)
 }
 
+rhsDecompMixJointDistr = function(rhs) {
+  ## read in expression as a quosure
+  distExpr = rlang::enexpr(rhs)
+  distString = as.character(distExpr)
+
+  ## create data frame of named arguments and their position
+  namedArgDF = data.frame(
+    position = as.integer(NA),
+    argName = as.character(NA),
+    argValue = as.character(NA),
+    stringsAsFactors = FALSE
+  )[-1, ]
+
+  ## get top function name (note: this assumes namespace is stripped)
+  fnName = rlang::call_name(distExpr)
+
+  ## get params (i.e. dists passed via ... to mix)
+  ## and non-param arguments like dim as list
+  argList = as.list(rlang::call_standardise(distExpr)[-1])
+  argNames = names(argList)
+  argValues = as.character(argList)
+
+  paramIndices = which(names(argList)=="")
+  argIndices = which(!(names(argList)==""))
+
+  argDF = data.frame(argName = argNames[argIndices],
+                       argValue = argValues[argIndices],
+                       stringsAsFactors = FALSE)
+
+  paramDF = data.frame(argName = argValues[paramIndices],
+                       argValue = argValues[paramIndices],
+                       stringsAsFactors = FALSE)
+
+  z = list(
+    distr = TRUE,
+    fcn = fnName,
+    paramDF = paramDF,
+    argDF = argDF
+  )
+  return(z)
+}
+
+
 ### function to decompose rhs argument
 ### if distribution, call rhsDecompDistr
 ### if formula, call rhsDecompFormula
@@ -134,7 +177,7 @@ rhsDecomp = function(rhs) {
 
   ## handle cases where just distribution name is supplied
   ## if function in greta namespace, then assume distr
-  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind","icloglog","icauchit","log1pe","imultilogit","joint","mixture","variable","zeros","ones","greta_array","as_data","icloglog","icauchit","log1pe","imultlogit")
+  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind","icloglog","icauchit","log1pe","imultilogit","variable","zeros","ones","greta_array","as_data","icloglog","icauchit","log1pe","imultlogit")
 
   if (is.symbol(distExpr)) {
     fnName = rlang::as_string(distExpr)
@@ -173,7 +216,11 @@ rhsDecomp = function(rhs) {
 
   if (fnName %in% getNamespaceExports("greta") &
       !(fnName %in% notDistrFunctions)) {
-    z = rhsDecompDistr(!!distExpr)
+    if (fnName %in% c("mixture","joint")) {
+      z = rhsDecompMixJointDistr(!!distExpr)
+      } else {  ##standard distribution
+        z = rhsDecompDistr(!!distExpr)
+      }
   } else {
     z = rhsDecompFormula(!!distExpr)
   }

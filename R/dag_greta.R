@@ -39,7 +39,7 @@
 #' }
 #' @importFrom dplyr bind_rows tibble left_join select add_row as_tibble group_indices row_number
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
-#' @importFrom rlang enquo expr_text .data
+#' @importFrom rlang enquo expr_text .data expr
 #' @importFrom igraph graph_from_data_frame topo_sort
 #' @importFrom tidyr gather
 #' @importFrom greta mcmc model as_data
@@ -236,8 +236,14 @@ dag_greta <- function(graph,
 
   ###Create MODEL Statement
   # get all non-observed / non-formula nodes by default
+  # that are not discrete distributions
+  discDists = c("bernoulli","binomial","beta_binomial",
+                "negative_binomial","hypergeometric",
+                "poisson","multinomial","categorical",
+                "dirichlet_multinomial")
   unobservedNodes = graphWithDim$nodes_df %>%
     dplyr::filter(obs == FALSE & distr == TRUE) %>%
+    dplyr::filter(!(rhs %in% discDists))%>%
     dplyr::pull(auto_label)
 
   #group unobserved nodes by their rhs for later plotting by ggplot
@@ -265,7 +271,10 @@ dag_greta <- function(graph,
                           ")   #MODEL")
 
   ###Create POSTERIOR draws statement
-  if (mcmc == TRUE) {
+  if (mcmc == TRUE) {  ##clear cacheEnv make sure priorGrp is restored
+    rmExpr = rlang::expr(rm(list = ls()))
+    eval(rmExpr, envir = cacheEnv)  ## clear cacheEnv
+    assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
     meaningfulLabels(graphWithDim)  ###assign meaningful labels in cacheEnv
     labelStatement = NULL
   } else {
