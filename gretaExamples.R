@@ -194,3 +194,68 @@ graph %>% dag_render(shortLabel = TRUE)
 drawsDF = graph %>% dag_greta()
 drawsDF %>% dagp_plot()
 
+### using mixture example
+# simulate a mixture of poisson random variables and try to recover the
+# parameters with a Bayesian model
+x <- c(rpois(800, 3),
+       rpois(200, 10))
+
+# weights <- uniform(0, 1, dim = 2)
+# rates <- normal(0, 10, truncation = c(0, Inf), dim = 2)
+# distribution(x) <- mixture(poisson(rates[1]),
+#                            poisson(rates[2]),
+#                            weights = weights)
+
+graph2 = dag_create() %>%
+  dag_node("Mixed Var","x",
+           rhs = mixture(alpha, beta, weights = weights),
+           data = x) %>%
+  dag_node("Alpha Var","alpha",
+           rhs = poisson(lambda_a),
+           child = "x") %>%
+  dag_node("Beta Var","beta",
+           rhs = poisson(lambda_b),
+           child = "x") %>%
+  dag_node("Weight Vars","weights",
+           rhs = uniform(0,1, dim =2),
+           child = "x") %>%
+  dag_node("Lambda A Rate","lambda_a",
+           rhs = uniform(1,5),
+           child = "alpha") %>%
+  dag_node("Lambda B Rate","lambda_b",
+           rhs = uniform(6,20),
+           child = "beta")
+graph2 %>% dag_render()
+graph2 %>% dag_greta(mcmc=FALSE)
+drawsDF = graph2 %>% dag_greta()
+drawsDF %>% dagp_plot()
+
+#### use dirichlet instead
+
+x <- c(rpois(800, 3),
+       rpois(200, 10))
+
+graph2 = dag_create() %>%
+  dag_node("Mixed Var","x",
+           rhs = mixture(alpha,beta,
+                         weights = t(weights)),
+           data = x) %>%
+  dag_node("Count Var 1","alpha",
+           rhs = poisson(lambda1),
+           child = "x") %>%
+  dag_node("Count Var 2","beta",
+           rhs = poisson(lambda2),
+           child = "x") %>%
+  dag_node("Weight Vars","weights",
+           rhs = dirichlet(t(c(1,1))),
+           child = "x") %>%
+  dag_node("Exp Rate 1","lambda1",
+           rhs = uniform(1,5),
+           child = "alpha") %>%
+  dag_node("Exp Rate 2","lambda2",
+           rhs = uniform(6,20),
+           child = "beta")
+graph2 %>% dag_render()
+graph2 %>% dag_greta(mcmc=FALSE)
+drawsDF = graph2 %>% dag_greta()
+drawsDF %>% dagp_plot()
