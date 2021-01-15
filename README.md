@@ -16,8 +16,8 @@ from R. Future iterations of the `causact` package will aim to be a
 front-end into several universal probablistic programming languages
 (e.g. Stan, Turing, Gen, etc.).
 
-Using the `causact` package for Bayesian inference is featured in `The
-Business Analyst's Guide to Business Analytics` available at
+Using the `causact` package for Bayesian inference is featured in `A
+Business Analyst's Introduction to Business Analytics` available at
 <http://causact.com/>.
 
 > NOTE: Package is under active development. Breaking changes are to be
@@ -118,16 +118,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.833          0.235          0.634          0.226
-#>  2          0.815          0.239          0.680          0.193
-#>  3          0.815          0.239          0.680          0.193
-#>  4          0.839          0.266          0.689          0.175
-#>  5          0.804          0.178          0.615          0.186
-#>  6          0.844          0.338          0.595          0.219
-#>  7          0.837          0.212          0.598          0.219
-#>  8          0.837          0.212          0.598          0.219
-#>  9          0.866          0.197          0.657          0.202
-#> 10          0.829          0.278          0.638          0.181
+#>  1          0.885          0.236          0.587          0.230
+#>  2          0.885          0.236          0.587          0.230
+#>  3          0.855          0.235          0.587          0.209
+#>  4          0.842          0.220          0.584          0.223
+#>  5          0.833          0.218          0.581          0.193
+#>  6          0.854          0.226          0.578          0.184
+#>  7          0.858          0.220          0.578          0.187
+#>  8          0.858          0.220          0.578          0.187
+#>  9          0.850          0.212          0.578          0.210
+#> 10          0.851          0.212          0.574          0.189
 #> # ... with 3,990 more rows
 ```
 
@@ -151,9 +151,9 @@ Credible interval plots.
 
 ## Further Usage
 
-For more info, see `The Business Analyst's Guide to Business Analytics`
-available at <https://www.causact.com>. Two additional examples are
-shown below.
+For more info, see `A Business Analyst's Introduction to Business
+Analytics` available at <https://www.causact.com>. Two additional
+examples are shown below.
 
 ## Prosocial Chimpanzees Example from Statistical Rethinking
 
@@ -295,3 +295,58 @@ drawsDF %>% dagp_plot()
 ```
 
 <img src="man/figures/eightschoolsGraphPost-1.png" width="100%" />
+
+## Example Where Observed RV Is A Mixed RV
+
+``` r
+#### use dirichlet instead
+library(greta)
+library(tidyverse)
+library(causact)
+
+## sample data - try to recover params
+x <- c(rpois(800, 3),rpois(200, 10))
+
+graph = dag_create() %>%  ## create generative DAG
+  dag_node("Mixed Var","x",
+           rhs = mixture(alpha,beta,
+                         weights = t(weights)),
+           data = x) %>%
+  dag_node("Count Var 1","alpha",
+           rhs = poisson(lambda1),
+           child = "x") %>%
+  dag_node("Count Var 2","beta",
+           rhs = poisson(lambda2),
+           child = "x") %>%
+  dag_node("Weight Vars","weights",
+           rhs = dirichlet(t(c(1,1))),
+           child = "x") %>%
+  dag_node("Exp Rate 1","lambda1",
+           rhs = uniform(1,5),
+           child = "alpha") %>%
+  dag_node("Exp Rate 2","lambda2",
+           rhs = uniform(6,20),
+           child = "beta")
+```
+
+### See graph
+
+``` r
+graph %>% dag_render()
+```
+
+<img src="man/figures/mixture.png" width="100%" />
+
+### Compute posterior
+
+``` r
+drawsDF = graph %>% dag_greta()
+```
+
+### Visualize posterior
+
+``` r
+drawsDF %>% dagp_plot()
+```
+
+<img src="man/figures/mixturePost.png" width="100%" />

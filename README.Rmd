@@ -270,3 +270,61 @@ drawsDF %>% dagp_plot()
 knitr::include_graphics("man/figures/eightschoolsGraphPost-1.png")
 ```
 
+## Example Where Observed RV Is A Mixed RV
+
+```{r mixtureGraph, results ="hide", warning = FALSE, message = FALSE}
+#### use dirichlet instead
+library(greta)
+library(tidyverse)
+library(causact)
+
+## sample data - try to recover params
+x <- c(rpois(800, 3),rpois(200, 10))
+
+graph = dag_create() %>%  ## create generative DAG
+  dag_node("Mixed Var","x",
+           rhs = mixture(alpha,beta,
+                         weights = t(weights)),
+           data = x) %>%
+  dag_node("Count Var 1","alpha",
+           rhs = poisson(lambda1),
+           child = "x") %>%
+  dag_node("Count Var 2","beta",
+           rhs = poisson(lambda2),
+           child = "x") %>%
+  dag_node("Weight Vars","weights",
+           rhs = dirichlet(t(c(1,1))),
+           child = "x") %>%
+  dag_node("Exp Rate 1","lambda1",
+           rhs = uniform(1,5),
+           child = "alpha") %>%
+  dag_node("Exp Rate 2","lambda2",
+           rhs = uniform(6,20),
+           child = "beta")
+```
+
+### See graph
+
+```{r mixtureGraphRenderCode, eval = FALSE, warning = FALSE, message = FALSE}
+graph %>% dag_render()
+```
+
+```{r mixtureGraphRenderPlot, out.width = "100%", echo = FALSE}
+knitr::include_graphics("man/figures/mixture.png")
+```
+
+### Compute posterior
+
+```{r mixtureGraphGreta, warning = FALSE, message = FALSE}
+drawsDF = graph %>% dag_greta()
+```
+
+### Visualize posterior
+
+```{r mixtureGraphPost, out.width = "100%", eval = FALSE, fig.width = 9, fig.height = 6, warning = FALSE, message = FALSE}
+drawsDF %>% dagp_plot()
+```
+
+```{r mixtureGraphRenderPost, out.width = "100%", echo = FALSE}
+knitr::include_graphics("man/figures/mixturePost.png")
+```
