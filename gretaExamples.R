@@ -231,11 +231,14 @@ drawsDF = graph2 %>% dag_greta()
 drawsDF %>% dagp_plot()
 
 #### use dirichlet instead
+library(greta)
+library(tidyverse)
+library(causact)
 
-x <- c(rpois(800, 3),
-       rpois(200, 10))
+## sample data - try to recover params
+x <- c(rpois(800, 3),rpois(200, 10))
 
-graph2 = dag_create() %>%
+graph2 = dag_create() %>%  ## create generative DAG
   dag_node("Mixed Var","x",
            rhs = mixture(alpha,beta,
                          weights = t(weights)),
@@ -255,7 +258,6 @@ graph2 = dag_create() %>%
   dag_node("Exp Rate 2","lambda2",
            rhs = uniform(6,20),
            child = "beta")
-graph2 %>% dag_render()
-graph2 %>% dag_greta(mcmc=FALSE)
-drawsDF = graph2 %>% dag_greta()
-drawsDF %>% dagp_plot()
+graph2 %>% dag_render()  ## visualize DAG
+drawsDF = graph2 %>% dag_greta() ## get posterior
+drawsDF %>% dagp_plot() ## visualize posterior
