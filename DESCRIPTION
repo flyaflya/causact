@@ -12,10 +12,10 @@ Description: Accelerate Bayesian analytics workflows in 'R' through interactive 
     acyclic graphs (DAGs) as a unifying language for business stakeholders, statisticians, 
     and programmers. This package relies on the sleek and elegant 'greta' package for 
     Bayesian inference. 'greta', in turn, is an interface into 'TensorFlow' from 'R'. 
-    Install 'greta' using instructions available here: <http://www.causact.com/install-tensorflow-greta-and-causact.html>.
-    See <http://github.com/flyaflya/causact> or <http://causact.com> for more documentation.
+    Install 'greta' using instructions available here: <https://www.causact.com/install-tensorflow-greta-and-causact.html>.
+    See <https://github.com/flyaflya/causact> or <https://www.causact.com/> for more documentation.
 License: MIT + file LICENSE
-URL: https://github.com/flyaflya/causact, https://causact.com
+URL: https://github.com/flyaflya/causact, https://www.causact.com/
 BugReports: https://github.com/flyaflya/causact/issues
 SystemRequirements: Python and TensorFlow are needed for Bayesian inference computations; 
     Python (>= 2.7.0) with header files and shared library;

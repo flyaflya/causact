@@ -3,7 +3,7 @@
 \docType{data}
 \name{totalBeachgoersRepSample}
 \alias{totalBeachgoersRepSample}
-\title{A representative sample from a random variable that represents the annual number of beach goers to Ocean City, MD beaches on hot days.  Think of this representative sample as coming from either a prior or posterior distribution.  An example using this sample is can be found in The Business Analyst's Guide To Business Analytics at http://causact.com.}
+\title{A representative sample from a random variable that represents the annual number of beach goers to Ocean City, MD beaches on hot days.  Think of this representative sample as coming from either a prior or posterior distribution.  An example using this sample is can be found in The Business Analyst's Guide To Business Analytics at https://www.causact.com/.}
 \format{
 A 4,000 element vector.
 \describe{
@@ -14,6 +14,6 @@ A 4,000 element vector.
 totalBeachgoersRepSample
 }
 \description{
-A representative sample from a random variable that represents the annual number of beach goers to Ocean City, MD beaches on hot days.  Think of this representative sample as coming from either a prior or posterior distribution.  An example using this sample is can be found in The Business Analyst's Guide To Business Analytics at http://causact.com.
+A representative sample from a random variable that represents the annual number of beach goers to Ocean City, MD beaches on hot days.  Think of this representative sample as coming from either a prior or posterior distribution.  An example using this sample is can be found in The Business Analyst's Guide To Business Analytics at https://www.causact.com/.
 }
 \keyword{datasets}

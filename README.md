@@ -18,7 +18,7 @@ front-end into several universal probablistic programming languages
 
 Using the `causact` package for Bayesian inference is featured in `A
 Business Analyst's Introduction to Business Analytics` available at
-<http://causact.com/>.
+<https://www.causact.com/>.
 
 > NOTE: Package is under active development. Breaking changes are to be
 > expected. Feedback and encouragement is appreciated via github issues
@@ -38,7 +38,7 @@ or the development version from GitHub:
 `causact` requires the `greta` package for Bayesian updating, which in
 turn, requires a specific version of `TensorFlow`. Install both `greta`
 and `TensorFlow` using the instructions available here:
-<https://www.causact.com/install-tensorflow-greta-and-causact.html>
+<https://www.causact.com/install-tensorflow-greta-and-causact.html>.
 
 ## Usage
 
@@ -118,16 +118,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.856          0.250          0.575          0.217
-#>  2          0.842          0.245          0.569          0.180
-#>  3          0.847          0.227          0.681          0.222
-#>  4          0.846          0.232          0.667          0.229
-#>  5          0.839          0.247          0.666          0.226
-#>  6          0.849          0.234          0.563          0.204
-#>  7          0.848          0.254          0.675          0.203
-#>  8          0.862          0.231          0.554          0.217
-#>  9          0.865          0.249          0.556          0.192
-#> 10          0.880          0.235          0.567          0.240
+#>  1          0.810          0.265          0.603          0.213
+#>  2          0.806          0.275          0.634          0.235
+#>  3          0.812          0.200          0.688          0.228
+#>  4          0.898          0.277          0.562          0.193
+#>  5          0.853          0.168          0.673          0.227
+#>  6          0.831          0.309          0.720          0.221
+#>  7          0.833          0.192          0.573          0.213
+#>  8          0.881          0.202          0.635          0.189
+#>  9          0.864          0.232          0.552          0.216
+#> 10          0.859          0.188          0.628          0.183
 #> # ... with 3,990 more rows
 ```
 

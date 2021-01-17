@@ -79,7 +79,7 @@
 #'   \item{CPI2017}{The Corruption Perceptions Index score for 2017: A country/territory’s score indicates the perceived level of public sector corruption on a scale of 0-100, where 0 means that a country is perceived as highly corrupt and a 100 means that a country is perceived as very clean. }
 #'   \item{HDI2017}{The human development index score for 2017: the Human Development Index (HDI) is a measure of achievement in the basic dimensions of human development across countries.  It is an index made from a simple unweighted average of a nation’s longevity, education and income and is widely accepted in development discourse.}
 #' }
-#' @source \url{http://www.transparency.org/cpi} CPI data available from www.transparency.org/cpi.  Accessed Oct 1, 2018. Consumer Perception Index 2017 by Transparency International is licensed under CC-BY- ND 4.0.
+#' @source \url{https://www.transparency.org/cpi} CPI data available from www.transparency.org/cpi.  Accessed Oct 1, 2018. Consumer Perception Index 2017 by Transparency International is licensed under CC-BY- ND 4.0.
 #' @source \url{http://hdr.undp.org/en/content/human-development-index-hdi} HDA data accessed on Oct 1, 2018.
 #' @source \url{https://data.worldbank.org/} Population data accessed on Oct 1, 2018.
 "corruptDF"
@@ -149,7 +149,7 @@
 #' }
 "carModelDF"
 
-#' A representative sample from a random variable that represents the annual number of beach goers to Ocean City, MD beaches on hot days.  Think of this representative sample as coming from either a prior or posterior distribution.  An example using this sample is can be found in The Business Analyst's Guide To Business Analytics at http://causact.com.
+#' A representative sample from a random variable that represents the annual number of beach goers to Ocean City, MD beaches on hot days.  Think of this representative sample as coming from either a prior or posterior distribution.  An example using this sample is can be found in The Business Analyst's Guide To Business Analytics at https://www.causact.com/.
 #' @format A 4,000 element vector.
 #' \describe{
 #'   \item{totalBeachgoersRepSample}{a draw from a representative sample of total beachgoers to Ocean City, MD.}
