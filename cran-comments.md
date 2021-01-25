@@ -9,7 +9,7 @@ This is a minor release to accomodate more `greta` functions as part of the `rhs
 
 0 errors | 0 warnings | 1 note
 
-Although some URL links causes a warning, they are all valid links.
+All suggested links have been fixed with changing http to https and including trailling forward slashes.  Only one URL link note remains and that link is valid (https://twitter.com/preposterior).
 
 
 ## rhub::check_for_cran() 
