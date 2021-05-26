@@ -58,7 +58,7 @@ meaningfulLabels = function(graph) {
 
   if (nrow(renamingMultiDimParamsDF) > 0) {
     uniqueLabels = unique(renamingMultiDimParamsDF$label)
-    for (i in 1:length(uniqueLabels)) {
+    for (i in seq_along(uniqueLabels)) {
       tempDF = renamingMultiDimParamsDF %>%
         dplyr::filter(label == uniqueLabels[i])
       dimensionList = purrr::map(tempDF$dimValue,.f = function(x) { return(1:x)})

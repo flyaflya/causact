@@ -96,7 +96,7 @@ dag_merge <- function(graph1,...){
 
     ## Thus, here we update the general item ID's for each df
     ## And bind the rows of each df to the corresponding df in the final graph
-    for  (df in 1:length(final)){
+    for  (df in seq_along(final)){
       graph[[df]][[1]] <- c(graph[[df]][[1]] + length(final[[df]][[1]]))
       final[[df]] <- as.data.frame(bind_rows(final[[df]],graph[[df]]))
     }

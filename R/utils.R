@@ -33,7 +33,7 @@ rhsDecompDistr = function(rhs) {
   allArgs = names(formals(fnName)) ##function arguments  ##note this used to use formalArgs, but did not work with beta distribution
 
   ## fill in missing arguments in list
-  for (i in 1:length(allArgs)) {
+  for (i in seq_along(allArgs)) {
     if (!(allArgs[i] %in% namedArgDF$argName)) {
       #arg Name missing
       insertIndex = which(namedArgDF$argName == "")[1]
@@ -368,7 +368,7 @@ findNodeID = function(graphListOrDF, nodeLabel) {
     nodeDF = graphListOrDF$nodes_df
   }
 
-  for (i in 1:length(nodeLabel)) {
+  for (i in seq_along(nodeLabel)) {
     nodeID[i] = as.integer(NA) ## set id to zero meaning unlabelled yet
     # search auto_label column
     nodePosition = max(which(nodeDF$auto_label == nodeLabel[i]), 0)
