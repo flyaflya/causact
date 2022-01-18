@@ -25,7 +25,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.2.0)
 Imports:
-    DiagrammeR (>= 1.0.6),
+    DiagrammeR (>= 1.0.7),
     dplyr (>= 0.8.5),
     magrittr (>= 1.5),
     ggplot2 (>= 3.3.0),
