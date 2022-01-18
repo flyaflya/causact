@@ -91,8 +91,7 @@ dagp_plot = function(drawsDF,densityPlot = FALSE) { # case where untidy posterio
     tryCatch({
       drawsDF = drawsDF %>%
       addPriorGroups() %>%
-        mutate(priorGroup = tidyr::replace_na(priorGroup,  ###line to try
-                          999999)) %>%
+        mutate(priorGroup = ifelse(is.na(priorGroup),999999,priorGroup)) %>%
       dplyr::filter(!is.na(priorGroup)) ##if try works, erase this line
     priorGroups = unique(drawsDF$priorGroup)
     numPriorGroups = length(priorGroups)
