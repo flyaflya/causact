@@ -213,8 +213,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   ### add egdes if applicable
   if (nrow(edgeDF) > 0) {
     ## use dashed for type = extract
-    edgeDF$style = ifelse(edgeDF$type == "extract","dashed","solid") %>%
-      tidyr::replace_na("solid")
+    edgeDF$style = ifelse(edgeDF$type != "extract" | is.na(edgeDF$type),"solid","dashed")
     edgeDF = DiagrammeR::create_edge_df(from = edgeDF$from,
                                         to = edgeDF$to,
                                         style = edgeDF$style)
