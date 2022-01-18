@@ -1,5 +1,9 @@
 # causact (development version)
 
+# causact 0.4.1
+* Fixed bugs introduced by changes in `tidyr::replace_na()`.
+* Fixed bug related to rendering generative DAGs where two variables were both on multiple plates.
+
 # causact 0.4.0
 
 ## Minor improvements and fixes
