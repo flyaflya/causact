@@ -117,7 +117,7 @@ dagp_plot = function(drawsDF,densityPlot = FALSE) { # case where untidy posterio
         geom_segment(aes(x = q05, xend = q95, alpha = alphaLevel), size = 4, color = "#5f9ea0") +
         geom_segment(aes(x = q45, xend = q55, alpha = alphaLevel), size = 4, color = "#11114e") +
         scale_alpha_continuous(range = c(0.6,1))  +
-        guides(alpha = FALSE) +
+        guides(alpha = "none") +
         theme_minimal(12) +
         labs(y = element_blank(),
              x = "parameter value",
