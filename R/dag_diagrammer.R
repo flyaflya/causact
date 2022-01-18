@@ -14,7 +14,7 @@
 #'   dag_diagrammer() %>%
 #'   render_graph(title = "DiagrammeR Version of causact_graph")
 #' @importFrom dplyr select filter group_by summarize mutate left_join
-#' @importFrom tidyr replace_na
+#' @importFrom tidyr
 #' @importFrom stringr str_replace
 #' @importFrom DiagrammeR create_node_df create_graph add_node_df create_edge_df
 #' @importFrom rlang .data

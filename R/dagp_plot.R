@@ -69,7 +69,7 @@
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy .data
 #' @export
 #' @importFrom ggplot2 ggplot geom_density facet_wrap aes theme_minimal theme scale_alpha_continuous guides labs geom_segment element_blank
-#' @importFrom tidyr gather replace_na
+#' @importFrom tidyr gather
 #' @importFrom cowplot plot_grid
 #' @importFrom stats quantile
 #' @export
