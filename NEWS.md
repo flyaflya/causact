@@ -1,4 +1,4 @@
-# causact (development version)
+# causact 0.4.1
 
 # causact 0.4.1
 * Fixed bugs introduced by changes in `tidyr::replace_na()`.
