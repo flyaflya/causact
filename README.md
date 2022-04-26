@@ -1,5 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/flyaflya/causact/workflows/R-CMD-check/badge.svg)](https://github.com/flyaflya/causact/actions)
+<!-- badges: end -->
 
 # causact
 
@@ -118,16 +122,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.819          0.226          0.593          0.169
-#>  2          0.851          0.214          0.579          0.172
-#>  3          0.883          0.260          0.574          0.207
-#>  4          0.844          0.256          0.575          0.218
-#>  5          0.815          0.275          0.570          0.198
-#>  6          0.784          0.246          0.542          0.215
-#>  7          0.893          0.188          0.673          0.199
-#>  8          0.843          0.162          0.676          0.213
-#>  9          0.825          0.180          0.690          0.212
-#> 10          0.867          0.265          0.534          0.214
+#>  1          0.849          0.207          0.611          0.196
+#>  2          0.862          0.206          0.617          0.201
+#>  3          0.862          0.206          0.609          0.192
+#>  4          0.854          0.203          0.620          0.211
+#>  5          0.859          0.203          0.602          0.219
+#>  6          0.873          0.201          0.576          0.196
+#>  7          0.870          0.201          0.576          0.179
+#>  8          0.859          0.202          0.593          0.170
+#>  9          0.864          0.204          0.606          0.217
+#> 10          0.859          0.201          0.602          0.201
 #> # ... with 3,990 more rows
 ```
 
