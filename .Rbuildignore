@@ -11,3 +11,4 @@ eightSchools.R
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
+^\.github$
