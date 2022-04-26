@@ -16,8 +16,9 @@ knitr::opts_chunk$set(
 ```
 
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/flyaflya/causact/workflows/R-CMD-check/badge.svg)](https://github.com/flyaflya/causact/actions)
-  <!-- badges: end -->
+[![R-CMD-check](https://github.com/flyaflya/causact/workflows/R-CMD-check/badge.svg)](https://github.com/flyaflya/causact/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/causact)](https://cran.r-project.org/package=causact)
+<!-- badges: end -->
 
 # causact
 

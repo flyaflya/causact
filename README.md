@@ -3,6 +3,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/flyaflya/causact/workflows/R-CMD-check/badge.svg)](https://github.com/flyaflya/causact/actions)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/causact)](https://cran.r-project.org/package=causact)
 <!-- badges: end -->
 
 # causact
@@ -122,16 +124,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.849          0.207          0.611          0.196
-#>  2          0.862          0.206          0.617          0.201
-#>  3          0.862          0.206          0.609          0.192
-#>  4          0.854          0.203          0.620          0.211
-#>  5          0.859          0.203          0.602          0.219
-#>  6          0.873          0.201          0.576          0.196
-#>  7          0.870          0.201          0.576          0.179
-#>  8          0.859          0.202          0.593          0.170
-#>  9          0.864          0.204          0.606          0.217
-#> 10          0.859          0.201          0.602          0.201
+#>  1          0.860          0.235          0.561          0.196
+#>  2          0.869          0.245          0.586          0.225
+#>  3          0.869          0.245          0.586          0.225
+#>  4          0.836          0.261          0.653          0.198
+#>  5          0.836          0.261          0.653          0.198
+#>  6          0.825          0.143          0.598          0.210
+#>  7          0.845          0.188          0.585          0.197
+#>  8          0.884          0.320          0.649          0.204
+#>  9          0.848          0.229          0.611          0.218
+#> 10          0.848          0.229          0.611          0.218
 #> # ... with 3,990 more rows
 ```
 
