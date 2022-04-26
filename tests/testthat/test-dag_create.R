@@ -113,3 +113,78 @@ test_that("dag plot creates graph", {
   plotGr = df %>% dagp_plot()
   expect_type(plotGr, "list")
 })
+
+
+test_that("dag merge can combine graphs", {
+  g1 = dag_create() %>%
+    dag_node("Demand for A","dA",
+             rhs = normal(15,4)) %>%
+    dag_node("Supply for A","sA",
+             rhs = uniform(0,100)) %>%
+    dag_node("Profit for A","pA",
+             rhs = min(sA,dA)) %>%
+    dag_edge(from = c("dA","sA"),to = c("pA"))
+  g2 <- dag_create() %>%
+    dag_node("Demand for B","dB",
+             rhs = normal(20,8)) %>%
+    dag_node("Supply for B","sB",
+             rhs = uniform(0,100)) %>%
+    dag_node("Profit for B","pB",
+             rhs = min(sB,dB)) %>%
+    dag_edge(from = c("dB","sB"),to = c("pB"))
+  newGraph = g1 %>% dag_merge(g2)
+  expect_equal(NROW(newGraph), 6)
+})
+
+test_that("bernoulli rvs can be generated", {
+  expect_equal(sum(rbern(10,1)), 10)
+})
+
+test_that("big models are okay", {
+  graph2 = dag_create() %>%
+    dag_node("Number of Signups","k",
+             rhs = binomial(nTrials,theta),
+             data = gymDF$nSigned) %>%
+    dag_node("Signup Probability","theta",
+             child = "k",
+             rhs = 1 / (1+exp(-y))) %>%
+    dag_node("Number of Trials","nTrials",
+             child = "k",
+             data = gymDF$nTrialCustomers) %>%
+    dag_node("Linear Predictor","y",
+             rhs = alpha + beta * x,
+             child = "theta") %>%
+    dag_node("Yoga Stretch Flag","x",
+             data = gymDF$yogaStretch,
+             child = "y") %>%
+    dag_node("Gym Intercept","alpha",
+             rhs = normal(mu_alpha,sd_alpha),
+             child = "y") %>%
+    dag_node("Gym Yoga Slope Coeff","beta",
+             rhs = normal(mu_beta,sd_beta),
+             child = "y") %>%
+    dag_node("Avg Crossfit Intercept","mu_alpha",
+             rhs = normal(-1,1.5),
+             child = "alpha") %>%
+    dag_node("Avg Crossfit Yoga Slope","mu_beta",
+             rhs = normal(0,0.75),
+             child = "beta") %>%
+    dag_node("SD Crossfit Intercept","sd_alpha",
+             rhs = uniform(0,3),
+             child = "alpha") %>%
+    dag_node("SD Crossfit Yoga Slope","sd_beta",
+             rhs = uniform(0,1.5),
+             child = "beta") %>%
+    dag_plate("Gym","j",
+              nodeLabels = c("alpha","beta"),
+              data = gymDF$gymID,
+              addDataNode = TRUE) %>%
+    dag_plate("Observation","i",
+              nodeLabels = c("k","x","j",
+                             "nTrials","theta","y"))
+  expect_equal(NROW(graph2$nodes_df), 12)
+  renderGraph = graph2 %>% dag_render(shortLabel = 35, wrapWidth = 22)
+  expect_type(renderGraph, "list")
+  gretaOut = graph2 %>% dag_greta(mcmc = FALSE, meaningfulLabels = FALSE)
+  expect_type(gretaOut, "character")
+})
