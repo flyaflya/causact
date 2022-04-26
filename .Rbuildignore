@@ -12,3 +12,4 @@ eightSchools.R
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
 ^\.github$
+^codecov\.yml$

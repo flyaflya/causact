@@ -5,6 +5,8 @@
 [![R-CMD-check](https://github.com/flyaflya/causact/workflows/R-CMD-check/badge.svg)](https://github.com/flyaflya/causact/actions)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/causact)](https://cran.r-project.org/package=causact)
+[![Codecov test
+coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)](https://app.codecov.io/gh/flyaflya/causact?branch=master)
 <!-- badges: end -->
 
 # causact
@@ -124,16 +126,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.860          0.235          0.561          0.196
-#>  2          0.869          0.245          0.586          0.225
-#>  3          0.869          0.245          0.586          0.225
-#>  4          0.836          0.261          0.653          0.198
-#>  5          0.836          0.261          0.653          0.198
-#>  6          0.825          0.143          0.598          0.210
-#>  7          0.845          0.188          0.585          0.197
-#>  8          0.884          0.320          0.649          0.204
-#>  9          0.848          0.229          0.611          0.218
-#> 10          0.848          0.229          0.611          0.218
+#>  1          0.838          0.277          0.644          0.194
+#>  2          0.857          0.195          0.638          0.190
+#>  3          0.842          0.212          0.583          0.197
+#>  4          0.835          0.186          0.578          0.193
+#>  5          0.863          0.241          0.642          0.195
+#>  6          0.828          0.297          0.590          0.209
+#>  7          0.869          0.261          0.641          0.204
+#>  8          0.866          0.254          0.611          0.207
+#>  9          0.835          0.239          0.622          0.203
+#> 10          0.852          0.191          0.615          0.207
 #> # ... with 3,990 more rows
 ```
 
