@@ -12,11 +12,7 @@ jobs:
         with:
           journal: joss
           # This should be the path to the paper within your repo.
-<<<<<<< HEAD
           paper-path: ../paper/JOSSsubmission.md
-=======
-          paper-path: ./paper/JOSSsubmission.md
->>>>>>> eed3c54a37b755039890d6018c331e143f64debf
       - name: Upload
         uses: actions/upload-artifact@v1
         with:
@@ -24,8 +20,5 @@ jobs:
           # This is the output path where Pandoc will write the compiled
           # PDF. Note, this should be the same directory as the input
           # paper.md
-<<<<<<< HEAD
           path: ../paper/JOSSsubmission.pdf
-=======
-          path: ./paper/JOSSsubmission.pdf
->>>>>>> eed3c54a37b755039890d6018c331e143f64debf
+
