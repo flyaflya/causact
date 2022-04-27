@@ -30,7 +30,7 @@ affiliations:
 
 # Summary
 
-The `causact` package provides `R` functions for visualizing and running inference on generative directed acyclic graphs (DAGs).  Once a generative DAG is created, the package automates Bayesian inference via the `greta` package [@golding2019greta] and `TensorFlow` [@dillon2017tensorflow].  The package eliminates the need for three separate versions of a model: 1) the narrative describing the problem, 2) the statistical model representing the problem, and 3) the computer model which codifies the model in a probabilistic programming language.  Instead, `causact` users create one unified model, a generative DAG, using a visual representation. 
+The `causact` package provides `R` functions for visualizing and running inference on generative directed acyclic graphs (DAGs).  Once a generative DAG is created, the package automates Bayesian inference via the `greta` package [@golding2019greta] and `TensorFlow` [@dillon2017tensorflow].  The package eliminates the need for three separate versions of a model: 1) the narrative describing the problem, 2) the statistical model representing the problem, and 3) the code enabling inference written in a probabilistic programming language.  Instead, `causact` users create one unified model, a generative DAG, using a visual representation. 
 
 # Statement of Need
 
@@ -42,7 +42,7 @@ Bayesian data analysis mixes data with domain knowledge to quantify uncertainty 
 
 Algorithmic advances in the *conditioning* step of Bayesian data analysis have given rise to a new class of programming languages called probabilistic programming languages (PPLs).  Practical and complex statistical models which are analytically intractable can now be solved computationally using inference algorithms.  In particular, Markov Chain Monte Carlo (MCMC) algorithms [@gelfand1990sampling; @gilks1996strategies;@congdon2010applied] handle arbitrarily large and complex models via highly effective sampling processes that quickly detect high-probability areas of the underlying distribution [@neal1993probabilistic,@pfeffer2016practical,@kruschke2014doing].  
 
-The `causact` package, presented in this paper, focuses on solving a three-language problem that occurs during Bayesian data analysis.  First, there is the language of the domain expert which we refer to as the _narrative_ of how data is generated.  Second, there is the language of _math_ where a statistical model, amenable to inference, is written.  Lastly, there is the language of _code_, PPL language itself used for computational inference of a well-defined statistical model.  The existence of these three languages creates friction as diverse stakeholders collaborate on how to yield insight from data; often mistakes get made in translation between the three languages.  Prior to `causact`, any agreed upon narrative of a data-generating process must ultimately be modelled in code using an error-prone process where model misspecification, variable indexing errors, prior distribution omissions, and other mismatches between desired model and coded model go easily unnoticed.  
+The `causact` package, presented in this paper, focuses on solving a three-language problem that occurs during Bayesian data analysis.  First, there is the language of the domain expert which we refer to as the _narrative_ of how data is generated.  Second, there is the language of _math_ where a statistical model, amenable to inference, is written.  Lastly, there is the language of _code_, where a PPL language supports computational inference from a well-defined statistical model.  The existence of these three languages creates friction as diverse stakeholders collaborate to yield insight from data; often mistakes get made in both communicating and translating between the three languages.  Prior to `causact`, any agreed upon narrative of a data-generating process must ultimately be modelled in code using an error-prone process where model misspecification, variable indexing errors, prior distribution omissions, and other mismatches between desired model and coded model go easily unnoticed.  
 
 To unify inference-problem narratives, the statistical models representing those narratives, and the code implementing the statistical models, `causact` introduces a modified visualization of *directed acyclic graphs* (DAGs), called the *generative DAG*, to serve as a more intuitive and collaborative interface into probabilistic programming languages and to ensure faithful abstractions of real-world data generating processes.  
 
@@ -81,7 +81,7 @@ R> graph %>% dag_render()
 ![A generative DAG of the eight schools model.\label{fig:eightSchools}](eightSchools.png){ width=98% }
 </center>
 
-Figure \autoref{fig:eightSchools} can be replicated without the math for less intimidating discussions with domain experts about the model using the `shortLabel = TRUE` argument.
+\autoref{fig:eightShort} replicates \autoref{fig:eightSchools} without math for less intimidating discussions with domain experts about the model using the `shortLabel = TRUE` argument (shown below).  `causact` does not require a complete model specification prior to rendering the DAG, hence, `causact` facilitates qualitative collaboration on the model design between less technical domain experts and the model builder.
 
 ```
 R> graph %>% dag_render(shortLabel = TRUE)
@@ -91,9 +91,9 @@ R> graph %>% dag_render(shortLabel = TRUE)
 ![Hiding mathematical details to facilitate collaborations with domain experts.\label{fig:eightShort}](eightShort.png){ width=98% }
 </center>
 
-All visualizations, including Figures \autoref{fig:eightSchools} and \autoref{fig:eightShort}, are created via `causact`'s calls to the `DiagrammeR` package [@iannone20].  The `dag_diagrammer()` function can convert a `causact_graph` to a `dgr_graph` (the main object when using `DiagrammeR`) for further customizing of a visualization using the `DiagrammeR` package. 
+All visualizations, including \autoref{fig:eightSchools} and \autoref{fig:eightShort}, are created via `causact`'s calls to the `DiagrammeR` package [@iannone20].  The `dag_diagrammer()` function can convert a `causact_graph` to a `dgr_graph` (the main object when using `DiagrammeR`) for further customizing of a visualization using the `DiagrammeR` package. 
 
-Sampling from the posterior of the eight schools model (Figure \autoref{fig:eightSchools}) does not require a user to write PPL code, but rather a user will simply pass the generative DAG object to `dag_greta()` and then inspect the data frame of posterior draws:
+Sampling from the posterior of the eight schools model (\autoref{fig:eightSchools}) does not require a user to write PPL code, but rather a user will simply pass the generative DAG object to `dag_greta()` and then inspect the data frame of posterior draws:
 
 ```
 R> library(greta) ## greta uses TensorFlow to get sample
@@ -156,7 +156,7 @@ R> drawsDF %>% dagp_plot()
   ![Credible intervals for the nine parameters of the eight schools model.\label{fig:eightPlot}](eightPlot.png){ width=78% }
 </center>
 
-The code above makes the plot in Figure \autoref{fig:eightPlot}.  For further posterior plotting, users would make their own plots using `ggplot2` [@wickham2016], `ggdist` [@kay2020], or similar.  For further model validation, including MCMC diagnostics, the user would use a package like `bayesplot` [@gabry2019visualization] or `shinystan` [@gabry2018].  For users who prefer to work with an `mcmc` object, they can extract the `draws` object after running the generated `greta` code from `dag_greta(mcmc=FALSE)` or find the object in the `cacheEnv` environment after running `dag_greta(mcmc=FALSE)` using `get("draws",envir = causact:::cacheEnv)`.  
+The code above makes the plot in \autoref{fig:eightPlot}.  For further posterior plotting, users would make their own plots using `ggplot2` [@wickham2016], `ggdist` [@kay2020], or similar.  For further model validation, including MCMC diagnostics, the user would use a package like `bayesplot` [@gabry2019visualization] or `shinystan` [@gabry2018].  For users who prefer to work with an `mcmc` object, they can extract the `draws` object after running the generated `greta` code from `dag_greta(mcmc=FALSE)` or find the object in the `cacheEnv` environment after running `dag_greta(mcmc=FALSE)` using `get("draws",envir = causact:::cacheEnv)`.  
 
 # Comparison to Other Packages
 \label{sec:compare}
@@ -169,6 +169,6 @@ The causact modelling syntax is flexible and encourages modellers to make bespok
 
 # Acknowledgements
 
-The `Stan` Development team has been inspirational for this work and has formed a wonderful Bayesian inference community around their powerful language.  Additionally, the books of @kruschke2014doing and @mcelreath2020statistical are tremendous resources for learning Bayesian data analysis and their pedagogy is aspirational.  Lastly, thanks to the University of Delaware students, MBAs and PhDs, who have contributed time, code, testing, and enthusiasm for this project from its beginning.
+The `Stan` Development team has been inspirational for this work and has formed a wonderful Bayesian inference community around their powerful language.  Additionally, the books of @kruschke2014doing and @mcelreath2020statistical are tremendous resources for learning Bayesian data analysis and their pedagogy is aspirational.  This work would not be possible without the `greta` dev team and special thanks to Nick Golding and Nick Tierney. Lastly, thanks to the University of Delaware students, MBAs and PhDs, who have contributed time, code, testing, and enthusiasm for this project from its beginning.
 
 # References
