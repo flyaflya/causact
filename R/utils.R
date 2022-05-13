@@ -177,7 +177,7 @@ rhsDecomp = function(rhs) {
 
   ## handle cases where just distribution name is supplied
   ## if function in greta namespace, then assume distr
-  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind","icloglog","icauchit","log1pe","imultilogit","variable","zeros","ones","greta_array","as_data","icloglog","icauchit","log1pe","imultlogit")
+  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind","icloglog","icauchit","log1pe","imultilogit","zeros","ones","greta_array","as_data","icloglog","icauchit","log1pe","imultlogit")
 
   if (is.symbol(distExpr)) {
     fnName = rlang::as_string(distExpr)
