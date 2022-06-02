@@ -13,3 +13,4 @@ eightSchools.R
 ^CRAN-SUBMISSION$
 ^\.github$
 ^codecov\.yml$
+^paper$
