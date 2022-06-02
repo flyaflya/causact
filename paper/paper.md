@@ -53,28 +53,28 @@ Generative DAGs pursue two simultaneous goals.  One goal is to capture the narra
 Capturing the narrative in code uses some core `causact` functions like `dag_create()`, `dag_node()`, `dag_edge()`, and `dag_plate()` with the chaining operator `%>%` used to build a DAG from the individual elements.  `dag_render()` or `dag_greta()` are then used to visualize the DAG or run inference on the DAG, respectively.  The simplicity with which generative DAGs are constructed belies the complexity of models which can be supported.  For example, multi-level or hierarchical models are easily constructed as shown here in code for constructing and visualizing an oft-cited Bayesian example known as eight schools [@JSSv012i03] whose data is included in `causact` (`causact::schoolsDF`).  The example is a study of coaching effects on test scores where students from eight schools were put into coached and uncoached groups.
 
 ```
-R> graph = dag_create() %>%
-+    dag_node("Treatment Effect","y",
-+             rhs = normal(theta, sigma),
-+             data = causact::schoolsDF$y) %>%
-+    dag_node("Std Error of Effect Estimates","sigma",
-+             data = causact::schoolsDF$sigma,
-+             child = "y") %>%
-+    dag_node("Exp. Treatment Effect","theta",
-+             child = "y",
-+             rhs = avgEffect + schoolEffect) %>%
-+    dag_node("Population Treatment Effect","avgEffect",
-+             child = "theta",
-+             rhs = normal(0,30)) %>%
-+    dag_node("School Level Effects","schoolEffect",
-+             rhs = normal(0,30),
-+             child = "theta") %>%
-+    dag_plate("Observation","i",nodeLabels = c("sigma","y","theta")) %>%
-+    dag_plate("School Name","school",
-+              nodeLabels = "schoolEffect",
-+              data = causact::schoolsDF$schoolName,
-+              addDataNode = TRUE)
-R> graph %>% dag_render()
+graph = dag_create() %>%
+    dag_node("Treatment Effect","y",
+             rhs = normal(theta, sigma),
+             data = causact::schoolsDF$y) %>%
+    dag_node("Std Error of Effect Estimates","sigma",
+             data = causact::schoolsDF$sigma,
+             child = "y") %>%
+    dag_node("Exp. Treatment Effect","theta",
+             child = "y",
+             rhs = avgEffect + schoolEffect) %>%
+    dag_node("Population Treatment Effect","avgEffect",
+             child = "theta",
+             rhs = normal(0,30)) %>%
+    dag_node("School Level Effects","schoolEffect",
+             rhs = normal(0,30),
+             child = "theta") %>%
+    dag_plate("Observation","i",nodeLabels = c("sigma","y","theta")) %>%
+    dag_plate("School Name","school",
+              nodeLabels = "schoolEffect",
+              data = causact::schoolsDF$schoolName,
+              addDataNode = TRUE)
+graph %>% dag_render()
 ```
 
 <center>
@@ -84,7 +84,7 @@ R> graph %>% dag_render()
 \autoref{fig:eightShort} replicates \autoref{fig:eightSchools} without math for less intimidating discussions with domain experts about the model using the `shortLabel = TRUE` argument (shown below).  `causact` does not require a complete model specification prior to rendering the DAG, hence, `causact` facilitates qualitative collaboration on the model design between less technical domain experts and the model builder.
 
 ```
-R> graph %>% dag_render(shortLabel = TRUE)
+graph %>% dag_render(shortLabel = TRUE)
 ```
 
 <center>
@@ -96,9 +96,9 @@ All visualizations, including \autoref{fig:eightSchools} and \autoref{fig:eightS
 Sampling from the posterior of the eight schools model (\autoref{fig:eightSchools}) does not require a user to write PPL code, but rather a user will simply pass the generative DAG object to `dag_greta()` and then inspect the data frame of posterior draws:
 
 ```
-R> library(greta) ## greta uses TensorFlow to get sample
-R> drawsDF = graph %>% dag_greta()
-R> drawsDF
+library(greta) ## greta uses TensorFlow to get sample
+drawsDF = graph %>% dag_greta()
+drawsDF
 ```
 
 ```
@@ -124,7 +124,7 @@ R> drawsDF
 Behind the scenes, `causact` creates the model's code equivalent using the `greta` PPL, but this is typically hidden from the user.  However, for debugging or further customizing a model, the `greta` code can be printed to the screen without executing it by setting the `mcmc` argument to `FALSE`:
 
 ```
-R> graph %>% dag_greta(mcmc=FALSE)
+graph %>% dag_greta(mcmc=FALSE)
 ```
 
 ```
@@ -149,7 +149,7 @@ The produced `greta` code is shown in the above code snippet.  The code can be d
 The output of `dag_greta()` is in the form of a data frame of draws from the joint posterior.  To facilitate a quick look into posterior estimates, the `dagp_plot()` function creates a simple visual of 90% credible intervals.  It is the only core function that does not take a graph as its first argument.  By grouping all parameters that share the same prior distribution and leveraging the meaningful parameter names constructed using `dag_greta()`, it allows for quick comparisons of parameter values.
 
 ```
-R> drawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot()
 ```
 
 <center>
