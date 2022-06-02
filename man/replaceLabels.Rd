@@ -11,10 +11,9 @@ replaceLabels(draws)
 }
 \value{
 an \code{mcmc.list} with more meanignful names that get created during a \code{dag_greta} function call.
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-Replace parameter labels in a \code{mcmc.list} with more meaningful labels after they are created by running \code{dag_greta()}.  When \code{greta} creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta\link{1,1}, beta\link{2,1}, etc.).  Since parameter dimensionality is often determined by a \code{factor}, this functionality restores the text labels associated with the underlying factor whose coefficients are being estimated (e.g. beta_varValue1, beta_varValue2).  The meaningful parameter names are stored in an environment, \code{cacheEnv}, created by a call to \code{dag_greta()}.
+Replace parameter labels in a \code{mcmc.list} with more meaningful labels after they are created by running \code{dag_greta()}.  When \code{greta} creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta[1,1], beta[2,1], etc.).  Since parameter dimensionality is often determined by a \code{factor}, this functionality restores the text labels associated with the underlying factor whose coefficients are being estimated (e.g. beta_varValue1, beta_varValue2).  The meaningful parameter names are stored in an environment, \code{cacheEnv}, created by a call to \code{dag_greta()}.
 }

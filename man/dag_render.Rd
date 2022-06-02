@@ -43,5 +43,4 @@ dag_create() \%>\%
   dag_node("Demand","X") \%>\%
   dag_node("Price","Y", child = "X") \%>\%
   dag_render(shortLabel = TRUE)
-`r lifecycle::badge('stable')`
 }

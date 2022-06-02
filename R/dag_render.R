@@ -21,7 +21,6 @@
 #'   dag_node("Demand","X") %>%
 #'   dag_node("Price","Y", child = "X") %>%
 #'   dag_render(shortLabel = TRUE)
-#' `r lifecycle::badge('stable')`
 #' @importFrom dplyr select rename mutate filter left_join
 #' @importFrom dplyr case_when as_tibble as_data_frame
 #' @return Returns an object of class `grViz` and `htmlwidget` that is also rendered in the RStudio viewer for interactive buidling of graphical models.
