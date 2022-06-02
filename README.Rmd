@@ -129,15 +129,14 @@ drawsDF %>% dagp_plot()
 ```
 
 
-## Getting help
+## Getting Help and Suggesting Improvements
 
-Whether you encounter a clear bug or just have a question, we are thrilled to help you out.  In either case, please file a [GitHub issue](https://github.com/causact/issues).  If reporting a bug, please include a minimal reproducible example.  If encountering issues installing `greta`, please seek help at the [greta discussion forum](https://forum.greta-stats.org/).
+Whether you encounter a clear bug, have a suggestion for improvement, or just have a question, we are thrilled to help you out.  In all cases, please file a [GitHub issue](https://github.com/flyaflya/causact/issues).  If reporting a bug, please include a minimal reproducible example.  If encountering issues installing `greta`, please seek help at the [greta discussion forum](https://forum.greta-stats.org/).
 
 ## Contributing
 
-We welcome help turning `causact` into the most intuitive and fastest method of converting stakeholder narratives about data-generating processes into actionable insight from posterior distributions.  If you want to help us achieve this vision, we welcome your contributions.  Please note that this project is released with a [Contributor Code of
-Conduct](https://github.com/flyaflya/causact/blob/master/CODE_OF_CONDUCT.md). By participating
-in this project you agree to abide by its terms.
+We welcome help turning `causact` into the most intuitive and fastest method of converting stakeholder narratives about data-generating processes into actionable insight from posterior distributions.  If you want to help us achieve this vision, we welcome your contributions after reading the [new contributor guide](https://github.com/flyaflya/causact/blob/master/.github/contributing.md).  Please note that this project is released with a [Contributor Code of
+Conduct](https://github.com/flyaflya/causact/blob/master/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
 ## Further Usage
 

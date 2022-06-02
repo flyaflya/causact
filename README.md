@@ -126,16 +126,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.905          0.240          0.590          0.188
-#>  2          0.858          0.259          0.687          0.198
-#>  3          0.858          0.259          0.687          0.198
-#>  4          0.865          0.230          0.623          0.199
-#>  5          0.865          0.230          0.623          0.199
-#>  6          0.835          0.206          0.606          0.207
-#>  7          0.836          0.179          0.625          0.218
-#>  8          0.858          0.218          0.606          0.201
-#>  9          0.861          0.254          0.591          0.191
-#> 10          0.867          0.322          0.617          0.213
+#>  1          0.846          0.223          0.635          0.187
+#>  2          0.832          0.257          0.540          0.231
+#>  3          0.816          0.253          0.572          0.176
+#>  4          0.852          0.294          0.543          0.213
+#>  5          0.846          0.239          0.628          0.199
+#>  6          0.846          0.239          0.628          0.199
+#>  7          0.852          0.293          0.649          0.193
+#>  8          0.812          0.254          0.585          0.196
+#>  9          0.824          0.202          0.640          0.189
+#> 10          0.805          0.233          0.591          0.202
 #> # ... with 3,990 more rows
 ```
 
@@ -154,12 +154,13 @@ Credible interval plots.
 
 </div>
 
-## Getting help
+## Getting Help and Suggesting Improvements
 
-Whether you encounter a clear bug or just have a question, we are
-thrilled to help you out. In either case, please file a [GitHub
-issue](https://github.com/causact/issues). If reporting a bug, please
-include a minimal reproducible example. If encountering issues
+Whether you encounter a clear bug, have a suggestion for improvement, or
+just have a question, we are thrilled to help you out. In all cases,
+please file a [GitHub
+issue](https://github.com/flyaflya/causact/issues). If reporting a bug,
+please include a minimal reproducible example. If encountering issues
 installing `greta`, please seek help at the [greta discussion
 forum](https://forum.greta-stats.org/).
 
@@ -168,7 +169,9 @@ forum](https://forum.greta-stats.org/).
 We welcome help turning `causact` into the most intuitive and fastest
 method of converting stakeholder narratives about data-generating
 processes into actionable insight from posterior distributions. If you
-want to help us achieve this vision, we welcome your contributions.
+want to help us achieve this vision, we welcome your contributions after
+reading the [new contributor
+guide](https://github.com/flyaflya/causact/blob/master/.github/contributing.md).
 Please note that this project is released with a [Contributor Code of
 Conduct](https://github.com/flyaflya/causact/blob/master/CODE_OF_CONDUCT.md).
 By participating in this project you agree to abide by its terms.
