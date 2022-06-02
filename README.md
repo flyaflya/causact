@@ -7,6 +7,7 @@
 status](https://www.r-pkg.org/badges/version/causact)](https://cran.r-project.org/package=causact)
 [![Codecov test
 coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)](https://app.codecov.io/gh/flyaflya/causact?branch=master)
+[![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](Redirect-URL)
 <!-- badges: end -->
 
 # causact
@@ -28,9 +29,8 @@ Using the `causact` package for Bayesian inference is featured in
 `A Business Analyst's Introduction to Business Analytics` available at
 <https://www.causact.com/>.
 
-> NOTE: Package is under active development. Breaking changes are to be
-> expected. Feedback and encouragement is appreciated via github issues
-> or Twitter (<https://twitter.com/preposterior>).
+> Feedback and encouragement is appreciated via github issues or Twitter
+> (<https://twitter.com/preposterior>).
 
 ## Installation
 
@@ -126,16 +126,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.838          0.277          0.644          0.194
-#>  2          0.857          0.195          0.638          0.190
-#>  3          0.842          0.212          0.583          0.197
-#>  4          0.835          0.186          0.578          0.193
-#>  5          0.863          0.241          0.642          0.195
-#>  6          0.828          0.297          0.590          0.209
-#>  7          0.869          0.261          0.641          0.204
-#>  8          0.866          0.254          0.611          0.207
-#>  9          0.835          0.239          0.622          0.203
-#> 10          0.852          0.191          0.615          0.207
+#>  1          0.905          0.240          0.590          0.188
+#>  2          0.858          0.259          0.687          0.198
+#>  3          0.858          0.259          0.687          0.198
+#>  4          0.865          0.230          0.623          0.199
+#>  5          0.865          0.230          0.623          0.199
+#>  6          0.835          0.206          0.606          0.207
+#>  7          0.836          0.179          0.625          0.218
+#>  8          0.858          0.218          0.606          0.201
+#>  9          0.861          0.254          0.591          0.191
+#> 10          0.867          0.322          0.617          0.213
 #> # ... with 3,990 more rows
 ```
 
@@ -153,6 +153,25 @@ Credible interval plots.
 </p>
 
 </div>
+
+## Getting help
+
+Whether you encounter a clear bug or just have a question, we are
+thrilled to help you out. In either case, please file a [GitHub
+issue](https://github.com/causact/issues). If reporting a bug, please
+include a minimal reproducible example. If encountering issues
+installing `greta`, please seek help at the [greta discussion
+forum](https://forum.greta-stats.org/).
+
+## Contributing
+
+We welcome help turning `causact` into the most intuitive and fastest
+method of converting stakeholder narratives about data-generating
+processes into actionable insight from posterior distributions. If you
+want to help us achieve this vision, we welcome your contributions.
+Please note that this project is released with a [Contributor Code of
+Conduct](https://github.com/flyaflya/causact/blob/master/CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.
 
 ## Further Usage
 
