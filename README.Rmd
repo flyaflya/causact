@@ -359,3 +359,14 @@ drawsDF %>% dagp_plot()
 ```{r mixtureGraphRenderPost, out.width = "100%", echo = FALSE}
 knitr::include_graphics("man/figures/mixturePost.png")
 ```
+
+## Getting help
+
+Whether you encounter a clear bug or just have a question, we are thrilled to help you out.  In either case, please file a [GitHub issue](https://github.com/causact/issues).  If reporting a bug, please include a minimal reproducible example.  If encountering issues installing `greta`, please seek help at the [greta discussion forum](https://forum.greta-stats.org/).
+
+------------------------------------------------------------------------
+
+Please note that this project is released with a [Contributor Code of
+Conduct](https://github.com/flyaflya/causact/blob/master/CODE_OF_CONDUCT.md). By participating
+in this project you agree to abide by its terms.
+
