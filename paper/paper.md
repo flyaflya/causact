@@ -52,7 +52,7 @@ Generative DAGs pursue two simultaneous goals.  One goal is to capture the narra
 
 Capturing the narrative in code uses some core `causact` functions like `dag_create()`, `dag_node()`, `dag_edge()`, and `dag_plate()` with the chaining operator `%>%` used to build a DAG from the individual elements.  `dag_render()` or `dag_greta()` are then used to visualize the DAG or run inference on the DAG, respectively.  The simplicity with which generative DAGs are constructed belies the complexity of models which can be supported.  For example, multi-level or hierarchical models are easily constructed as shown here in code for constructing and visualizing an oft-cited Bayesian example known as eight schools [@JSSv012i03] whose data is included in `causact` (`causact::schoolsDF`).  The example is a study of coaching effects on test scores where students from eight schools were put into coached and uncoached groups.
 
-```
+```r
 graph = dag_create() %>%
     dag_node("Treatment Effect","y",
              rhs = normal(theta, sigma),
@@ -83,7 +83,7 @@ graph %>% dag_render()
 
 \autoref{fig:eightShort} replicates \autoref{fig:eightSchools} without math for less intimidating discussions with domain experts about the model using the `shortLabel = TRUE` argument (shown below).  `causact` does not require a complete model specification prior to rendering the DAG, hence, `causact` facilitates qualitative collaboration on the model design between less technical domain experts and the model builder.
 
-```
+```r
 graph %>% dag_render(shortLabel = TRUE)
 ```
 
@@ -95,60 +95,60 @@ All visualizations, including \autoref{fig:eightSchools} and \autoref{fig:eightS
 
 Sampling from the posterior of the eight schools model (\autoref{fig:eightSchools}) does not require a user to write PPL code, but rather a user will simply pass the generative DAG object to `dag_greta()` and then inspect the data frame of posterior draws:
 
-```
+```r
 library(greta) ## greta uses TensorFlow to get sample
 drawsDF = graph %>% dag_greta()
 drawsDF
 ```
 
 ```
-# A tibble: 4,000 x 9
-   avgEffect schoolEffect_Sc~ schoolEffect_Sc~ schoolEffect_Sc~
-       <dbl>            <dbl>            <dbl>            <dbl>
- 1     0.102            40.1              3.59            -4.51
- 2     4.59             23.6              4.43           -26.3 
- 3    -0.451            18.5             24.3             16.5 
- 4    18.9               8.07           -26.3            -28.6 
- 5    17.3              -5.83            -4.25           -26.2 
- 6     1.97             42.7              2.25            12.6 
- 7    12.7             -11.2              5.31           -16.5 
- 8     9.11            -17.4              9.09           -12.7 
- 9    -3.74             71.5              1.82            23.6 
-10    -2.43             48.2            -13.3              2.89
-# ... with 3,990 more rows, and 5 more variables:
-#   schoolEffect_School4 <dbl>, schoolEffect_School5 <dbl>,
-#   schoolEffect_School6 <dbl>, schoolEffect_School7 <dbl>,
-#   schoolEffect_School8 <dbl>
+## # A tibble: 4,000 x 9
+##    avgEffect schoolEffect_Sc~ schoolEffect_Sc~ schoolEffect_Sc~
+##        <dbl>            <dbl>            <dbl>            <dbl>
+##  1     0.102            40.1              3.59            -4.51
+##  2     4.59             23.6              4.43           -26.3 
+##  3    -0.451            18.5             24.3             16.5 
+##  4    18.9               8.07           -26.3            -28.6 
+##  5    17.3              -5.83            -4.25           -26.2 
+##  6     1.97             42.7              2.25            12.6 
+##  7    12.7             -11.2              5.31           -16.5 
+##  8     9.11            -17.4              9.09           -12.7 
+##  9    -3.74             71.5              1.82            23.6 
+## 10    -2.43             48.2            -13.3              2.89
+## # ... with 3,990 more rows, and 5 more variables:
+## #   schoolEffect_School4 <dbl>, schoolEffect_School5 <dbl>,
+## #   schoolEffect_School6 <dbl>, schoolEffect_School7 <dbl>,
+## #   schoolEffect_School8 <dbl>
 ```
 
 Behind the scenes, `causact` creates the model's code equivalent using the `greta` PPL, but this is typically hidden from the user.  However, for debugging or further customizing a model, the `greta` code can be printed to the screen without executing it by setting the `mcmc` argument to `FALSE`:
 
-```
+```r
 graph %>% dag_greta(mcmc=FALSE)
 ```
 
 ```
-sigma <- as_data(causact::schoolsDF$sigma)   #DATA
-y <- as_data(causact::schoolsDF$y)           #DATA
-school     <- as.factor(causact::schoolsDF$schoolName)   #DIM
-school_dim <- length(unique(school))   #DIM
-schoolEffect <- normal(mean = 0, sd = 30, dim = school_dim) #PRIOR
-avgEffect    <- normal(mean = 0, sd = 30)                   #PRIOR
-theta  <- avgEffect + schoolEffect[school]   #OPERATION
-distribution(y) <- normal(mean = theta, sd = sigma)   #LIKELIHOOD
-gretaModel  <- model(avgEffect,schoolEffect)   #MODEL
-meaningfulLabels(graph)
-draws       <- mcmc(gretaModel)              #POSTERIOR
-drawsDF     <- replaceLabels(draws) %>% as.matrix() %>%
-                dplyr::as_tibble()           #POSTERIOR
-tidyDrawsDF <- drawsDF %>% addPriorGroups()  #POSTERIOR
+## sigma <- as_data(causact::schoolsDF$sigma)   #DATA
+## y <- as_data(causact::schoolsDF$y)           #DATA
+## school     <- as.factor(causact::schoolsDF$schoolName)   #DIM
+## school_dim <- length(unique(school))   #DIM
+## schoolEffect <- normal(mean = 0, sd = 30, dim = school_dim) #PRIOR
+## avgEffect    <- normal(mean = 0, sd = 30)                   #PRIOR
+## theta  <- avgEffect + schoolEffect[school]   #OPERATION
+## distribution(y) <- normal(mean = theta, sd = sigma)   #LIKELIHOOD
+## gretaModel  <- model(avgEffect,schoolEffect)   #MODEL
+## meaningfulLabels(graph)
+## draws       <- mcmc(gretaModel)              #POSTERIOR
+## drawsDF     <- replaceLabels(draws) %>% as.matrix() %>%
+##                 dplyr::as_tibble()           #POSTERIOR
+## tidyDrawsDF <- drawsDF %>% addPriorGroups()  #POSTERIOR
 ```
 
 The produced `greta` code is shown in the above code snippet.  The code can be difficult to digest for some and exemplifies the advantages of working visually using `casuact`.  The above code is also challenging to write without error or misinterpretation.  Indexing is particularly tricky in PPL's with indexing based on meaningless numbers (e.g. 1,2,3,$\ldots$).  To facilitate quicker interpretation `causact` abbreviates posterior parameters using human-interpretable names.
 
 The output of `dag_greta()` is in the form of a data frame of draws from the joint posterior.  To facilitate a quick look into posterior estimates, the `dagp_plot()` function creates a simple visual of 90% credible intervals.  It is the only core function that does not take a graph as its first argument.  By grouping all parameters that share the same prior distribution and leveraging the meaningful parameter names constructed using `dag_greta()`, it allows for quick comparisons of parameter values.
 
-```
+```r
 drawsDF %>% dagp_plot()
 ```
 
