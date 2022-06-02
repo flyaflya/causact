@@ -9,13 +9,13 @@ Each observation is a country.}
 \format{
 A data frame with 174 rows and 7 variables:
 \describe{
-  \item{country}{country name}
-  \item{region}{region name as given with CPI rating}
-  \item{countryCode}{three letter abbreviation for country}
-  \item{regionCode}{four letter or less abbreviation for country}
-  \item{population}{2017 country population}
-  \item{CPI2017}{The Corruption Perceptions Index score for 2017: A country/territory’s score indicates the perceived level of public sector corruption on a scale of 0-100, where 0 means that a country is perceived as highly corrupt and a 100 means that a country is perceived as very clean. }
-  \item{HDI2017}{The human development index score for 2017: the Human Development Index (HDI) is a measure of achievement in the basic dimensions of human development across countries.  It is an index made from a simple unweighted average of a nation’s longevity, education and income and is widely accepted in development discourse.}
+\item{country}{country name}
+\item{region}{region name as given with CPI rating}
+\item{countryCode}{three letter abbreviation for country}
+\item{regionCode}{four letter or less abbreviation for country}
+\item{population}{2017 country population}
+\item{CPI2017}{The Corruption Perceptions Index score for 2017: A country/territory’s score indicates the perceived level of public sector corruption on a scale of 0-100, where 0 means that a country is perceived as highly corrupt and a 100 means that a country is perceived as very clean. }
+\item{HDI2017}{The human development index score for 2017: the Human Development Index (HDI) is a measure of achievement in the basic dimensions of human development across countries.  It is an index made from a simple unweighted average of a nation’s longevity, education and income and is widely accepted in development discourse.}
 }
 }
 \source{

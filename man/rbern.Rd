@@ -2,8 +2,7 @@
 % Please edit documentation in R/bernoulliDist.R
 \name{rbern}
 \alias{rbern}
-\title{Make dbern,pbern,qbern,rbern available for
-implementation of the Bernoulli distribution functions.}
+\title{The Bernoulli Distribution}
 \usage{
 rbern(n, prob)
 }
@@ -16,9 +15,11 @@ rbern(n, prob)
 A vector of 0's and 1's representing failure and success.
 }
 \description{
+#' \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 Density, distribution function, quantile function and random generation for the benoulli distribution with parameter \code{prob}.
 }
 \examples{
-#Return a random result of a Bernoulli trial given \code{prob}.
+#Return a random result of a Bernoulli trial given `prob`.
 rbern(n =1, prob = 0.5)
 }

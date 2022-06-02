@@ -27,6 +27,8 @@ dag_render(
 Returns an object of class \code{grViz} and \code{htmlwidget} that is also rendered in the RStudio viewer for interactive buidling of graphical models.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 Using a \code{causact_graph} object, render the graph in the RStudio Viewer.
 }
 \examples{
@@ -41,4 +43,5 @@ dag_create() \%>\%
   dag_node("Demand","X") \%>\%
   dag_node("Price","Y", child = "X") \%>\%
   dag_render(shortLabel = TRUE)
+`r lifecycle::badge('stable')`
 }

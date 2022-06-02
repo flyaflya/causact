@@ -7,10 +7,10 @@
 \format{
 A data frame with 8 rows and 3 variables:
 \describe{
-  \item{y}{estimated treatment effect at a particular school}
-  \item{sigma}{standard error of the treamtment effect estimate}
-  \item{schoolName}{an identifier for the school represented by this row}
-  }
+\item{y}{estimated treatment effect at a particular school}
+\item{sigma}{standard error of the treamtment effect estimate}
+\item{schoolName}{an identifier for the school represented by this row}
+}
 }
 \usage{
 schoolsDF

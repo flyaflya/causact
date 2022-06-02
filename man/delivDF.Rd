@@ -7,11 +7,11 @@
 \format{
 A data frame (tibble) with 117,790 rows and 5 variables:
 \describe{
-  \item{shipID}{unique ID for each shipment}
-  \item{plannedShipDate}{shipment date promised to customer}
-  \item{actualShipDate}{date the shipment was actually shipped}
-  \item{partID}{unique part identifier}
-  \item{quantity}{quantity of partID in shipment}
+\item{shipID}{unique ID for each shipment}
+\item{plannedShipDate}{shipment date promised to customer}
+\item{actualShipDate}{date the shipment was actually shipped}
+\item{partID}{unique part identifier}
+\item{quantity}{quantity of partID in shipment}
 }
 }
 \source{

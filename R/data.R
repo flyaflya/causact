@@ -79,14 +79,14 @@
 #'   \item{CPI2017}{The Corruption Perceptions Index score for 2017: A country/territory’s score indicates the perceived level of public sector corruption on a scale of 0-100, where 0 means that a country is perceived as highly corrupt and a 100 means that a country is perceived as very clean. }
 #'   \item{HDI2017}{The human development index score for 2017: the Human Development Index (HDI) is a measure of achievement in the basic dimensions of human development across countries.  It is an index made from a simple unweighted average of a nation’s longevity, education and income and is widely accepted in development discourse.}
 #' }
-#' @source \url{https://www.transparency.org/cpi} CPI data available from www.transparency.org/cpi.  Accessed Oct 1, 2018. Consumer Perception Index 2017 by Transparency International is licensed under CC-BY- ND 4.0.
-#' @source \url{http://hdr.undp.org/en/content/human-development-index-hdi} HDA data accessed on Oct 1, 2018.
-#' @source \url{https://data.worldbank.org/} Population data accessed on Oct 1, 2018.
+#' @source <https://www.transparency.org/cpi> CPI data available from www.transparency.org/cpi.  Accessed Oct 1, 2018. Consumer Perception Index 2017 by Transparency International is licensed under CC-BY- ND 4.0.
+#' @source <http://hdr.undp.org/en/content/human-development-index-hdi> HDA data accessed on Oct 1, 2018.
+#' @source <https://data.worldbank.org/> Population data accessed on Oct 1, 2018.
 "corruptDF"
 
 
 #' Dataframe of 1,460 observations of home sales in Ames, Iowa.  Known as The Ames Housing dataset, it was compiled by Dean De Cock for use in data science education.
-#' Each observation is a home sale.  See \code{houseDFDescr} for more info.
+#' Each observation is a home sale.  See `houseDFDescr` for more info.
 #' @format A data frame with 1,460 rows and 37 variables:
 #' \describe{
 #'   \item{SalePrice}{the property's sale price in dollars. This is the target variable}
@@ -127,17 +127,17 @@
 #'   \item{SaleType}{Type of sale}
 #'   \item{SaleCondition}{Condition of sale}
 #' }
-#' @source \url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
+#' @source <https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data> Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 "houseDF"
 
 #' Dataframe of 523 descriptions of data values from "The Ames Housing dataset", compiled by Dean De Cock for use in data science education.
-#' Each observation is a possible value from a varaible in the \code{houseDF} dataset.
+#' Each observation is a possible value from a varaible in the `houseDF` dataset.
 #' @format A data frame with 260 rows and 2 variables:
 #' \describe{
-#'   \item{varName}{the name and description of a variable stored in the \code{houseDF} dataset}
-#'   \item{varValueDescr}{The value and accompanying interpretation for values in the \code{houseDF} dataset}
+#'   \item{varName}{the name and description of a variable stored in the `houseDF` dataset}
+#'   \item{varValueDescr}{The value and accompanying interpretation for values in the `houseDF` dataset}
 #' }
-#' @source \url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
+#' @source <https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data> Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 "houseDFDescr"
 
 #' Dataframe of 1000 (fake) observations of whether certain car buyers were willing to get information on a credit card speciailizing in rewards for adventure travellers.

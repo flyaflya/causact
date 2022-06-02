@@ -1,12 +1,17 @@
-#' Store meaningful parameter labels prior to running \code{dag_greta()} of \code{greta::mcmc()}.  When \code{greta} creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta[1,1], beta[2,1], etc.).  Since parameter dimensionality is often determined by a \code{factor}, this function creates labels from the factors unqiue values.  \code{replaceLabels()} applies the text labels stored using this function to the \code{greta} output.  The meaningful parameter names are stored in an environment, \code{cacheEnv}.
-#' @param graph a \code{causact_graph} object.
-#' @return a data frame \code{meaningfulLabels} stored in an environment named \code{cacheEnv} that contains a lookup table between greta labels and meaningful labels.
+#' Store meaningful parameter labels
+#' @description
+#' `r lifecycle::badge('experimental')`
+#'
+#' Store meaningful parameter labels prior to running `dag_greta()` of `greta::mcmc()`.  When `greta` creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta[1,1], beta[2,1], etc.).  Since parameter dimensionality is often determined by a `factor`, this function creates labels from the factors unqiue values.  `replaceLabels()` applies the text labels stored using this function to the `greta` output.  The meaningful parameter names are stored in an environment, `cacheEnv`.
+#' @param graph a `causact_graph` object.
+#' @return a data frame `meaningfulLabels` stored in an environment named `cacheEnv` that contains a lookup table between greta labels and meaningful labels.
 #'
 #' @importFrom dplyr filter left_join select pull as_tibble mutate_all bind_rows
 #' @import rlang
 #' @importFrom purrr map
 #' @importFrom tidyr unite
 #' @export
+
 meaningfulLabels = function(graph) {
 
   ###get dimension information if not there

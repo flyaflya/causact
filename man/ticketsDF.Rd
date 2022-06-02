@@ -9,10 +9,10 @@ Data modified from https://github.com/stan-dev/stancon_talks/tree/master/2018/Co
 \format{
 A data frame with 55167 rows and 4 variables:
 \describe{
-  \item{precinct}{unique precinct identifier representing precinct of issuing officer}
-  \item{date}{the date on which ticket violations occurred}
-  \item{month_year}{the month_year extracted from date column}
-  \item{daily_tickets}{Number of tickets issued out of precinct on this day}
+\item{precinct}{unique precinct identifier representing precinct of issuing officer}
+\item{date}{the date on which ticket violations occurred}
+\item{month_year}{the month_year extracted from date column}
+\item{daily_tickets}{Number of tickets issued out of precinct on this day}
 }
 }
 \usage{

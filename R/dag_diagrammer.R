@@ -1,10 +1,12 @@
-## function to convert graph to Diagrammer object
-## for visualization
-#' The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
-#' @param graph a graph object of class \code{causact_graph} created using \code{dag_create()}.
+#' Convert graph to Diagrammer object for visualization
+#' @description
+#' `r lifecycle::badge('stable')`
+#'
+#' Convert a `causact_graph` to a `DiagrammeR` object for visualization.
+#' @param graph a graph object of class `causact_graph` created using `dag_create()`.
 #' @param wrapWidth a required character label that describes the node.
 #' @param shortLabel a longer more descriptive character label for the node.
-#' @return a graph object of class \code{dgr_graph}.  Useful for further customizing graph displays using the \code{DiagrammeR} package.
+#' @return a graph object of class `dgr_graph`.  Useful for further customizing graph displays using the `DiagrammeR` package.
 #' @examples
 #' library("DiagrammeR")
 #' dag_create() %>%
@@ -18,6 +20,7 @@
 #' @importFrom DiagrammeR create_node_df create_graph add_node_df create_edge_df
 #' @importFrom rlang .data
 #' @export
+
 
 dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
 

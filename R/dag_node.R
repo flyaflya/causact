@@ -1,18 +1,20 @@
-#' Add a node to an existing \code{causact_graph} object
+#' Add a node to an existing `causact_graph` object
+#' @description
+#' `r lifecycle::badge('stable')`
 #'
-#' The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
-#' @param graph a graph object of class \code{causact_graph}.  An initial object gets created using \code{dag_create()}.
+#' Add a node to an existing `causact_graph` object. The graph object should be of class `causact_graph` and created using `dag_create()`.
+#' @param graph a graph object of class `causact_graph`.  An initial object gets created using `dag_create()`.
 #' @param descr a longer more descriptive character label for the node.
 #' @param label a shorter character label for referencing the node (e.g. "X","beta").
-#' @param rhs either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.
+#' @param rhs either a greta distribution such as `uniform, normal, lognormal, bernoulli,` etc. or an R expression. Greta distribution arguments are optional.  Valid values include `normal(mu,sigma)`,`greta::normal`, `normal`, and `normal(6,2)`.  R computation/expression examples include `alpha+beta*x` or `ilogit(alpha + gamma + beta)`.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.
 #' @param child an optional character vector of existing node labels.  Directed edges from the newly created node to the supplied nodes will be created.
 #' @param data a vector or data frame (with observations in rows and variables in columns).
-#' @param obs a logical value indicating whether the node is observed.  Assumed to be \code{TRUE} when \code{data} argument is given.
-#' @param keepAsDF a logical value indicating whether the \code{data} argument should be split into one random varaible node per column or kept together as a random matrix for matrix computation.  Defaults to creating one node per column of the data frame.
-#' @param extract a logical value.  When TRUE, child nodes will try to extract an indexed value from this node.  When FALSE, the entire random object (e.g. scalar, vector, matrix) is passed to children nodes.  Only use this argument when overriding default behavior seen using \code{dag_render()}.
-#' @param dec a logical value indicating whether the node is a decision node.  Used to show nodes as rectangles instead of ovals when using \code{dag_render()}.
-#' @param det a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using \code{dag_render()}.  Assumed to be \code{TRUE} when \code{rhs} is a formula.
-#' @return a graph object of class \code{causact_graph} with an additional node(s).
+#' @param obs a logical value indicating whether the node is observed.  Assumed to be `TRUE` when `data` argument is given.
+#' @param keepAsDF a logical value indicating whether the `data` argument should be split into one random variable node per column or kept together as a random matrix for matrix computation.  Defaults to creating one node per column of the data frame.
+#' @param extract a logical value.  When TRUE, child nodes will try to extract an indexed value from this node.  When FALSE, the entire random object (e.g. scalar, vector, matrix) is passed to children nodes.  Only use this argument when overriding default behavior seen using `dag_render()`.
+#' @param dec a logical value indicating whether the node is a decision node.  Used to show nodes as rectangles instead of ovals when using `dag_render()`.
+#' @param det a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using `dag_render()`.  Assumed to be `TRUE` when `rhs` is a formula.
+#' @return a graph object of class `causact_graph` with an additional node(s).
 #' @examples
 #' library(greta)
 #' # Create an empty graph and add 2 nodes by using
@@ -64,6 +66,7 @@
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy
 #' @importFrom greta uniform normal lognormal bernoulli binomial beta_binomial negative_binomial hypergeometric poisson gamma inverse_gamma weibull exponential pareto student laplace beta cauchy chi_squared logistic f multivariate_normal wishart lkj_correlation multinomial categorical dirichlet dirichlet_multinomial %*% apply backsolve chol2inv colMeans cov2cor colSums diag eigen forwardsolve identity rowMeans rowSums sweep tapply joint mixture variable zeros ones greta_array as_data iprobit ilogit icloglog icauchit log1pe imultilogit
 #' @export
+
 dag_node <- function(graph,
                      descr = as.character(NA),
                      label = as.character(NA),

@@ -7,7 +7,7 @@
 \format{
 A 4,000 element vector.
 \describe{
-  \item{totalBeachgoersRepSample}{a draw from a representative sample of total beachgoers to Ocean City, MD.}
+\item{totalBeachgoersRepSample}{a draw from a representative sample of total beachgoers to Ocean City, MD.}
 }
 }
 \usage{

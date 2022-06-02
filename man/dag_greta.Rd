@@ -2,7 +2,7 @@
 % Please edit documentation in R/dag_greta.R
 \name{dag_greta}
 \alias{dag_greta}
-\title{Generate a representive sample of the posterior distribution}
+\title{Generate a representative sample of the posterior distribution}
 \usage{
 dag_greta(graph, mcmc = TRUE, meaningfulLabels = TRUE, ...)
 }
@@ -16,7 +16,7 @@ dag_greta(graph, mcmc = TRUE, meaningfulLabels = TRUE, ...)
 \item{...}{additional arguments to be passed onto \code{greta::mcmc()}.}
 }
 \value{
-If \code{mcmc=TRUE}, returns a dataframe of posterior distribution samples corresponding to the input `causact_graph`.  Each column is a parameter and each row a draw from the posterior sample output.  If \code{mcmc=FALSE}, running \code{dag_greta} returns a character string of code that would help the user create three objects representing the posterior distribution:
+If \code{mcmc=TRUE}, returns a dataframe of posterior distribution samples corresponding to the input \code{causact_graph}.  Each column is a parameter and each row a draw from the posterior sample output.  If \code{mcmc=FALSE}, running \code{dag_greta} returns a character string of code that would help the user create three objects representing the posterior distribution:
 \enumerate{
 \item \code{draws}:  An mcmc.list object containing raw output from the HMCMC sampler used by \code{greta}.
 \item \code{drawsDF}:  A wide data frame with all latent variables as columns and all draws as rows.  This data frame is useful for calculations based on the posterior
@@ -24,7 +24,9 @@ If \code{mcmc=TRUE}, returns a dataframe of posterior distribution samples corre
 }
 }
 \description{
-The input graph object should be of class \code{causact_graph} and created using \code{dag_create()}.  The specification of a completely consistent joint distribution is left to the user.  Helpful error messages are scheduled for future versions of the \code{causact} package.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
+Generate a representative sample of the posterior distribution.  The input graph object should be of class \code{causact_graph} and created using \code{dag_create()}.  The specification of a completely consistent joint distribution is left to the user.  Helpful error messages are scheduled for future versions of the \code{causact} package.
 }
 \examples{
 library(greta)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dag_diagrammer.R
 \name{dag_diagrammer}
 \alias{dag_diagrammer}
-\title{The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.}
+\title{Convert graph to Diagrammer object for visualization}
 \usage{
 dag_diagrammer(graph, wrapWidth = 24, shortLabel = FALSE)
 }
@@ -17,7 +17,9 @@ dag_diagrammer(graph, wrapWidth = 24, shortLabel = FALSE)
 a graph object of class \code{dgr_graph}.  Useful for further customizing graph displays using the \code{DiagrammeR} package.
 }
 \description{
-The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
+Convert a \code{causact_graph} to a \code{DiagrammeR} object for visualization.
 }
 \examples{
 library("DiagrammeR")

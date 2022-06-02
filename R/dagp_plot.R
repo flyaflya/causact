@@ -1,8 +1,10 @@
-#' Plot posterior distribution of latent parameters in \code{causact_graph} model.
+#' Plot posterior distribution from dataframe of posterior draws.
+#' @description
+#' `r lifecycle::badge('stable')`
 #'
-#' The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
-#' @param drawsDF the dataframe output of \code{dag_greta(mcmc=TRUE)} where each column is a parameter and each row a single draw from a representative sample.
-#' @param densityPlot If \code{TRUE}, each parameter gets its own density plot.  If \code{FALSE} (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
+#' Plot the posterior distribution of all latent parameters using a dataframe of posterior draws from a `causact_graph` model.
+#' @param drawsDF the dataframe output of `dag_greta(mcmc=TRUE)` where each column is a parameter and each row a single draw from a representative sample.
+#' @param densityPlot If `TRUE`, each parameter gets its own density plot.  If `FALSE` (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
 #' @return a credible interval plot of all latent posterior distribution parameters.
 #' @examples
 #' # A simple example
@@ -73,6 +75,7 @@
 #' @importFrom cowplot plot_grid
 #' @importFrom stats quantile
 #' @export
+
 
 dagp_plot = function(drawsDF,densityPlot = FALSE) { # case where untidy posterior draws are provided
   ..scaled.. <- q95 <- reasonableIntervalWidth <- credIQR <- shape <- param <- NULL ## place holder to pass devtools::check

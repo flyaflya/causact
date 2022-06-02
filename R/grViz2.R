@@ -1,14 +1,14 @@
 #' R + viz.js
 #'
-#' Make diagrams in R using \href{https://github.com/mdaines/viz.js}{viz.js}
+#' Make diagrams in R using [viz.js](https://github.com/mdaines/viz.js)
 #' with infrastructure provided by
-#' \href{http://www.htmlwidgets.org/}{htmlwidgets}.
+#' [htmlwidgets](http://www.htmlwidgets.org/).
 #' @param diagram spec for a diagram as either text, filename string, or file
 #'   connection.
-#' @param engine string for the Graphviz layout engine; can be \code{dot}
-#'   (default), \code{neato}, \code{circo}, or \code{twopi}. For more
+#' @param engine string for the Graphviz layout engine; can be `dot`
+#'   (default), `neato`, `circo`, or `twopi`. For more
 #'   information see
-#'   \href{https://github.com/mdaines/viz.js}{viz.js usage}.
+#'   [viz.js usage](https://github.com/mdaines/viz.js).
 #' @param allow_subst a boolean that enables/disables substitution
 #'   functionality.
 #' @param options parameters supplied to the htmlwidgets framework.
@@ -16,7 +16,7 @@
 #'   graphic in pixels.
 #' @param height an optional parameter for specifying the height of the
 #'   resulting graphic in pixels.
-#' @return An object of class \code{htmlwidget} that will intelligently print
+#' @return An object of class `htmlwidget` that will intelligently print
 #'   itself into HTML in a variety of contexts including the R console, within
 #'   R Markdown documents, and within Shiny output bindings.
 #' @importFrom rstudioapi isAvailable

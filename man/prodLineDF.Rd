@@ -7,9 +7,9 @@
 \format{
 A data frame (tibble) with 117,790 rows and 5 variables:
 \describe{
-  \item{partID}{unique part identifier}
-  \item{productLine}{a product line associated with the partID}
-  \item{prodCategory}{a product category associated with the partID}
+\item{partID}{unique part identifier}
+\item{productLine}{a product line associated with the partID}
+\item{prodCategory}{a product category associated with the partID}
 }
 }
 \source{

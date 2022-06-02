@@ -1,16 +1,16 @@
 #' Set DiagrammeR defaults for graphical models
 #'
-#' \code{setDirectedGraph} returns a graph with good defaults.
+#' `setDirectedGraph` returns a graph with good defaults.
 #'
 #' @param dgrGraph A DiagrammeR graph
-#' @return An updated version of \code{dgrGraph} with good defaults for
+#' @return An updated version of `dgrGraph` with good defaults for
 #'   graphical models.
 #' @examples
 #' library(DiagrammeR)
 #' create_graph() %>% add_node() %>% render_graph()  # default DiagrammeR aesthetics
 #' create_graph() %>% add_node() %>% setDirectedGraphTheme() %>% render_graph() ## causact aesthetics
 #' @importFrom DiagrammeR add_global_graph_attrs
-#' @return return a \code{dgrGraph} object with the color and shape defaults used by the \code{causact} package.
+#' @return return a `dgrGraph` object with the color and shape defaults used by the `causact` package.
 #' @export
 
 setDirectedGraphTheme = function(dgrGraph) {

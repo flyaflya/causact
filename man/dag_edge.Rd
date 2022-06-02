@@ -2,7 +2,7 @@
 % Please edit documentation in R/dag_edge.R
 \name{dag_edge}
 \alias{dag_edge}
-\title{Add an edge (or edges) between nodes in a graph object.}
+\title{Add edge (or edges) between nodes}
 \usage{
 dag_edge(graph, from, to, type = as.character(NA))
 }
@@ -19,6 +19,8 @@ dag_edge(graph, from, to, type = as.character(NA))
 a graph object of class \code{dgr_graph} with additional edges created by this function.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 With a graph object of class \code{causact_graph} created from \code{dag_create}, add an edge between nodes in the graph.  Vector recycling is used for all arguments.
 }
 \examples{

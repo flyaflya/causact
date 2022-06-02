@@ -7,11 +7,11 @@
 \format{
 A data frame with 12145 rows and 5 variables:
 \describe{
-  \item{Date}{date game was played}
-  \item{Home}{abbreviation for home team (i.e. stadium where game played)}
-  \item{Visitor}{abbreviation for visiting team}
-  \item{HomeScore}{Runs scored by the home team}
-  \item{VisitorScore}{Runs scored by the visiting team}
+\item{Date}{date game was played}
+\item{Home}{abbreviation for home team (i.e. stadium where game played)}
+\item{Visitor}{abbreviation for visiting team}
+\item{HomeScore}{Runs scored by the home team}
+\item{VisitorScore}{Runs scored by the visiting team}
 }
 }
 \usage{

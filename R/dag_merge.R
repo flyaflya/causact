@@ -1,10 +1,11 @@
-#' Merge two non-intersect \code{causact_graph} objects
+#' Merge two non-intersecting `causact_graph` objects
+#' @description
+#' `r lifecycle::badge('experimental')`
 #'
-#' Generates a single \code{causact_graph} graph object that combines the multiple provided graphs.
-#'
+#' Generates a single `causact_graph` graph object that combines multiple graphs.
 #' @param graph1 A causact_graph objects to be merged with
 #' @param ...    As many causact_graph's as wish to be merged
-#' @return a merged graph object of class \code{causact_graph}.  Useful for creating simple graphs and then merging them into a more complex structure.
+#' @return a merged graph object of class `causact_graph`.  Useful for creating simple graphs and then merging them into a more complex structure.
 #' @examples
 #' # With `dag_merge()` we
 #' # reset the node ID's and all other item ID's,

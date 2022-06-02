@@ -2,7 +2,7 @@
 % Please edit documentation in R/dagp_plot.R
 \name{dagp_plot}
 \alias{dagp_plot}
-\title{Plot posterior distribution of latent parameters in \code{causact_graph} model.}
+\title{Plot posterior distribution from dataframe of posterior draws.}
 \usage{
 dagp_plot(drawsDF, densityPlot = FALSE)
 }
@@ -15,7 +15,9 @@ dagp_plot(drawsDF, densityPlot = FALSE)
 a credible interval plot of all latent posterior distribution parameters.
 }
 \description{
-The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
+Plot the posterior distribution of all latent parameters using a dataframe of posterior draws from a \code{causact_graph} model.
 }
 \examples{
 # A simple example

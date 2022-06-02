@@ -2,7 +2,7 @@
 % Please edit documentation in R/meaningfulLabels.R
 \name{meaningfulLabels}
 \alias{meaningfulLabels}
-\title{Store meaningful parameter labels prior to running \code{dag_greta()} of \code{greta::mcmc()}.  When \code{greta} creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta[1,1], beta[2,1], etc.).  Since parameter dimensionality is often determined by a \code{factor}, this function creates labels from the factors unqiue values.  \code{replaceLabels()} applies the text labels stored using this function to the \code{greta} output.  The meaningful parameter names are stored in an environment, \code{cacheEnv}.}
+\title{Store meaningful parameter labels}
 \usage{
 meaningfulLabels(graph)
 }
@@ -13,5 +13,7 @@ meaningfulLabels(graph)
 a data frame \code{meaningfulLabels} stored in an environment named \code{cacheEnv} that contains a lookup table between greta labels and meaningful labels.
 }
 \description{
-Store meaningful parameter labels prior to running \code{dag_greta()} of \code{greta::mcmc()}.  When \code{greta} creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta[1,1], beta[2,1], etc.).  Since parameter dimensionality is often determined by a \code{factor}, this function creates labels from the factors unqiue values.  \code{replaceLabels()} applies the text labels stored using this function to the \code{greta} output.  The meaningful parameter names are stored in an environment, \code{cacheEnv}.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+Store meaningful parameter labels prior to running \code{dag_greta()} of \code{greta::mcmc()}.  When \code{greta} creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta\link{1,1}, beta\link{2,1}, etc.).  Since parameter dimensionality is often determined by a \code{factor}, this function creates labels from the factors unqiue values.  \code{replaceLabels()} applies the text labels stored using this function to the \code{greta} output.  The meaningful parameter names are stored in an environment, \code{cacheEnv}.
 }

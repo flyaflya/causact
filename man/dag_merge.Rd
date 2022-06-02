@@ -2,7 +2,7 @@
 % Please edit documentation in R/dag_merge.R
 \name{dag_merge}
 \alias{dag_merge}
-\title{Merge two non-intersect \code{causact_graph} objects}
+\title{Merge two non-intersecting \code{causact_graph} objects}
 \usage{
 dag_merge(graph1, ...)
 }
@@ -15,7 +15,9 @@ dag_merge(graph1, ...)
 a merged graph object of class \code{causact_graph}.  Useful for creating simple graphs and then merging them into a more complex structure.
 }
 \description{
-Generates a single \code{causact_graph} graph object that combines the multiple provided graphs.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+Generates a single \code{causact_graph} graph object that combines multiple graphs.
 }
 \examples{
 # With `dag_merge()` we

@@ -7,9 +7,9 @@
 \format{
 A data frame with 1000 rows and 3 variables:
 \describe{
-  \item{customerID}{a unique id of a potential credit card customer.  They just bought a car and are asked if they want information on the credit card.}
-  \item{carModel}{The model of car purchased.}
-  \item{getCard}{Whether the customer expressed interest in hearing more about the card.}
+\item{customerID}{a unique id of a potential credit card customer.  They just bought a car and are asked if they want information on the credit card.}
+\item{carModel}{The model of car purchased.}
+\item{getCard}{Whether the customer expressed interest in hearing more about the card.}
 }
 }
 \usage{

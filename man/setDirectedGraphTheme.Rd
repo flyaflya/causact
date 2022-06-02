@@ -11,7 +11,7 @@ setDirectedGraphTheme(dgrGraph)
 }
 \value{
 An updated version of \code{dgrGraph} with good defaults for
-  graphical models.
+graphical models.
 
 return a \code{dgrGraph} object with the color and shape defaults used by the \code{causact} package.
 }

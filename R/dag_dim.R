@@ -1,8 +1,8 @@
-#' Add dimension information to \code{causact_graph}
+#' Add dimension information to `causact_graph`
 #'
 #' Internal function that is used as part of rendering graph or running greta.
-#' @param graph a graph object of class \code{causact_graph} created using \code{dag_create()}.
-#' @return a graph object of class \code{causact_graph} with populated dimension information.
+#' @param graph a graph object of class `causact_graph` created using `dag_create()`.
+#' @return a graph object of class `causact_graph` with populated dimension information.
 #' @importFrom dplyr mutate filter left_join select add_row
 #' @importFrom purrr map_int
 #' @importFrom igraph graph_from_data_frame topo_sort

@@ -1,16 +1,18 @@
-#' Generate a representive sample of the posterior distribution
+#' Generate a representative sample of the posterior distribution
+#' @description
+#' `r lifecycle::badge('stable')`
 #'
-#' The input graph object should be of class \code{causact_graph} and created using \code{dag_create()}.  The specification of a completely consistent joint distribution is left to the user.  Helpful error messages are scheduled for future versions of the \code{causact} package.
+#' Generate a representative sample of the posterior distribution.  The input graph object should be of class `causact_graph` and created using `dag_create()`.  The specification of a completely consistent joint distribution is left to the user.  Helpful error messages are scheduled for future versions of the `causact` package.
 #'
-#' @param graph a graph object of class \code{causact_graph} representing a complete and conistent specification of a joint distribution.
-#' @param mcmc a logical value indicating whether to sample from the posterior distribution.  When \code{mcmc=FALSE}, the greta code is printed to the console, but not executed.  The user can cut and paste the code to another script for running line-by-line.  This option is most useful for debugging purposes. When \code{mcmc=TRUE}, the code is executed and outputs a dataframe of posterior draws.
-#' @param meaningfulLabels a logical value indicating whether to replace the indexed variable names in \code{draws} with abbreviated names representing the factor value corresponding to the index.  This argument is treated as \code{TRUE} regardless of user input.  The ability to retain numerical indexing will be in a subsequent release.
-#' @param ... additional arguments to be passed onto \code{greta::mcmc()}.
-#' @return If \code{mcmc=TRUE}, returns a dataframe of posterior distribution samples corresponding to the input `causact_graph`.  Each column is a parameter and each row a draw from the posterior sample output.  If \code{mcmc=FALSE}, running \code{dag_greta} returns a character string of code that would help the user create three objects representing the posterior distribution:
+#' @param graph a graph object of class `causact_graph` representing a complete and conistent specification of a joint distribution.
+#' @param mcmc a logical value indicating whether to sample from the posterior distribution.  When `mcmc=FALSE`, the greta code is printed to the console, but not executed.  The user can cut and paste the code to another script for running line-by-line.  This option is most useful for debugging purposes. When `mcmc=TRUE`, the code is executed and outputs a dataframe of posterior draws.
+#' @param meaningfulLabels a logical value indicating whether to replace the indexed variable names in `draws` with abbreviated names representing the factor value corresponding to the index.  This argument is treated as `TRUE` regardless of user input.  The ability to retain numerical indexing will be in a subsequent release.
+#' @param ... additional arguments to be passed onto `greta::mcmc()`.
+#' @return If `mcmc=TRUE`, returns a dataframe of posterior distribution samples corresponding to the input `causact_graph`.  Each column is a parameter and each row a draw from the posterior sample output.  If `mcmc=FALSE`, running `dag_greta` returns a character string of code that would help the user create three objects representing the posterior distribution:
 #' \enumerate{
-#' \item \code{draws}:  An mcmc.list object containing raw output from the HMCMC sampler used by \code{greta}.
-#' \item \code{drawsDF}:  A wide data frame with all latent variables as columns and all draws as rows.  This data frame is useful for calculations based on the posterior
-#' \item \code{tidyDrawsDF}:  A long data frame with each draw represented on one line.  This data frame is useful for plotting posterior distributions.
+#' \item `draws`:  An mcmc.list object containing raw output from the HMCMC sampler used by `greta`.
+#' \item `drawsDF`:  A wide data frame with all latent variables as columns and all draws as rows.  This data frame is useful for calculations based on the posterior
+#' \item `tidyDrawsDF`:  A long data frame with each draw represented on one line.  This data frame is useful for plotting posterior distributions.
 #' }
 #'
 #' @examples
@@ -44,6 +46,7 @@
 #' @importFrom tidyr gather
 #' @importFrom greta mcmc model as_data
 #' @export
+
 dag_greta <- function(graph,
                       mcmc = TRUE,
                       meaningfulLabels = TRUE,

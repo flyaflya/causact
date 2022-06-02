@@ -2,14 +2,16 @@
 % Please edit documentation in R/dag_create.R
 \name{dag_create}
 \alias{dag_create}
-\title{Create a graph object focused on drawing a DAG.}
+\title{Create a graph object for drawing a DAG.}
 \usage{
 dag_create()
 }
 \value{
-a list object of class `causact_graph` consisting of 6 dataframes.  Each data frame is responsible for storing information about nodes, edges, plates, and the relationships among them.
+a list object of class \code{causact_graph} consisting of 6 dataframes.  Each data frame is responsible for storing information about nodes, edges, plates, and the relationships among them.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 Generates a \code{causact_graph} graph object that is set-up for drawing DAG graphs.
 }
 \examples{

@@ -8,8 +8,8 @@ Each observation is a possible value from a varaible in the \code{houseDF} datas
 \format{
 A data frame with 260 rows and 2 variables:
 \describe{
-  \item{varName}{the name and description of a variable stored in the \code{houseDF} dataset}
-  \item{varValueDescr}{The value and accompanying interpretation for values in the \code{houseDF} dataset}
+\item{varName}{the name and description of a variable stored in the \code{houseDF} dataset}
+\item{varValueDescr}{The value and accompanying interpretation for values in the \code{houseDF} dataset}
 }
 }
 \source{

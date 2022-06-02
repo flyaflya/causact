@@ -27,12 +27,14 @@ dag_plate(
 
 \item{addDataNode}{a logical value.  When \code{addDataNode = TRUE}, the code attempts to add a node of observed data that is used as an index for extracting the correct parameter from parent nodes that are on the newly created plate.  Verify the graphical model using \code{dag_render()} to ensure correct behavior.}
 
-\item{rhs}{Optional \code{rhs} expression for when \code{addDataNode = TRUE}.  This can be either a greta distribution such as \code{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.}
+\item{rhs}{Optional \code{rhs} expression for when \code{addDataNode = TRUE}.  This can be either a greta distribution such as \verb{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.}
 }
 \value{
 an expansion of the input \code{causact_graph} object with an added plate representing the repetition of \code{nodeLabels} for each unique value of \code{data}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Given a graph object of class \code{causact_graph}, create collections of nodes that should be repeated i.e. represent multiple instances of a random variable, random vector, or random matrix.  When nodes are on more than one plate, graph rendering will treat each unique combination of plates as separate plates.
 }
 \examples{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/addPriorGroups.R
 \name{addPriorGroups}
 \alias{addPriorGroups}
-\title{Add a column to tidy dataframe of draws that groups parameters by their prior distribution.  All parameters with the same prior distribution recieve the same index.}
+\title{Group together latent parameters by prior distribution.}
 \usage{
 addPriorGroups(drawsDF)
 }
@@ -13,5 +13,7 @@ addPriorGroups(drawsDF)
 a tidy dataframe of posterior draws. Useful for passing to \code{dagp_plot()} or for creating plots using \code{ggplot()}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Add a column to tidy dataframe of draws that groups parameters by their prior distribution.  All parameters with the same prior distribution recieve the same index.
 }
