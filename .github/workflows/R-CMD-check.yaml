@@ -26,7 +26,8 @@ jobs:
           extra-packages: rcmdcheck
 
       - uses: r-lib/actions/check-r-package@v1
-            - name: Fix Conda permissions on macOS
+
+      - name: Fix Conda permissions on macOS
         if: runner.os == 'macOS'
         run: sudo chown -R $UID $CONDA
 
