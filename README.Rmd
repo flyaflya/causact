@@ -140,7 +140,7 @@ Conduct](https://github.com/flyaflya/causact/blob/master/CODE_OF_CONDUCT.md). By
 
 ## Further Usage
 
-For more info, see `A Business Analyst's Introduction to Business Analytics` available at https://www.causact.com.  Two additional examples are shown below.
+For more info, see `A Business Analyst's Introduction to Business Analytics` available at https://www.causact.com.  You can also check out the package's vignette: `vignette("narrative-to-insight-with-causact")`.  Two additional examples are shown below.
 
 ## Prosocial Chimpanzees Example from Statistical Rethinking
 

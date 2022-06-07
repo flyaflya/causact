@@ -4,9 +4,9 @@
 \R\testingDAG.R
 ^R/testingDAG\.R$
 ^\.httr-oauth$
-README.Rmd
-gretaExamples.R
-eightSchools.R
+^README.Rmd$
+^gretaExamples.R$
+^eightSchools.R$
 ^graphics.*$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
@@ -17,3 +17,5 @@ eightSchools.R
 ^CODE_OF_CONDUCT\.md$
 ^\.github\contributing.md$
 ^\.github/workflows/R-CMD-check\.yaml$
+^vignettes/\.Rmd\.orig$
+^vignettes/precompile.R$

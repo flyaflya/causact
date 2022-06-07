@@ -7,12 +7,19 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE, message = FALSE,
+  comment = "#>",
+  dev = 'svg',
+  dpi=600
+)
+```
 
 This vignette illustrates how to use the `causact` package to reduce the friction experienced while going from business issues to computational Bayesian models, inference, and insight.  The package is easy-to-use, intuitive, and provides a visual interface to `greta`, an `R` based probabilistic programming language (PPL).  To get started load the required packages:
 
-
-```r
+```{r setup}
 library(greta)
 library(causact)
 ```
@@ -27,17 +34,15 @@ We will use the below example fictional narrative along with some simulated data
 
 Let's get started capturing the BankPass problem as a graphical model.  The first thought should be to make a simple model of how the real-world ends up generating your variable(s) of interest; and don't worry about how good the model is - just get something written.
 
-
-```r
+```{r cardModelSimple, echo = TRUE, out.width = "52%", fig.cap="Figure 1: Simple model.", fig.align="center"}
 library(causact)
 dag_create() %>%
   dag_node("Get Card", "Y") %>%
   dag_node("Adventurous Personality", "X",
            child = "Y") %>%
   dag_render(shortLabel = TRUE)
-```
 
-<img src="figure/cardModelSimple-1.png" title="Figure 1: Simple model." alt="Figure 1: Simple model." width="52%" style="display: block; margin: auto;" />
+```
 
 The above output is a visual depiction of what mathematicians and computer scientists call a _graph_.  To them, a _graph_ is a set of related objects where the objects are called _nodes_ and any pair of related nodes are known as an _edge_.  For our purposes, a _node_ is a visual depiction of a random variable (i.e. an oval) and the presence of a visible _edge_ indicates a relationship between the connected random variables.
 
@@ -59,17 +64,15 @@ where successes are mapped to 1 and failures mapped to 0.
 
 However, how does one map "Adventurous Personality" to values?  In fact, what measurement or specific criteria am I using for "Adventurous Personality"?  This is an ill-defined variable.  Since the story actually suggests that _Car Model_ is the data we have, let's create a graphical model where _Car Model_ helps determine the likelihood of _Get Card_. Using $Y$ and $X$ as respective labels for _Car Model_ and _Get Card_, we show a revised candidate graphical model below.
 
-
-```r
+```{r cardModelSimpleRevised, echo = TRUE, out.width = "52%", fig.cap="Figure 2: Revised simple model.", fig.align="center"}
 library(causact)
 dag_create() %>%
   dag_node("Get Card", "X") %>%
   dag_node("Car Model", "Y",
            child = "X") %>%
   dag_render(shortLabel = FALSE)
-```
 
-<img src="figure/cardModelSimpleRevised-1.png" title="Figure 2: Revised simple model." alt="Figure 2: Revised simple model." width="52%" style="display: block; margin: auto;" />
+```
 
 As shown above, the difficult to measure personality node gets replaced by the car model node.  To verify we can measure _Car Model_ as a random variable, let's be explicit about the mapping of "Car Model" outcomes to real numbers.  For example:
 
@@ -87,8 +90,7 @@ $$
 
 A dataset to accompany this story is built-in to the `causact` package:
 
-
-```r
+```{r, tidy = FALSE}
 # ------------------------------------
 # Revisiting the Get Credit Card Model
 # ------------------------------------
@@ -96,21 +98,6 @@ A dataset to accompany this story is built-in to the `causact` package:
 # data included in the causact package
 # 1,000 customers and the car they drive
 carModelDF   #show data
-#> # A tibble: 1,000 x 3
-#> # Rowwise: 
-#>    customerID carModel       getCard
-#>         <int> <chr>            <int>
-#>  1          1 Toyota Corolla       0
-#>  2          2 Subaru Outback       1
-#>  3          3 Toyota Corolla       0
-#>  4          4 Subaru Outback       0
-#>  5          5 Kia Forte            1
-#>  6          6 Toyota Corolla       0
-#>  7          7 Toyota Corolla       0
-#>  8          8 Subaru Outback       1
-#>  9          9 Toyota Corolla       0
-#> 10         10 Toyota Corolla       0
-#> # ... with 990 more rows
 ```
 
 We take a bottom-up approach starting with our target measurement _Get Card_ to add in mathematical details about how the data is generated.  Specifically, we declare any observation `x` to be a Bernoulli-distributed random variable with yet-to-be-defined parameter `theta`.  (For a list of supported distributions type `?greta::distributions`)
@@ -119,8 +106,7 @@ To model subsequent nodes, consider any parameters on the right-hand side of the
 
 Realizing that _Signup Probability_ is truly the variable of interest - we are interested in the probability of someone signing up for the card, not what car they drive.  The below figure graphically models the _probability of sign-up_ ($\theta$) as the parent, and not the actual car model.  Notice that nodes with data, i.e.  _Get Card_, have darker fill; _observed nodes_ get a darker fill and _latent_ or _unobserved nodes_ remain lighter.
 
-
-```r
+```{r theta44, tidy = FALSE, out.width = "52%", fig.cap = "Figure 3: A generative DAG for the credit card example.", fig.align="center"}
 graph = dag_create() %>%
   dag_node("Get Card","x",
            rhs = bernoulli(theta),
@@ -131,19 +117,15 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="figure/theta44-1.png" title="Figure 3: A generative DAG for the credit card example." alt="Figure 3: A generative DAG for the credit card example." width="52%" style="display: block; margin: auto;" />
-
 The above generative recipe implies there is only one _true_ $\theta$ value and all 1,000 Bernoulli observations are outcomes of Bernoulli trials using that one $\theta$ value.  The posterior distribution under this assumption is easily obtained:
 
-
-```r
+```{r gretaCardPlot, fig.width = 6, fig.height = 2, tidy = FALSE, out.width = "75%", fig.cap = "Figure 4: Posterior distribution for the probability of a prospective customer getting the credit card without looking at the car they drive.", fig.align="center"}
 drawsDF = graph %>% dag_greta()
+
 drawsDF %>% dagp_plot()
 ```
 
-<img src="figure/gretaCardPlot-1.svg" title="Figure 4: Posterior distribution for the probability of a prospective customer getting the credit card without looking at the car they drive." alt="Figure 4: Posterior distribution for the probability of a prospective customer getting the credit card without looking at the car they drive." width="75%" style="display: block; margin: auto;" />
-
-Hence, a reasonable conclusion might be that plausible values for _Signup Probability_ lie (roughly) between 37% and 41%.
+Hence, a reasonable conclusion might be that plausible values for _Signup Probability_ lie (roughly) between `r round(100 * quantile(drawsDF$theta, 0.05),0)`% and `r round(100 * quantile(drawsDF$theta, 0.95),0)`%.
 
 ### Modelling the effect of car model with plates
 
@@ -157,8 +139,7 @@ Our business narrative calls for the probability to change based on car model.  
 
 Below, we can change the generative DAG to accommodate the story of _Signup Probability_ being different for drivers of different cars.
 
-
-```r
+```{r cardPlatePlot, out.width = "60%", fig.cap = "Figure 5: Estimating the probability of a prospective customer getting the credit card as a function of the car they drive.", fig.align="center"}
 ### Now vary your modelling of theta by car model
 ### we use the plate notation to say
 ### "create a copy of theta for each unique car model
@@ -178,74 +159,63 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="figure/cardPlatePlot-1.png" title="Figure 5: Estimating the probability of a prospective customer getting the credit card as a function of the car they drive." alt="Figure 5: Estimating the probability of a prospective customer getting the credit card as a function of the car they drive." width="60%" style="display: block; margin: auto;" />
-
 This generative DAG used one additional function call, `dag_plate()`, that resulted in both the creation of the plate, and also the additional node representing _Car Model_ observations.  Each of the 1,000 observed customers of the _Car Model_ __node__ were driving one of 4 unique car models of the _Car Model_ __plate__.  The indexing of `theta` by `y`, i.e. the `theta[y]` on the `rhs` of the _Get Card_ node extracts one of the 4 $\theta$-values to govern each observation of $x$.
 
 > Expert tip: Observed-discrete random variables, like car model, are best modelled via plates.  Do not rush to add nodes or indexes for these random variables.  Let dag\_plate() do the work for you.
 
 Now, when we get the posterior distribution from our `greta` code, we get a representative sample of four $\theta$ values instead of one.
 
-
-```r
+```{r}
 ## get representative sample
 drawsDF = graph %>% dag_greta(warmup = 400)
 ```
 
 Visualizing the posterior yields:
 
-
-```r
+```{r postCardPlatePlot, fig.width = 6, fig.height = 3, out.width = "90%", fig.cap = "Figure 6: Posterior distribution for theta based on car model.", fig.align="center"}
 drawsDF %>% dagp_plot()
 ```
-
-<img src="figure/postCardPlatePlot-1.svg" title="Figure 6: Posterior distribution for theta based on car model." alt="Figure 6: Posterior distribution for theta based on car model." width="90%" style="display: block; margin: auto;" />
 
 Notice, the index names for the four `theta` values are automatically generated as abbreviated versions of the unique labels found in `carModelDF$carModel`.
 
 Digesting the psoterior plot, notice that credible interval widths are different for the different `theta` values.  For example, the probability interval for the Toyota Corolla is more narrow than the interval for the other cars.  This is simply because there is more data regarding Toyota Corolla drivers than the other vehicles.  With more data, we get more confident in our estimate. Here is a quick way to see the distribution of car models across our observations:
 
-
-```r
+```{r, warnings = FALSE, tidy = FALSE}
 library(tidyverse)
 carModelDF %>%
   group_by(carModel) %>%
   summarize(numOfObservations = n())
-#> # A tibble: 4 x 2
-#>   carModel       numOfObservations
-#>   <chr>                      <int>
-#> 1 Jeep Wrangler                193
-#> 2 Kia Forte                     86
-#> 3 Subaru Outback               145
-#> 4 Toyota Corolla               576
 ```
 
 ### Making A Probabilistic Statement With An Indicator Function
 
 In the previous posterior plot, notice the overlapping beliefs regarding the _true_ sign-up probability for drivers of the Toyota Corolla and Kia Forte.  Based on this, a reasonable query might be what is the probability that `theta_KiaForte` > `theta_ToytCrll`? As a typical workflow, use an indicator function on the posterior draws to answer the question.  So, to answer "what is the probability that `theta_KiaForte` > `theta_ToytCrll`?", we compute:
 
-
-```r
+```{r, tidy = FALSE}
 drawsDF %>%
   mutate(indicatorFunction =
            theta_KiaForte > theta_ToytCrll) %>%
   summarize(pctOfDraws = mean(indicatorFunction))
-#> # A tibble: 1 x 1
-#>   pctOfDraws
-#>        <dbl>
-#> 1      0.766
 ```
 
+```{r, echo = FALSE, results = "hide", tidy = FALSE}
+pctDraws = drawsDF %>%
+  mutate(indicatorFunction =
+           ifelse(theta_KiaForte > theta_ToytCrll,
+                  1,0)) %>%
+  summarize(pctOfDraws = mean(indicatorFunction)) %>%
+  pull(pctOfDraws) %>%
+  prod(100) %>%
+  round(0)
+```
 
-
-And using this ability to make probabalistic statements, one might say "there is an approximately 77% chance that Kia Forte drivers are more likely than Toyota Corolla drivers to sign up for the credit card.
+And using this ability to make probabalistic statements, one might say "there is an approximately `r pctDraws`% chance that Kia Forte drivers are more likely than Toyota Corolla drivers to sign up for the credit card.
 
 ## Putting A Plate Around The Observed Random Variables
 
 In the previous genrative DAG, the bracketed `[1000]` next to the node descriptions tells us that the observed data has 1,000 elements. Often, for visual clarity, I like to make a plate of observations and have the observed nodes revert back to representing single realizations.  This is done by creating a second plate, but now excluding the `data` argument in the additional call to `dag_plate`:
 
-
-```r
+```{r cardCode, tidy = FALSE}
 graph = dag_create() %>%
   dag_node("Get Card","x",
            rhs = bernoulli(theta),
@@ -263,12 +233,9 @@ graph = dag_create() %>%
 
 `dag_plate()` now infers the number of repetitions from the observed values within the plate.   The generative DAG shown below reflects this change, yet remains  computationally equivalent to the previous DAG.
 
-
-```r
+```{r cardPlatePlot2, out.width = "60%", fig.cap = "Figure 7: Using a plate for observations in addition to the plate for car models.", fig.align="center"}
 graph %>% dag_render()
 ```
-
-<img src="figure/cardPlatePlot2-1.png" title="Figure 7: Using a plate for observations in addition to the plate for car models." alt="Figure 7: Using a plate for observations in addition to the plate for car models." width="60%" style="display: block; margin: auto;" />
 
 This code change is completely optional, but using the extra plate adds clarity for both you and your collaborators in a data analysis.
 
