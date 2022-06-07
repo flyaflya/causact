@@ -16,3 +16,4 @@ eightSchools.R
 ^paper$
 ^CODE_OF_CONDUCT\.md$
 ^\.github\contributing.md$
+^\.github/workflows/R-CMD-check\.yaml$
