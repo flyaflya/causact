@@ -19,7 +19,7 @@ library(causact)
 
 ## Motivating Business Narrative
 
-We will use the below example fictional narrative along with some simulated data to motivate how to use use `causact` for iterating from narrative to computational insight.  A more detailed version of this vignette can be found in Chapters 14-17 of "A Business Analyst's Introduction to Business Analytics" available at http://www.causact.com.
+We will use the below example fictional narrative along with some simulated data to motivate how to use use `causact` for iterating from narrative to computational insight.  A more detailed version of this vignette can be found in Chapters 14-17 of "A Business Analyst's Introduction to Business Analytics" available at https://www.causact.com.
 
 > BankPass is an auto financing company that is launching a new credit card, the Travel Rewards Card (TRC).  The card is designed for people who love to take adventure vacations like ziplining, kayaking, scuba diving, and the like.  To date, BankPass has been randomly selecting a small number of customers to target with a private offer to sign up for the card.  They would like to assess the probability that an individual will get a TRC card if exposed to a private marketing offer.  Since they are an auto-loan company, they are curious about whether the model of car (e.g. Honda Accord, Toyota Corrola, Jeep Wrangler, etc.) being financed influences a customer's willingness to sign up for the credit card.  The logic is that people who like adventure travel might also like specific kinds of cars.  If it is true that cars are a reflection of their owners, then the company might expand its credit card offerings to take advantage of its car ownership data.
 
@@ -37,7 +37,7 @@ dag_create() %>%
   dag_render(shortLabel = TRUE)
 ```
 
-<img src="figure/cardModelSimple-1.png" title="Figure 1: Simple model." alt="Figure 1: Simple model." width="52%" style="display: block; margin: auto;" />
+<img src="cardModelSimple-1.png" title="Figure 1: Simple model." alt="Figure 1: Simple model." width="52%" style="display: block; margin: auto;" />
 
 The above output is a visual depiction of what mathematicians and computer scientists call a _graph_.  To them, a _graph_ is a set of related objects where the objects are called _nodes_ and any pair of related nodes are known as an _edge_.  For our purposes, a _node_ is a visual depiction of a random variable (i.e. an oval) and the presence of a visible _edge_ indicates a relationship between the connected random variables.
 
@@ -69,7 +69,7 @@ dag_create() %>%
   dag_render(shortLabel = FALSE)
 ```
 
-<img src="figure/cardModelSimpleRevised-1.png" title="Figure 2: Revised simple model." alt="Figure 2: Revised simple model." width="52%" style="display: block; margin: auto;" />
+<img src="cardModelSimpleRevised-1.png" title="Figure 2: Revised simple model." alt="Figure 2: Revised simple model." width="52%" style="display: block; margin: auto;" />
 
 As shown above, the difficult to measure personality node gets replaced by the car model node.  To verify we can measure _Car Model_ as a random variable, let's be explicit about the mapping of "Car Model" outcomes to real numbers.  For example:
 
@@ -131,7 +131,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="figure/theta44-1.png" title="Figure 3: A generative DAG for the credit card example." alt="Figure 3: A generative DAG for the credit card example." width="52%" style="display: block; margin: auto;" />
+<img src="theta44-1.png" title="Figure 3: A generative DAG for the credit card example." alt="Figure 3: A generative DAG for the credit card example." width="52%" style="display: block; margin: auto;" />
 
 The above generative recipe implies there is only one _true_ $\theta$ value - which is unknown so we place a flat uniform prior over all possible values for $\theta$. Given $\theta$, 1,000 observations are outcomes of Bernoulli trials using that one $\theta$ value.  The posterior distribution reallocates plausibility among $\theta$ values to those most consistent with our prior and data.  A representative sample from the posterior distribution is easily obtained using `dag_greta`:
 
@@ -141,9 +141,9 @@ drawsDF = graph %>% dag_greta()
 drawsDF %>% dagp_plot()
 ```
 
-<img src="figure/gretaCardPlot-1.svg" title="Figure 4: Posterior distribution for the probability of a prospective customer getting the credit card without looking at the car they drive." alt="Figure 4: Posterior distribution for the probability of a prospective customer getting the credit card without looking at the car they drive." width="75%" style="display: block; margin: auto;" />
+<img src="gretaCardPlot-1.svg" title="Figure 4: Posterior distribution for the probability of a prospective customer getting the credit card without looking at the car they drive." alt="Figure 4: Posterior distribution for the probability of a prospective customer getting the credit card without looking at the car they drive." width="75%" style="display: block; margin: auto;" />
 
-From this, a reasonable conclusion might be that plausible values for _Signup Probability_ lie (roughly) between 37% and 42%.
+From this, a reasonable conclusion might be that plausible values for _Signup Probability_ lie (roughly) between 36% and 42%.
 
 ### Modelling the effect of car model with plates
 
@@ -178,7 +178,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="figure/cardPlatePlot-1.png" title="Figure 5: Estimating the probability of a prospective customer getting the credit card as a function of the car they drive." alt="Figure 5: Estimating the probability of a prospective customer getting the credit card as a function of the car they drive." width="60%" style="display: block; margin: auto;" />
+<img src="cardPlatePlot-1.png" title="Figure 5: Estimating the probability of a prospective customer getting the credit card as a function of the car they drive." alt="Figure 5: Estimating the probability of a prospective customer getting the credit card as a function of the car they drive." width="60%" style="display: block; margin: auto;" />
 
 This generative DAG used one additional function call, `dag_plate()`, that resulted in both the creation of the plate, and also the additional node representing _Car Model_ observations.  Each of the 1,000 observed customers of the _Car Model_ __node__ were driving one of 4 unique car models of the _Car Model_ __plate__.  The indexing of `theta` by `y`, i.e. the `theta[y]` on the `rhs` of the _Get Card_ node extracts one of the 4 $\theta$-values to govern each observation of $x$.
 
@@ -199,7 +199,7 @@ Visualizing the posterior yields:
 drawsDF %>% dagp_plot()
 ```
 
-<img src="figure/postCardPlatePlot-1.svg" title="Figure 6: Posterior distribution for theta based on car model." alt="Figure 6: Posterior distribution for theta based on car model." width="90%" style="display: block; margin: auto;" />
+<img src="postCardPlatePlot-1.svg" title="Figure 6: Posterior distribution for theta based on car model." alt="Figure 6: Posterior distribution for theta based on car model." width="90%" style="display: block; margin: auto;" />
 
 Notice, the index names for the four `theta` values are automatically generated as abbreviated versions of the unique labels found in `carModelDF$carModel`.
 
@@ -233,12 +233,12 @@ drawsDF %>%
 #> # A tibble: 1 x 1
 #>   pctOfDraws
 #>        <dbl>
-#> 1      0.805
+#> 1      0.769
 ```
 
 
 
-And using this ability to make probabalistic statements, one might say "there is an approximately 81% chance that Kia Forte drivers are more likely than Toyota Corolla drivers to sign up for the credit card.
+And using this ability to make probabalistic statements, one might say "there is an approximately 77% chance that Kia Forte drivers are more likely than Toyota Corolla drivers to sign up for the credit card.
 
 ## Putting A Plate Around The Observed Random Variables
 
@@ -268,7 +268,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-<img src="figure/cardPlatePlot2-1.png" title="Figure 7: Using a plate for observations in addition to the plate for car models." alt="Figure 7: Using a plate for observations in addition to the plate for car models." width="60%" style="display: block; margin: auto;" />
+<img src="cardPlatePlot2-1.png" title="Figure 7: Using a plate for observations in addition to the plate for car models." alt="Figure 7: Using a plate for observations in addition to the plate for car models." width="60%" style="display: block; margin: auto;" />
 
 This code change is completely optional, but using the extra plate adds clarity for both you and your collaborators in a data analysis.
 

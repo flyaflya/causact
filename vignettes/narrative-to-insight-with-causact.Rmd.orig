@@ -26,7 +26,7 @@ library(causact)
 
 ## Motivating Business Narrative
 
-We will use the below example fictional narrative along with some simulated data to motivate how to use use `causact` for iterating from narrative to computational insight.  A more detailed version of this vignette can be found in Chapters 14-17 of "A Business Analyst's Introduction to Business Analytics" available at http://www.causact.com.
+We will use the below example fictional narrative along with some simulated data to motivate how to use use `causact` for iterating from narrative to computational insight.  A more detailed version of this vignette can be found in Chapters 14-17 of "A Business Analyst's Introduction to Business Analytics" available at https://www.causact.com.
 
 > BankPass is an auto financing company that is launching a new credit card, the Travel Rewards Card (TRC).  The card is designed for people who love to take adventure vacations like ziplining, kayaking, scuba diving, and the like.  To date, BankPass has been randomly selecting a small number of customers to target with a private offer to sign up for the card.  They would like to assess the probability that an individual will get a TRC card if exposed to a private marketing offer.  Since they are an auto-loan company, they are curious about whether the model of car (e.g. Honda Accord, Toyota Corrola, Jeep Wrangler, etc.) being financed influences a customer's willingness to sign up for the credit card.  The logic is that people who like adventure travel might also like specific kinds of cars.  If it is true that cars are a reflection of their owners, then the company might expand its credit card offerings to take advantage of its car ownership data.
 
