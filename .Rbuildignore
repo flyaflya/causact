@@ -19,3 +19,5 @@
 ^\.github/workflows/R-CMD-check\.yaml$
 ^vignettes/\.Rmd\.orig$
 ^vignettes/precompile.R$
+^doc$
+^Meta$

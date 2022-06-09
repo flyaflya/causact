@@ -233,12 +233,12 @@ drawsDF %>%
 #> # A tibble: 1 x 1
 #>   pctOfDraws
 #>        <dbl>
-#> 1      0.780
+#> 1      0.805
 ```
 
 
 
-And using this ability to make probabalistic statements, one might say "there is an approximately 78% chance that Kia Forte drivers are more likely than Toyota Corolla drivers to sign up for the credit card.
+And using this ability to make probabalistic statements, one might say "there is an approximately 81% chance that Kia Forte drivers are more likely than Toyota Corolla drivers to sign up for the credit card.
 
 ## Putting A Plate Around The Observed Random Variables
 
