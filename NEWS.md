@@ -1,6 +1,6 @@
-# causact (development version)
-
-# causact 0.4.1
+# causact 0.4.2
+* Added `vignette("narrative-to-insight-with-causact") to introduce the package's encouraged user workflow.
+* Allow `greta::variable()` to be used for flat priors.
 
 # causact 0.4.1
 * Fixed bugs introduced by changes in `tidyr::replace_na()`.

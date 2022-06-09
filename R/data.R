@@ -80,7 +80,7 @@
 #'   \item{HDI2017}{The human development index score for 2017: the Human Development Index (HDI) is a measure of achievement in the basic dimensions of human development across countries.  It is an index made from a simple unweighted average of a nation’s longevity, education and income and is widely accepted in development discourse.}
 #' }
 #' @source <https://www.transparency.org/cpi> CPI data available from www.transparency.org/cpi.  Accessed Oct 1, 2018. Consumer Perception Index 2017 by Transparency International is licensed under CC-BY- ND 4.0.
-#' @source <http://hdr.undp.org/en/content/human-development-index-hdi> HDA data accessed on Oct 1, 2018.
+#' @source <https://hdr.undp.org/en/content/human-development-index-hdi> HDA data accessed on Oct 1, 2018.
 #' @source <https://data.worldbank.org/> Population data accessed on Oct 1, 2018.
 "corruptDF"
 
