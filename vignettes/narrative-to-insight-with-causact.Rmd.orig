@@ -102,9 +102,9 @@ carModelDF   #show data
 
 We take a bottom-up approach starting with our target measurement _Get Card_ to add in mathematical details about how the data is generated.  Specifically, we declare any observation `x` to be a Bernoulli-distributed random variable with yet-to-be-defined parameter `theta`.  (For a list of supported distributions type `?greta::distributions`)
 
-To model subsequent nodes, consider any parameters on the right-hand side of the statistical model that remain undefined.  Hence, if $x \sim \textrm{Bernoulli}(\theta)$, then $\theta$ should be a parent node in the graphical model.  And at this point, we say _ay caramba!_.  There is a mismatch between _Car Model_, the parent of _Get Card_ in the previous graphical model, and $\theta$, the implied parent of _Get Card_ in the statistical model which would represent _Signup Probability_.
+To model additional nodes, consider any parameters on the right-hand side of the statistical model that remain undefined; in our case `theta` is undefined.  Hence, if $x \sim \textrm{Bernoulli}(\theta)$, then $\theta$ should be a parent node of $x$ in the graphical model.  And at this point, we say _ay caramba!_.  There is a mismatch between _Car Model_, the parent of _Get Card_ in the previous graphical model, and $\theta$, the implied parent of _Get Card_ using the statistical model.
 
-Realizing that _Signup Probability_ is truly the variable of interest - we are interested in the probability of someone signing up for the card, not what car they drive.  The below figure graphically models the _probability of sign-up_ ($\theta$) as the parent, and not the actual car model.  Notice that nodes with data, i.e.  _Get Card_, have darker fill; _observed nodes_ get a darker fill and _latent_ or _unobserved nodes_ remain lighter.
+Realizing that _Signup Probability_, $\theta$,  is truly the variable of interest as we are interested in modelling the probability of someone signing up for the card.  The below figure graphically models the _probability of sign-up_ ($\theta$) as the parent.  Notice that nodes with data, i.e.  _Get Card_, have darker fill; _observed nodes_ get a darker fill and _latent_ or _unobserved nodes_ remain lighter.  The right-hand side (`rhs`) of darker nodes represent the _likelihood_ part of Bayes rule and the right-hand side of lighter nodes reprent the _prior_ part of Bayes rule.
 
 ```{r theta44, tidy = FALSE, out.width = "52%", fig.cap = "Figure 3: A generative DAG for the credit card example.", fig.align="center"}
 graph = dag_create() %>%
@@ -117,7 +117,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 ```
 
-The above generative recipe implies there is only one _true_ $\theta$ value and all 1,000 Bernoulli observations are outcomes of Bernoulli trials using that one $\theta$ value.  The posterior distribution under this assumption is easily obtained:
+The above generative recipe implies there is only one _true_ $\theta$ value - which is unknown so we place a flat uniform prior over all possible values for $\theta$. Given $\theta$, 1,000 observations are outcomes of Bernoulli trials using that one $\theta$ value.  The posterior distribution reallocates plausibility among $\theta$ values to those most consistent with our prior and data.  A representative sample from the posterior distribution is easily obtained using `dag_greta`:
 
 ```{r gretaCardPlot, fig.width = 6, fig.height = 2, tidy = FALSE, out.width = "75%", fig.cap = "Figure 4: Posterior distribution for the probability of a prospective customer getting the credit card without looking at the car they drive.", fig.align="center"}
 drawsDF = graph %>% dag_greta()
@@ -125,7 +125,7 @@ drawsDF = graph %>% dag_greta()
 drawsDF %>% dagp_plot()
 ```
 
-Hence, a reasonable conclusion might be that plausible values for _Signup Probability_ lie (roughly) between `r round(100 * quantile(drawsDF$theta, 0.05),0)`% and `r round(100 * quantile(drawsDF$theta, 0.95),0)`%.
+From this, a reasonable conclusion might be that plausible values for _Signup Probability_ lie (roughly) between `r round(100 * quantile(drawsDF$theta, 0.05),0)`% and `r round(100 * quantile(drawsDF$theta, 0.95),0)`%.
 
 ### Modelling the effect of car model with plates
 

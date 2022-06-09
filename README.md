@@ -126,16 +126,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.846          0.223          0.635          0.187
-#>  2          0.832          0.257          0.540          0.231
-#>  3          0.816          0.253          0.572          0.176
-#>  4          0.852          0.294          0.543          0.213
-#>  5          0.846          0.239          0.628          0.199
-#>  6          0.846          0.239          0.628          0.199
-#>  7          0.852          0.293          0.649          0.193
-#>  8          0.812          0.254          0.585          0.196
-#>  9          0.824          0.202          0.640          0.189
-#> 10          0.805          0.233          0.591          0.202
+#>  1          0.819          0.229          0.652          0.213
+#>  2          0.819          0.229          0.652          0.213
+#>  3          0.819          0.229          0.652          0.213
+#>  4          0.841          0.306          0.657          0.199
+#>  5          0.841          0.306          0.657          0.199
+#>  6          0.839          0.229          0.582          0.192
+#>  7          0.856          0.243          0.638          0.206
+#>  8          0.856          0.243          0.638          0.206
+#>  9          0.847          0.238          0.579          0.197
+#> 10          0.868          0.192          0.657          0.197
 #> # ... with 3,990 more rows
 ```
 
@@ -180,7 +180,9 @@ By participating in this project you agree to abide by its terms.
 
 For more info, see
 `A Business Analyst's Introduction to Business Analytics` available at
-<https://www.causact.com>. Two additional examples are shown below.
+<https://www.causact.com>. You can also check out the package’s
+vignette: `vignette("narrative-to-insight-with-causact")`. Two
+additional examples are shown below.
 
 ## Prosocial Chimpanzees Example from Statistical Rethinking
 
