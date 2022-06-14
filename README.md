@@ -7,7 +7,7 @@
 status](https://www.r-pkg.org/badges/version/causact)](https://cran.r-project.org/package=causact)
 [![Codecov test
 coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)](https://app.codecov.io/gh/flyaflya/causact?branch=master)
-[![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](Redirect-URL)
+[![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)
 <!-- badges: end -->
 
 # causact
@@ -126,16 +126,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.823          0.205          0.678          0.190
-#>  2          0.855          0.220          0.637          0.200
-#>  3          0.826          0.224          0.582          0.223
-#>  4          0.831          0.212          0.629          0.173
-#>  5          0.878          0.236          0.619          0.210
-#>  6          0.801          0.277          0.610          0.199
-#>  7          0.878          0.240          0.633          0.208
-#>  8          0.878          0.240          0.633          0.208
-#>  9          0.874          0.275          0.616          0.214
-#> 10          0.870          0.301          0.589          0.224
+#>  1          0.878          0.219          0.560          0.211
+#>  2          0.839          0.296          0.660          0.227
+#>  3          0.840          0.229          0.571          0.209
+#>  4          0.864          0.175          0.669          0.199
+#>  5          0.809          0.307          0.537          0.204
+#>  6          0.823          0.269          0.593          0.203
+#>  7          0.865          0.178          0.644          0.204
+#>  8          0.879          0.274          0.555          0.197
+#>  9          0.849          0.189          0.623          0.230
+#> 10          0.817          0.231          0.577          0.180
 #> # ... with 3,990 more rows
 ```
 
