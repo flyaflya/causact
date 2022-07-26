@@ -7,7 +7,7 @@ tags:
 - probabilistic programming
 - graphical models
 - directed acyclic graphs
-date: "26 April 2022"
+date: "26 July 2022"
 output:
   pdf_document: default
   html_document:
@@ -88,7 +88,7 @@ graph %>% dag_render()
 ```
 
 <center>
-![A generative DAG of modelling chimpanzee behavior.\label{fig:chimps}](chimps.png){ width=98% }
+![A generative DAG of modelling chimpanzee behavior.\label{fig:chimps}](chimps.png){ width=105% }
 </center>
 
 \autoref{fig:chimpShort} replicates \autoref{fig:chimps} without math for less intimidating discussions with domain experts about the model using the `shortLabel = TRUE` argument (shown below).  `causact` does not require a complete model specification prior to rendering the DAG, hence, `causact` facilitates qualitative collaboration on the model design between less technical domain experts and the model builder.
@@ -164,7 +164,7 @@ drawsDF %>% dagp_plot()
 ```
 
 <center>
-  ![Credible intervals for the nine parameters of the eight schools model.\label{fig:chimpPlot}](chimpPlot.png){ width=78% }
+  ![Credible intervals for the nine parameters of the eight schools model.\label{fig:chimpPlot}](chimpPlot.png){ width=90% }
 </center>
 
 The code above makes the plot in \autoref{fig:chimpPlot}.  For further posterior plotting, users would make their own plots using `ggplot2` [@wickham2016], `ggdist` [@kay2020], or similar.  For further model validation, including MCMC diagnostics, the user would use a package like `bayesplot` [@gabry2019visualization] or `shinystan` [@gabry2018].  For users who prefer to work with an `mcmc` object, they can extract the `draws` object after running the generated `greta` code from `dag_greta(mcmc=FALSE)` or find the object in the `cacheEnv` environment after running `dag_greta(mcmc=FALSE)` using `get("draws",envir = causact:::cacheEnv)`.  
