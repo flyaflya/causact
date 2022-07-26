@@ -50,50 +50,60 @@ To unify inference-problem narratives, the statistical models representing those
 
 Generative DAGs pursue two simultaneous goals.  One goal is to capture the narrative by building a conceptual understanding of the data generating process that lends itself to statistical modelling.  And the second goal is to gather all the mathematical elements needed for specifying a complete Bayesian model of the data generating process.  Both of these goals will be satisfied by iteratively assessing the narrative and the narrative's translation into rigorous mathematics using `causact` functions.
 
-Capturing the narrative in code uses some core `causact` functions like `dag_create()`, `dag_node()`, `dag_edge()`, and `dag_plate()` with the chaining operator `%>%` used to build a DAG from the individual elements.  `dag_render()` or `dag_greta()` are then used to visualize the DAG or run inference on the DAG, respectively.  The simplicity with which generative DAGs are constructed belies the complexity of models which can be supported.  For example, multi-level or hierarchical models are easily constructed as shown here in code for constructing and visualizing an oft-cited Bayesian example known as eight schools [@JSSv012i03] whose data is included in `causact` (`causact::schoolsDF`).  The example is a study of coaching effects on test scores where students from eight schools were put into coached and uncoached groups.
+Capturing the narrative in code uses some core `causact` functions like `dag_create()`, `dag_node()`, `dag_edge()`, and `dag_plate()` with the chaining operator `%>%` used to build a DAG from the individual elements.  `dag_render()` or `dag_greta()` are then used to visualize the DAG or run inference on the DAG, respectively.  The simplicity with which generative DAGs are constructed belies the complexity of models which can be supported.  For example, multi-level or hierarchical models are easily constructed as shown here in code for constructing and visualizing an experiment about chimpanzees [@mcelreath2020statistical] whose data is included in `causact` (`causact::chimpanzeesDF`).  Chimpanzees are given a choice to pull one of two levers - right or left.  Depending on the lever pulled, the chimpanzee is either prosocial, pulling the lever which feeds both himself and a partner, or not prosocial where only the lever-puller receives food.  
 
 ```r
-graph = dag_create() %>%
-    dag_node("Treatment Effect","y",
-             rhs = normal(theta, sigma),
-             data = causact::schoolsDF$y) %>%
-    dag_node("Std Error of Effect Estimates","sigma",
-             data = causact::schoolsDF$sigma,
-             child = "y") %>%
-    dag_node("Exp. Treatment Effect","theta",
-             child = "y",
-             rhs = avgEffect + schoolEffect) %>%
-    dag_node("Population Treatment Effect","avgEffect",
-             child = "theta",
-             rhs = normal(0,30)) %>%
-    dag_node("School Level Effects","schoolEffect",
-             rhs = normal(0,30),
-             child = "theta") %>%
-    dag_plate("Observation","i",nodeLabels = c("sigma","y","theta")) %>%
-    dag_plate("School Name","school",
-              nodeLabels = "schoolEffect",
-              data = causact::schoolsDF$schoolName,
-              addDataNode = TRUE)
+## get only the experiments with partner present
+chimpDF = causact::chimpanzeesDF %>% filter(condition == 1)
+## create model
+graph = dag_create() %>% 
+  dag_node("Pull Left","L",
+           rhs = bernoulli(theta),
+           data = chimpDF$pulled_left) %>% 
+  dag_node("Prob. Pull Left","theta",
+           rhs = 1 / (1 + exp(-y)),
+           child = "L") %>% 
+  dag_node("Linear Predictor","y",
+           rhs = alpha + alpha_i + beta * prosoc_left,
+           child = "theta") %>% 
+  dag_node("Global Intercept","alpha",
+          rhs = normal(0,10)) %>%
+  dag_node("Actor Intercept","alpha_i",
+           rhs = normal(0,sigma_i)) %>% 
+  dag_node("Prosocial Coefficient","beta",
+           rhs = normal(0,10)) %>% 
+  dag_node("Left Prosocial Flag","prosoc_left",
+           data = chimpDF$prosoc_left) %>%
+  dag_edge(c("alpha","alpha_i","beta","prosoc_left"),"y") %>% 
+  dag_node("Actor Variability","sigma_i",
+           rhs = cauchy(0,1,trunc = c(0,Inf)),
+           child = "alpha_i") %>% 
+  dag_plate("Actor","i",
+            nodeLabels = c("alpha_i"),
+            data = chimpDF$actor,
+            addDataNode = TRUE) %>%
+  dag_plate("Observation","j",
+            nodeLabels = c("prosoc_left","i","y","theta","L"))
 graph %>% dag_render()
 ```
 
 <center>
-![A generative DAG of the eight schools model.\label{fig:eightSchools}](eightSchools.png){ width=98% }
+![A generative DAG of modelling chimpanzee behavior.\label{fig:chimps}](chimps.png){ width=98% }
 </center>
 
-\autoref{fig:eightShort} replicates \autoref{fig:eightSchools} without math for less intimidating discussions with domain experts about the model using the `shortLabel = TRUE` argument (shown below).  `causact` does not require a complete model specification prior to rendering the DAG, hence, `causact` facilitates qualitative collaboration on the model design between less technical domain experts and the model builder.
+\autoref{fig:chimpShort} replicates \autoref{fig:chimps} without math for less intimidating discussions with domain experts about the model using the `shortLabel = TRUE` argument (shown below).  `causact` does not require a complete model specification prior to rendering the DAG, hence, `causact` facilitates qualitative collaboration on the model design between less technical domain experts and the model builder.
 
 ```r
 graph %>% dag_render(shortLabel = TRUE)
 ```
 
 <center>
-![Hiding mathematical details to facilitate collaborations with domain experts.\label{fig:eightShort}](eightShort.png){ width=98% }
+![Hiding mathematical details to facilitate collaborations with domain experts.\label{fig:chimpShort}](chimpShort.png){ width=98% }
 </center>
 
-All visualizations, including \autoref{fig:eightSchools} and \autoref{fig:eightShort}, are created via `causact`'s calls to the `DiagrammeR` package [@iannone20].  The `dag_diagrammer()` function can convert a `causact_graph` to a `dgr_graph` (the main object when using `DiagrammeR`) for further customizing of a visualization using the `DiagrammeR` package. 
+All visualizations, including \autoref{fig:chimps} and \autoref{fig:chimpShort}, are created via `causact`'s calls to the `DiagrammeR` package [@iannone20].  The `dag_diagrammer()` function can convert a `causact_graph` to a `dgr_graph` (the main object when using `DiagrammeR`) for further customizing of a visualization using the `DiagrammeR` package. 
 
-Sampling from the posterior of the eight schools model (\autoref{fig:eightSchools}) does not require a user to write PPL code, but rather a user will simply pass the generative DAG object to `dag_greta()` and then inspect the data frame of posterior draws:
+Sampling from the posterior of the chimpanzee model (\autoref{fig:chimps}) does not require a user to write PPL code, but rather a user will simply pass the generative DAG object to `dag_greta()` and then inspect the data frame of posterior draws:
 
 ```r
 library(greta) ## greta uses TensorFlow to get sample
@@ -102,23 +112,21 @@ drawsDF
 ```
 
 ```
-## # A tibble: 4,000 x 9
-##    avgEffect schoolEffect_Sc~ schoolEffect_Sc~ schoolEffect_Sc~
-##        <dbl>            <dbl>            <dbl>            <dbl>
-##  1     0.102            40.1              3.59            -4.51
-##  2     4.59             23.6              4.43           -26.3 
-##  3    -0.451            18.5             24.3             16.5 
-##  4    18.9               8.07           -26.3            -28.6 
-##  5    17.3              -5.83            -4.25           -26.2 
-##  6     1.97             42.7              2.25            12.6 
-##  7    12.7             -11.2              5.31           -16.5 
-##  8     9.11            -17.4              9.09           -12.7 
-##  9    -3.74             71.5              1.82            23.6 
-## 10    -2.43             48.2            -13.3              2.89
-## # ... with 3,990 more rows, and 5 more variables:
-## #   schoolEffect_School4 <dbl>, schoolEffect_School5 <dbl>,
-## #   schoolEffect_School6 <dbl>, schoolEffect_School7 <dbl>,
-## #   schoolEffect_School8 <dbl>
+## # A tibble: 4,000 x 10
+##     alpha alpha_i_1 alpha_i_2 alpha_i_3 alpha_i_4 alpha_i_5 alpha_i_6
+##     <dbl>     <dbl>     <dbl>     <dbl>     <dbl>     <dbl>     <dbl>
+##  1  0.227    -1.01       3.58     -1.40    -1.50     -0.963    0.133 
+##  2  0.227    -1.01       3.58     -1.40    -1.50     -0.963    0.133 
+##  3 -0.204    -0.489      3.84     -1.43    -1.14     -0.253    0.863 
+##  4  0.221    -0.503      3.83     -1.30    -0.835    -0.212    0.0866
+##  5  0.189    -1.54       3.99     -1.27    -1.85     -1.60     0.0299
+##  6  1.14     -1.58       2.20     -3.06    -2.58     -2.00    -1.41  
+##  7 -0.195    -0.405      2.75     -1.53    -0.849    -0.750   -0.481 
+##  8  0.832    -2.04       2.96     -3.12    -2.65     -1.67    -1.71  
+##  9  1.91     -2.78       1.78     -3.98    -3.15     -2.97    -2.46  
+## 10  1.01     -2.52       6.37     -2.74    -3.09     -2.37    -0.957 
+## # ... with 3,990 more rows, and 3 more variables: alpha_i_7 <dbl>,
+##   beta <dbl>, sigma_i <dbl>
 ```
 
 Behind the scenes, `causact` creates the model's code equivalent using the `greta` PPL, but this is typically hidden from the user.  However, for debugging or further customizing a model, the `greta` code can be printed to the screen without executing it by setting the `mcmc` argument to `FALSE`:
@@ -128,15 +136,18 @@ graph %>% dag_greta(mcmc=FALSE)
 ```
 
 ```
-## sigma <- as_data(causact::schoolsDF$sigma)   #DATA
-## y <- as_data(causact::schoolsDF$y)           #DATA
-## school     <- as.factor(causact::schoolsDF$schoolName)   #DIM
-## school_dim <- length(unique(school))   #DIM
-## schoolEffect <- normal(mean = 0, sd = 30, dim = school_dim) #PRIOR
-## avgEffect    <- normal(mean = 0, sd = 30)                   #PRIOR
-## theta  <- avgEffect + schoolEffect[school]   #OPERATION
-## distribution(y) <- normal(mean = theta, sd = sigma)   #LIKELIHOOD
-## gretaModel  <- model(avgEffect,schoolEffect)   #MODEL
+## prosoc_left <- as_data(chimpDF$prosoc_left)   #DATA
+## L <- as_data(chimpDF$pulled_left)             #DATA
+## i      <- as.factor(chimpDF$actor)   #DIM
+## i_dim  <- length(unique(i))   #DIM
+## alpha   <- normal(mean = 0, sd = 10)                            #PRIOR
+## beta    <- normal(mean = 0, sd = 10)                            #PRIOR
+## sigma_i <- cauchy(location = 0, scale = 1, trunc = c(0, Inf))   #PRIOR
+## alpha_i <- normal(mean = 0, sd = sigma_i, dim = i_dim)          #PRIOR
+## y      <- alpha + alpha_i[i] + beta * prosoc_left   #OPERATION
+## theta  <- 1 / (1 + exp(-y))                         #OPERATION
+## distribution(L) <- bernoulli(prob = theta)   #LIKELIHOOD
+## gretaModel  <- model(alpha,alpha_i,beta,sigma_i)   #MODEL
 ## meaningfulLabels(graph)
 ## draws       <- mcmc(gretaModel)              #POSTERIOR
 ## drawsDF     <- replaceLabels(draws) %>% as.matrix() %>%
@@ -144,7 +155,7 @@ graph %>% dag_greta(mcmc=FALSE)
 ## tidyDrawsDF <- drawsDF %>% addPriorGroups()  #POSTERIOR
 ```
 
-The produced `greta` code is shown in the above code snippet.  The code can be difficult to digest for some and exemplifies the advantages of working visually using `casuact`.  The above code is also challenging to write without error or misinterpretation.  Indexing is particularly tricky in PPL's with indexing based on meaningless numbers (e.g. 1,2,3,$\ldots$).  To facilitate quicker interpretation `causact` abbreviates posterior parameters using human-interpretable names.
+The produced `greta` code is shown in the above code snippet.  The code can be difficult to digest for some and exemplifies the advantages of working visually using `casuact`.  The above code is also challenging to write without error or misinterpretation.  Indexing is particularly tricky in PPL's and `causact` abbreviates posterior parameters using indexes consistent with the id data provided (e.g. `$as.factor(chimpDF$actor)$`).
 
 The output of `dag_greta()` is in the form of a data frame of draws from the joint posterior.  To facilitate a quick look into posterior estimates, the `dagp_plot()` function creates a simple visual of 90% credible intervals.  It is the only core function that does not take a graph as its first argument.  By grouping all parameters that share the same prior distribution and leveraging the meaningful parameter names constructed using `dag_greta()`, it allows for quick comparisons of parameter values.
 
@@ -153,10 +164,10 @@ drawsDF %>% dagp_plot()
 ```
 
 <center>
-  ![Credible intervals for the nine parameters of the eight schools model.\label{fig:eightPlot}](eightPlot.png){ width=78% }
+  ![Credible intervals for the nine parameters of the eight schools model.\label{fig:chimpPlot}](chimpPlot.png){ width=78% }
 </center>
 
-The code above makes the plot in \autoref{fig:eightPlot}.  For further posterior plotting, users would make their own plots using `ggplot2` [@wickham2016], `ggdist` [@kay2020], or similar.  For further model validation, including MCMC diagnostics, the user would use a package like `bayesplot` [@gabry2019visualization] or `shinystan` [@gabry2018].  For users who prefer to work with an `mcmc` object, they can extract the `draws` object after running the generated `greta` code from `dag_greta(mcmc=FALSE)` or find the object in the `cacheEnv` environment after running `dag_greta(mcmc=FALSE)` using `get("draws",envir = causact:::cacheEnv)`.  
+The code above makes the plot in \autoref{fig:chimpPlot}.  For further posterior plotting, users would make their own plots using `ggplot2` [@wickham2016], `ggdist` [@kay2020], or similar.  For further model validation, including MCMC diagnostics, the user would use a package like `bayesplot` [@gabry2019visualization] or `shinystan` [@gabry2018].  For users who prefer to work with an `mcmc` object, they can extract the `draws` object after running the generated `greta` code from `dag_greta(mcmc=FALSE)` or find the object in the `cacheEnv` environment after running `dag_greta(mcmc=FALSE)` using `get("draws",envir = causact:::cacheEnv)`.  
 
 # Comparison to Other Packages
 \label{sec:compare}
