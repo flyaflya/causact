@@ -50,9 +50,13 @@ To unify inference-problem narratives, the statistical models representing those
 
 Generative DAGs pursue two simultaneous goals.  One goal is to capture the narrative by building a conceptual understanding of the data generating process that lends itself to statistical modelling.  And the second goal is to gather all the mathematical elements needed for specifying a complete Bayesian model of the data generating process.  Both of these goals will be satisfied by iteratively assessing the narrative and the narrative's translation into rigorous mathematics using `causact` functions.
 
-Capturing the narrative in code uses some core `causact` functions like `dag_create()`, `dag_node()`, `dag_edge()`, and `dag_plate()` with the chaining operator `%>%` used to build a DAG from the individual elements.  `dag_render()` or `dag_greta()` are then used to visualize the DAG or run inference on the DAG, respectively.  The simplicity with which generative DAGs are constructed belies the complexity of models which can be supported.  For example, multi-level or hierarchical models are easily constructed as shown here in code for constructing and visualizing an experiment about chimpanzees [@mcelreath2020statistical] whose data is included in `causact` (`causact::chimpanzeesDF`).  Chimpanzees are given a choice to pull one of two levers - right or left.  Depending on the lever pulled, the chimpanzee is either prosocial, pulling the lever which feeds both himself and a partner, or not prosocial where only the lever-puller receives food.  
+Capturing the narrative in code uses the core `causact` functions `dag_create()`, `dag_node()`, `dag_edge()`, and `dag_plate()` which are connected via the chaining operator `%>%` to build a DAG.  `dag_render()` or `dag_greta()` are then used to visualize the DAG or run inference on the DAG, respectively.  The simplicity with which generative DAGs are constructed belies the complexity of models which can be supported.  For example, multi-level or hierarchical models are easily constructed as shown below in code for constructing and visualizing an experiment about chimpanzees [@mcelreath2020statistical]; related data is included in `causact` (`causact::chimpanzeesDF`).  Each chimpanzee "actor" is given a choice to pull one of two levers - right or left.  Depending on the lever pulled, the chimpanzee is either acting prosocially, pulling the lever which feeds both himself and a partner, or not prosocially where only the lever-pulling chimpanzee receives food.  \autoref{fig:chimps} depicts a varying intercepts model where a baseline proclivity to pull the left lever varies with each of the seven chimpanzee actors being observed. 
 
 ```r
+## load packages for example
+library(greta)
+library(causact)
+library(tidyverse)
 ## get only the experiments with partner present
 chimpDF = causact::chimpanzeesDF %>% filter(condition == 1)
 ## create model
@@ -167,7 +171,7 @@ drawsDF %>% dagp_plot()
   ![Credible intervals for the nine parameters of the eight schools model.\label{fig:chimpPlot}](chimpPlot.png){ width=90% }
 </center>
 
-The code above makes the plot in \autoref{fig:chimpPlot}.  For further posterior plotting, users would make their own plots using `ggplot2` [@wickham2016], `ggdist` [@kay2020], or similar.  For further model validation, including MCMC diagnostics, the user would use a package like `bayesplot` [@gabry2019visualization] or `shinystan` [@gabry2018].  For users who prefer to work with an `mcmc` object, they can extract the `draws` object after running the generated `greta` code from `dag_greta(mcmc=FALSE)` or find the object in the `cacheEnv` environment after running `dag_greta(mcmc=FALSE)` using `get("draws",envir = causact:::cacheEnv)`.  
+The code above makes the plot in \autoref{fig:chimpPlot} showing credible intervals for unobserved latent parameters.  For example, `alpha_i_2` represents a chimp with strong preference for pulling the left lever; this chimp is  affectionately referred to as "Lefty".  For further posterior plotting, users would make their own plots using `ggplot2` [@wickham2016], `ggdist` [@kay2020], or similar.  For further model validation, including MCMC diagnostics, the user would use a package like `bayesplot` [@gabry2019visualization] or `shinystan` [@gabry2018].  For users who prefer to work with an `mcmc` object, they can extract the `draws` object after running the generated `greta` code from `dag_greta(mcmc=FALSE)` or find the object in the `cacheEnv` environment after running `dag_greta(mcmc=FALSE)` using `get("draws",envir = causact:::cacheEnv)`.  
 
 # Comparison to Other Packages
 \label{sec:compare}
