@@ -159,7 +159,7 @@ graph %>% dag_greta(mcmc=FALSE)
 ## tidyDrawsDF <- drawsDF %>% addPriorGroups()  #POSTERIOR
 ```
 
-The produced `greta` code is shown in the above code snippet.  The code can be difficult to digest for some and exemplifies the advantages of working visually using `casuact`.  The above code is also challenging to write without error or misinterpretation.  Indexing is particularly tricky in PPL's and `causact` abbreviates posterior parameters using indexes consistent with the id data provided (e.g. `$as.factor(chimpDF$actor)$`).
+The produced `greta` code is shown in the above code snippet.  The code can be difficult to digest for some and exemplifies the advantages of working visually using `causact`.  The above code is also challenging to write without error or misinterpretation.  Indexing is particularly tricky in PPL's and `causact` abbreviates posterior parameters using indexes consistent with the id data provided (e.g. `$as.factor(chimpDF$actor)$`).
 
 The output of `dag_greta()` is in the form of a data frame of draws from the joint posterior.  To facilitate a quick look into posterior estimates, the `dagp_plot()` function creates a simple visual of 90% credible intervals.  It is the only core function that does not take a graph as its first argument.  By grouping all parameters that share the same prior distribution and leveraging the meaningful parameter names constructed using `dag_greta()`, it allows for quick comparisons of parameter values.
 
