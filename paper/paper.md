@@ -168,7 +168,7 @@ drawsDF %>% dagp_plot()
 ```
 
 <center>
-  ![Credible intervals for the nine parameters of the eight schools model.\label{fig:chimpPlot}](chimpPlot.png){ width=90% }
+  ![Visualizing credible intervals for latent parameters.\label{fig:chimpPlot}](chimpPlot.png){ width=90% }
 </center>
 
 The code above makes the plot in \autoref{fig:chimpPlot} showing credible intervals for unobserved latent parameters.  For example, `alpha_i_2` represents a chimp with strong preference for pulling the left lever; this chimp is  affectionately referred to as "Lefty".  For further posterior plotting, users would make their own plots using `ggplot2` [@wickham2016], `ggdist` [@kay2020], or similar.  For further model validation, including MCMC diagnostics, the user would use a package like `bayesplot` [@gabry2019visualization] or `shinystan` [@gabry2018].  For users who prefer to work with an `mcmc` object, they can extract the `draws` object after running the generated `greta` code from `dag_greta(mcmc=FALSE)` or find the object in the `cacheEnv` environment after running `dag_greta(mcmc=FALSE)` using `get("draws",envir = causact:::cacheEnv)`.  
