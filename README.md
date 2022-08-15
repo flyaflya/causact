@@ -8,6 +8,8 @@ status](https://www.r-pkg.org/badges/version/causact)](https://cran.r-project.or
 [![Codecov test
 coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)](https://app.codecov.io/gh/flyaflya/causact?branch=master)
 [![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6949489.svg)](https://doi.org/10.5281/zenodo.6949489)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.04415/status.svg)](https://doi.org/10.21105/joss.04415)
 <!-- badges: end -->
 
 # causact
@@ -126,16 +128,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 x 4
 #>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
 #>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.878          0.219          0.560          0.211
-#>  2          0.839          0.296          0.660          0.227
-#>  3          0.840          0.229          0.571          0.209
-#>  4          0.864          0.175          0.669          0.199
-#>  5          0.809          0.307          0.537          0.204
-#>  6          0.823          0.269          0.593          0.203
-#>  7          0.865          0.178          0.644          0.204
-#>  8          0.879          0.274          0.555          0.197
-#>  9          0.849          0.189          0.623          0.230
-#> 10          0.817          0.231          0.577          0.180
+#>  1          0.869          0.209          0.573          0.209
+#>  2          0.823          0.158          0.488          0.219
+#>  3          0.872          0.137          0.656          0.195
+#>  4          0.821          0.285          0.613          0.196
+#>  5          0.821          0.285          0.613          0.196
+#>  6          0.821          0.285          0.613          0.196
+#>  7          0.854          0.206          0.643          0.193
+#>  8          0.815          0.284          0.638          0.184
+#>  9          0.815          0.284          0.638          0.184
+#> 10          0.837          0.313          0.611          0.189
 #> # ... with 3,990 more rows
 ```
 
@@ -145,14 +147,7 @@ drawsDF  ### see top of data frame
 drawsDF %>% dagp_plot()
 ```
 
-<div class="figure">
-
-<img src="man/figures/gretaPost-1.png" alt="Credible interval plots." width="70%" />
-<p class="caption">
-Credible interval plots.
-</p>
-
-</div>
+<img src="man/figures/gretaPost-1.png" title="Credible interval plots." alt="Credible interval plots." width="70%" />
 
 ## Getting Help and Suggesting Improvements
 
