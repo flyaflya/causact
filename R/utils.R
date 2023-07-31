@@ -61,13 +61,13 @@ rhsDecompDistr = function(rhs) {
       distString[2:length(distString)]
   }
 
-  ## sort based on standard parameter ordering for greta
+  ## sort based on standard parameter ordering for greta or causact
   allArgsDF = data.frame(argName = allArgs, stringsAsFactors = FALSE) %>%
     dplyr::left_join(namedArgDF, by = "argName") %>%
     dplyr::select(-position)
   rm(namedArgDF)
 
-  ## for all greta distributions, one of the below words signals
+  ## for all greta or causact distributions, one of the below words signals
   ## the transition from parameter arguments to other arguments
   numParents = min(which(allArgs %in% c("dim", "dimension", "n_realisations"))) - 1  ## get number of dist paramaters
   if(rlang::is_empty(numParents)){ numParents = nrow(allArgsDF) }  ## some distributions are missing dim argument, so assume (for now) all arguments are parameters
@@ -176,7 +176,7 @@ rhsDecomp = function(rhs) {
   simpleRHS = FALSE  ## assume complex expression
 
   ## handle cases where just distribution name is supplied
-  ## if function in greta namespace, then assume distr
+  ## if function in greta or causact namespace, then assume distr
   notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind","icloglog","icauchit","log1pe","imultilogit","zeros","ones","greta_array","as_data","icloglog","icauchit","log1pe","imultlogit")
 
   if (is.symbol(distExpr)) {
