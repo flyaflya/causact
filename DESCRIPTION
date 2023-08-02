@@ -37,7 +37,7 @@ Imports:
     htmlwidgets (>= 1.5.1),
     rstudioapi (>= 0.11),
     lifecycle
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     covr,
@@ -49,7 +49,7 @@ VignetteBuilder: knitr
 Config/reticulate:
   list(
     packages = list(
-      list(package = "python", version = "3.11"),
+      list(package = "python", version = "3.11", pip = TRUE),
       list(package = "numpyro[cpu]", version = "0.12.1", pip = TRUE),
       list(package = "arviz", version = "0.15.1", pip = TRUE)
     )
