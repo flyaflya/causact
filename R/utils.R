@@ -273,12 +273,12 @@ rhsPriorComposition = function(graph) {
                                                   argDimLabels),  ## use cbind for R indexing
                                            "]"))) %>% ## add extraction index to label
     dplyr::group_by(.data$id,rhsID,rhs) %>%
-    dplyr::summarize(args = paste0(argName," = ",argValue,collapse = ", ")) %>%
+    dplyr::summarize(args = paste0(argName," = ",argValue,collapse = ", "), .groups = "drop_last") %>%
     dplyr::left_join(plateDimDF, by = c("id" = "nodeID")) %>%
     dplyr::mutate(indexLabel = ifelse(is.na(indexLabel) | indexLabel == "NA","",indexLabel)) %>%
     dplyr::mutate(indexLabel = ifelse(indexLabel == "","",paste0(indexLabel,"_dim"))) %>%
     dplyr::group_by(.data$id,rhsID,rhs,args) %>%
-    dplyr::summarize(indexLabel = paste0(indexLabel, collapse = ",")) %>%
+    dplyr::summarize(indexLabel = paste0(indexLabel, collapse = ","), .groups = "drop_last") %>%
     dplyr::mutate(indexLabel = ifelse(stringr::str_detect(indexLabel,","),
                                       paste0("c(",indexLabel,")"),
                                       indexLabel)) %>%
@@ -592,7 +592,7 @@ updateExtractArguments = function(graphWithDim) {
       dplyr::group_by(rhsID, argName, argType, argValue) %>%
       dplyr::summarize(
         argDimLabels = paste0(argDimLabels, collapse = ","),
-        minRowID = min(argID)
+        minRowID = min(argID), .groups = "drop_last"
       ) %>%
       dplyr::mutate(argDimLabels = gsub("NA,", "", argDimLabels)) %>%
       dplyr::mutate(argDimLabels = ifelse(argDimLabels == "NA", as.character(NA), argDimLabels)) %>%
