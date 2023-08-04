@@ -9,11 +9,10 @@ vignette: >
 
 
 
-This vignette illustrates how to use the `causact` package to reduce the friction experienced while going from business issues to computational Bayesian models, inference, and insight.  The package is easy-to-use, intuitive, and provides a visual interface to `greta`, an `R` based probabilistic programming language (PPL).  To get started load the required packages:
+This vignette illustrates how to use the `causact` package to reduce the friction experienced while going from business issues to computational Bayesian models, inference, and insight.  The package is easy-to-use, intuitive, and provides a visual interface to computational Bayesian inference, and allows `R` to access a probabilistic programming language (PPL).  To get started load the required packages:
 
 
 ```r
-library(greta)
 library(causact)
 ```
 
@@ -113,7 +112,7 @@ carModelDF   #show data
 #> # ... with 990 more rows
 ```
 
-We take a bottom-up approach starting with our target measurement _Get Card_ to add in mathematical details about how the data is generated.  Specifically, we declare any observation `x` to be a Bernoulli-distributed random variable with yet-to-be-defined parameter `theta`.  (For a list of supported distributions type `?greta::distributions`)
+We take a bottom-up approach starting with our target measurement _Get Card_ to add in mathematical details about how the data is generated.  Specifically, we declare any observation `x` to be a Bernoulli-distributed random variable with yet-to-be-defined parameter `theta`.  (For a list of supported distributions type `?causact::distributions`)
 
 To model additional nodes, consider any parameters on the right-hand side of the statistical model that remain undefined; in our case `theta` is undefined.  Hence, if $x \sim \textrm{Bernoulli}(\theta)$, then $\theta$ should be a parent node of $x$ in the graphical model.  And at this point, we say _ay caramba!_.  There is a mismatch between _Car Model_, the parent of _Get Card_ in the previous graphical model, and $\theta$, the implied parent of _Get Card_ using the statistical model.
 
@@ -133,11 +132,11 @@ graph %>% dag_render()
 
 <img src="theta44-1.png" title="Figure 3: A generative DAG for the credit card example." alt="Figure 3: A generative DAG for the credit card example." width="52%" style="display: block; margin: auto;" />
 
-The above generative recipe implies there is only one _true_ $\theta$ value - which is unknown so we place a flat uniform prior over all possible values for $\theta$. Given $\theta$, 1,000 observations are outcomes of Bernoulli trials using that one $\theta$ value.  The posterior distribution reallocates plausibility among $\theta$ values to those most consistent with our prior and data.  A representative sample from the posterior distribution is easily obtained using `dag_greta`:
+The above generative recipe implies there is only one _true_ $\theta$ value - which is unknown so we place a flat uniform prior over all possible values for $\theta$. Given $\theta$, 1,000 observations are outcomes of Bernoulli trials using that one $\theta$ value.  The posterior distribution reallocates plausibility among $\theta$ values to those most consistent with our prior and data.  A representative sample from the posterior distribution is easily obtained using `dag_numpyro`:
 
 
 ```r
-drawsDF = graph %>% dag_greta()
+drawsDF = graph %>% dag_numpyro()
 drawsDF %>% dagp_plot()
 ```
 
@@ -147,7 +146,7 @@ From this, a reasonable conclusion might be that plausible values for _Signup Pr
 
 ### Modelling the effect of car model with plates
 
-Our business narrative calls for the probability to change based on car model.  The `dag_plate()` function helps create a generative DAG where `theta` will vary based on car model.  A major difference between `greta` and `causact` is that the `causact` package shifts the burden of index creation to the computer.  A _plate_ signifies that the random variables inside of it should be repeated; thus, any oval inside a plate is indexed behind the scenes and effectively, a repeat instance is created for each member of the plate.  The system automatically adds the index to the model using the plate `label` for indexing notation. When using `dag_plate()` the following arguments prove most useful:
+Our business narrative calls for the probability to change based on car model.  The `dag_plate()` function helps create a generative DAG where `theta` will vary based on car model.  In comparison to mode probabilistic programming paradigms, the `causact` package shifts the burden of index creation to the computer instead of the analyst.  A _plate_ signifies that the random variables inside of it should be repeated; thus, any oval inside a plate is indexed behind the scenes and effectively, a repeat instance is created for each member of the plate.  The system automatically adds the index to the model using the plate `label` for indexing notation. When using `dag_plate()` the following arguments prove most useful:
 
 * `descr` - a character string representing a longer more descriptive label for the cluster/plate.
 * `label` - a short character string to use as an index label when generating code.
@@ -184,12 +183,12 @@ This generative DAG used one additional function call, `dag_plate()`, that resul
 
 > Expert tip: Observed-discrete random variables, like car model, are best modelled via plates.  Do not rush to add nodes or indexes for these random variables.  Let dag\_plate() do the work for you.
 
-Now, when we get the posterior distribution from our `greta` code, we get a representative sample of four $\theta$ values instead of one.
+Now, when we get the posterior distribution from our code, we get a representative sample of four $\theta$ values instead of one.
 
 
 ```r
 ## get representative sample
-drawsDF = graph %>% dag_greta(warmup = 400)
+drawsDF = graph %>% dag_numpyro(warmup = 400)
 ```
 
 Visualizing the posterior yields:

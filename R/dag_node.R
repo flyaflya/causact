@@ -6,7 +6,7 @@
 #' @param graph a graph object of class `causact_graph`.  An initial object gets created using `dag_create()`.
 #' @param descr a longer more descriptive character label for the node.
 #' @param label a shorter character label for referencing the node (e.g. "X","beta").
-#' @param rhs either a greta distribution such as `uniform, normal, lognormal, bernoulli,` etc. or an R expression. Greta distribution arguments are optional.  Valid values include `normal(mu,sigma)`,`greta::normal`, `normal`, and `normal(6,2)`.  R computation/expression examples include `alpha+beta*x` or `ilogit(alpha + gamma + beta)`.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.
+#' @param rhs either a distribution such as `uniform, normal, lognormal, bernoulli,` etc. or an R expression. Valid values include `normal(mu,sigma)`, `normal`, and `normal(6,2)`.  R computation/expression examples include `alpha+beta*x` or `1 / exp(-(alpha + beta * x))`.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.
 #' @param child an optional character vector of existing node labels.  Directed edges from the newly created node to the supplied nodes will be created.
 #' @param data a vector or data frame (with observations in rows and variables in columns).
 #' @param obs a logical value indicating whether the node is observed.  Assumed to be `TRUE` when `data` argument is given.
@@ -16,7 +16,6 @@
 #' @param det a logical value indicating whether the node is a deterministic function of its parents  Used to draw a double-line (i.e. peripheries = 2) around a shape when using `dag_render()`.  Assumed to be `TRUE` when `rhs` is a formula.
 #' @return a graph object of class `causact_graph` with an additional node(s).
 #' @examples
-#' library(greta)
 #' # Create an empty graph and add 2 nodes by using
 #' # the `dag_node()` function twice
 #' graph2 = dag_create() %>%
@@ -59,12 +58,12 @@
 #' graph %>% dag_render()
 #' \dontrun{
 #' # below requires Tensorflow installation
-#' graph %>% dag_greta(mcmc=TRUE)
+#' drawsDF = graph %>% dag_numpyro(mcmc=TRUE)
 #' tidyDrawsDF %>% dagp_plot()
 #' }
 #' @importFrom dplyr bind_rows filter
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy
-#' @importFrom greta uniform normal lognormal bernoulli binomial beta_binomial negative_binomial hypergeometric poisson gamma inverse_gamma weibull exponential pareto student laplace beta cauchy chi_squared logistic f multivariate_normal wishart lkj_correlation multinomial categorical dirichlet dirichlet_multinomial %*% apply backsolve chol2inv colMeans cov2cor colSums diag eigen forwardsolve identity rowMeans rowSums sweep tapply joint mixture variable zeros ones greta_array as_data iprobit ilogit icloglog icauchit log1pe imultilogit
+
 #' @export
 
 dag_node <- function(graph,

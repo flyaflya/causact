@@ -3,7 +3,7 @@
 \docType{data}
 \name{baseballData}
 \alias{baseballData}
-\title{Dataframe of 12,145 observations of baseball games in 2010}
+\title{Dataframe of 12,145 observations of baseball games in 2010 - 2014}
 \format{
 A data frame with 12145 rows and 5 variables:
 \describe{
@@ -18,6 +18,6 @@ A data frame with 12145 rows and 5 variables:
 baseballData
 }
 \description{
-Dataframe of 12,145 observations of baseball games in 2010
+Dataframe of 12,145 observations of baseball games in 2010 - 2014
 }
 \keyword{datasets}

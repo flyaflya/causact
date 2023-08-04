@@ -25,7 +25,7 @@ dag_node(
 
 \item{label}{a shorter character label for referencing the node (e.g. "X","beta").}
 
-\item{rhs}{either a greta distribution such as \verb{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Greta distribution arguments are optional.  Valid values include \code{normal(mu,sigma)},\code{greta::normal}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{ilogit(alpha + gamma + beta)}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.}
+\item{rhs}{either a distribution such as \verb{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Valid values include \code{normal(mu,sigma)}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x} or \code{1 / exp(-(alpha + beta * x))}.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.}
 
 \item{child}{an optional character vector of existing node labels.  Directed edges from the newly created node to the supplied nodes will be created.}
 
@@ -50,7 +50,6 @@ a graph object of class \code{causact_graph} with an additional node(s).
 Add a node to an existing \code{causact_graph} object. The graph object should be of class \code{causact_graph} and created using \code{dag_create()}.
 }
 \examples{
-library(greta)
 # Create an empty graph and add 2 nodes by using
 # the `dag_node()` function twice
 graph2 = dag_create() \%>\%
@@ -93,7 +92,7 @@ graph = dag_create() \%>\%
 graph \%>\% dag_render()
 \dontrun{
 # below requires Tensorflow installation
-graph \%>\% dag_greta(mcmc=TRUE)
+drawsDF = graph \%>\% dag_numpyro(mcmc=TRUE)
 tidyDrawsDF \%>\% dagp_plot()
 }
 }

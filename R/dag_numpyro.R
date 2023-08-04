@@ -1,11 +1,12 @@
 #' Generate a representative sample of the posterior distribution
 #' @description
-#' `r lifecycle::badge('experimental')`
-#'
-#' Generate a representative sample of the posterior distribution.  The input graph object should be of class `causact_graph` and created using `dag_create()`.  The specification of a completely consistent joint distribution is left to the user.  Helpful error messages are scheduled for future versions of the `causact` package.
+#' Generate a representative sample of the posterior distribution.  The input graph object should be of class `causact_graph` and created using `dag_create()`.  The specification of a completely consistent joint distribution is left to the user.
 #'
 #' @param graph a graph object of class `causact_graph` representing a complete and conistent specification of a joint distribution.
 #' @param mcmc a logical value indicating whether to sample from the posterior distribution.  When `mcmc=FALSE`, the numpyro code is printed to the console, but not executed.  The user can cut and paste the code to another script for running line-by-line.  This option is most useful for debugging purposes. When `mcmc=TRUE`, the code is executed and outputs a dataframe of posterior draws.
+#' @param num_warmups an integer value for the number of initial steps that will be discarded while the markov chain finds its way into the typical set.
+#' @param num_samples an integer value for the number of samples.
+#' @param seed an integer-valued random seed that serves as a starting point for a random number generator. By setting the seed to a specific value, you can ensure the reproducibility and consistency of your results.
 #' @param ... additional arguments to be passed onto `numpyro`.
 #' @return If `mcmc=TRUE`, returns a dataframe of posterior distribution samples corresponding to the input `causact_graph`.  Each column is a parameter and each row a draw from the posterior sample output.  If `mcmc=FALSE`, running `dag_numpyro` returns a character string of code that would help the user generate the posterior distribution
 #'
@@ -25,24 +26,35 @@
 #'             nodeLabels = "theta")
 #'
 #' graph %>% dag_render()
-#' gretaCode = graph %>% dag_greta(mcmc=FALSE)
+#' numpyroCode = graph %>% dag_numpyro(mcmc=FALSE)
 #' \dontrun{
 #' ## default functionality returns a data frame
-#' # below requires Tensorflow installation
-#' drawsDF = graph %>% dag_greta()
+#' # below requires numpyro installation
+#' drawsDF = graph %>% dag_numpyro()
 #' drawsDF %>% dagp_plot()
 #' }
-#' @importFrom dplyr bind_rows tibble left_join select add_row as_tibble group_indices row_number
+#' @importFrom dplyr bind_rows tibble left_join rowwise select add_row as_tibble group_indices row_number mutate filter
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
-#' @importFrom rlang enquo expr_text .data expr
+#' @importFrom rlang enquo expr_text .data expr is_na
 #' @importFrom igraph graph_from_data_frame topo_sort
 #' @importFrom tidyr gather
-#' @importFrom greta mcmc model as_data
+#' @import reticulate
 #' @export
 
 dag_numpyro <- function(graph,
                       mcmc = TRUE,
-                      ...) {
+                      num_warmup = 1000,
+                      num_samples = 4000,
+                      seed = 111) {
+
+  ## make sure reticulate autoconfigure is disabled when running this function - I do not think this is needed
+  # ac_flag <- Sys.getenv("RETICULATE_AUTOCONFIGURE")
+  # on.exit(
+  #   Sys.setenv(
+  #     RETICULATE_AUTOCONFIGURE = ac_flag
+  #   )
+  # )
+  # Sys.setenv(RETICULATE_AUTOCONFIGURE = FALSE)
 
   ## get graph object name for label statement
   graphName = rlang::as_name(rlang::ensym(graph))
@@ -109,28 +121,24 @@ dag_numpyro <- function(graph,
   dimStatements = NULL
   functionArguments = NULL
   coordLabelsStatements = NULL
-  priorStatements = NULL
-  opStatements = NULL
-  likeStatements = NULL
-  # use priorOpLikeDF to use topological order
-  # for prior, operation, and likelihood statements
-  priorOpLikeDF = data.frame(statement = as.character(NA),
-                             orderID = as.integer(NA),
-                             stringsAsFactors = FALSE)[-1,]
-  priorOpLikeStatements = NULL
+  codeStatements = NULL
   modelStatement = NULL
   posteriorStatement = NULL
 
   ###IMPORT:   Create code for import statements
   importStatements = "import numpy as np
-import numpyro
+import numpyro as npo
 import numpyro.distributions as dist
+import pandas as pd
 import arviz as az
 from jax import random
 from numpyro.infer import MCMC, NUTS
-from jax.scipy.special import expit as invLogit"
-
-
+from jax.numpy import transpose as t
+from jax.numpy import (exp, log, log1p, expm1, abs,
+                       mean, sqrt, sign, round,
+                       cos, sin, tan, cosh, sinh, tanh,
+                       sum, prod, min, max, cumsum, cumprod )
+## note that above is from JAX numpy package, not numpy.\n"
 
   ###DATA:  Create Code for Data Lines (Nodes that are not in plates)
   lhsNodesDF = nodeDF %>%
@@ -139,7 +147,8 @@ from jax.scipy.special import expit as invLogit"
     dplyr::mutate(codeLine = paste0(auto_label,
                              " = ",
                              "np.array(",
-                             paste0("r.",data,
+                             paste0("r.",
+                                    gsub("\\$", ".",data),
                              ")"))) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #DATA"))
 
@@ -185,102 +194,122 @@ sep = "\n")
       }
 
     ### DEFINE NUMPYRO FUNCTION
+    functionName = paste0(graphName,"_model")
     numPyFunStartStatement = paste0(
-      paste0("def ",graphName,"_model("),
+      paste0("def ",functionName,"("),
       paste(functionArguments,sep = ","),
       "):")
 
     ### alter nodeDF to have numpyro code
     ### first, add unobserved distribution node code
-    nodeDF %>%
-      rowwise() %>%
-      mutate(codeLine =
-               ifelse(distr==TRUE & obs == FALSE,
-                      paste0(auto_label,
-                             " = ",
-                             rlang::eval_tidy(rlang::parse_expr(auto_rhs))),NA)) %>%
-      select(codeLine)
+    modelCodeDF =     nodeDF %>%
+    ## get rid of data only nodes - not part of likelihood
+    filter(!(obs == TRUE & distr == FALSE)) %>%
+    ## narrow down columns to useful ones
+    select(id, rhs, obs, rhsID, distr, auto_label, auto_data, dimID, auto_rhs, dec, det, nodeOrder) %>%
+    ## add in plate dimension labels
+    left_join(dimDF %>% filter(dimType == "plate") %>%
+                select(dimID, dimLabel), by = "dimID") %>%
+    rowwise() %>%
+    ## create code lines for unobserved RV's
+    mutate(codeLine = NA) %>% ##init column
+    mutate(codeLine =
+             ifelse(distr==TRUE & obs == FALSE,
+                    paste0(
+                      auto_label,
+                           " = npo.sample('",
+                      auto_label, "', ",
+                      rlang::eval_tidy(
+                        rlang::parse_expr(auto_rhs)),
+                      ")"),
+                    codeLine)) %>%
+    ## create code lines for observed RV's - likelihoods
+    mutate(codeLine =
+             ifelse(distr==TRUE & obs == TRUE,
+                    paste0(
+                      auto_label,
+                      " = npo.sample('",
+                      auto_label, "', ",
+                      rlang::eval_tidy(
+                        rlang::parse_expr(auto_rhs)),
+                      ",obs=",auto_label,")"),
+                    codeLine)) %>%
+    ## create code lines for deterministic RV's -- operations
+    mutate(codeLine =
+             ifelse((distr==FALSE & obs==FALSE),
+                    paste0(
+                      auto_label,
+                      " = npo.deterministic('",
+                      auto_label, "', ",
+                      ## replace R power(^) with python power(**)
+                      gsub("\\^", "**", auto_rhs),
+                      ")"),
+                    codeLine)) %>%
+      select(dimLabel,codeLine,auto_label)
 
+  ###Create MODEL function BODY using codeLines from above
+    # Using a for loop to iterate over rows
+    prevDimLabel = NA
+    modelStatement = "\t## Define random variables and their relationships"
+    for (i in 1:nrow(modelCodeDF)) {
+      currDimLabel = modelCodeDF$dimLabel[i]
+      ## node not on plate
+      if (rlang::is_na(currDimLabel)) {
+        numTabs = 1
+        ## for not null add to existing statements
+        if (!(rlang::is_null(modelStatement))) {
+          modelStatement =
+            paste(modelStatement,paste0(paste(rep("\t",
+                                          numTabs),
+                                     collapse = ""),
+                                  modelCodeDF$codeLine[i]),
+                sep = "\n")
+          } else { ## initialize modelStatement
+            modelStatement =
+              paste0(paste(rep("\t",
+                               numTabs),
+                           collapse = ""),
+                     modelCodeDF$codeLine[i])
+          }
+      }
+      ## additional line for starting plate
+      if (!rlang::is_na(currDimLabel) & !identical(currDimLabel,prevDimLabel)) {
+        numTabs = 1
+        newLine = paste0("with npo.plate('",
+                         currDimLabel,"_dim",
+                         "',",currDimLabel,
+                         "_dim):")
+        modelStatement = paste(modelStatement,
+                               paste0(paste(rep("\t",
+                                        numTabs),
+                                   collapse = ""),
+                                    newLine),
+              sep = "\n")
+      }
+      ## node on plate
+      if (!rlang::is_na(currDimLabel)) {
+        numTabs = 2
+        modelStatement =
+          paste(modelStatement,paste0(paste(rep("\t",
+                                          numTabs),
+                                      collapse = ""),
+                                     modelCodeDF$codeLine[i]),
+                sep = "\n")
+      }
+      prevDimLabel = currDimLabel
+    }
 
-  ### Prior, Operations, and Likelihood Get Sorted by Topological Order
-
-  ###PRIOR:  Create code for prior lines
-  ###create dataframe of dataNodes and their data
-
-
-  #update auto_rhs to use cbind for R indexing if there is a comma in it
-
-  lhsNodesDF = nodeDF %>%
-    dplyr::filter(distr == TRUE & obs == FALSE) %>%
-    dplyr::mutate(codeLine = paste0(abbrevLabelPad(auto_label),
-                             " = ",
-                             auto_rhs)) %>%
-    dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #PRIOR"))
-
-  ###Aggregate Code Statements for PRIOR
-  priorStatements = paste(lhsNodesDF$codeLine,
-                          sep = "\n")
-  priorOpLikeDF = dplyr::bind_rows(priorOpLikeDF,
-                                   data.frame(statement = priorStatements,
-                                              orderID = lhsNodesDF$nodeOrder,
-                                              stringsAsFactors = FALSE))
-
-  ###OPERATION:  Create code for OPERATION lines
-  lhsNodesDF = nodeDF %>%
-    dplyr::filter(!is.na(rhs) & distr == FALSE) %>%
-    dplyr::mutate(codeLine = paste0(abbrevLabelPad(auto_label),
-                             " = ",
-                             auto_rhs)) %>%
-    dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #OPERATION"))
-
-  ###Aggregate Code Statements for OPERATION
-  opStatements = paste(lhsNodesDF$codeLine,
-                       sep = "\n")
-  priorOpLikeDF = dplyr::bind_rows(priorOpLikeDF,
-                                   data.frame(statement = opStatements,
-                                              orderID = lhsNodesDF$nodeOrder,
-                                              stringsAsFactors = FALSE))
-
-  ###LIKELIHOOD:  Create code for LIKELIHOOD lines
-  lhsNodesDF = nodeDF %>%
-    dplyr::filter(obs == TRUE) %>%  ##only observed nodes
-    dplyr::inner_join(edgeDF, by = c("id" = "to")) %>% # only nodes with parents
-    dplyr::distinct(.data$id,auto_label,auto_rhs,nodeOrder) %>%
-    dplyr::mutate(codeLine = paste0(abbrevLabelPad(
-      paste0("distribution(",
-             auto_label,
-             ")")
-    ),
-    " = ",
-    auto_rhs)) %>%
-    dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #LIKELIHOOD"))
-
-  ###Aggregate Code Statements for LIKELIHOOD
-  likeStatements = paste(lhsNodesDF$codeLine,
-                         sep = "\n")
-  priorOpLikeDF = dplyr::bind_rows(priorOpLikeDF,
-                                   data.frame(statement = likeStatements,
-                                              orderID = lhsNodesDF$nodeOrder,
-                                              stringsAsFactors = FALSE))
-
-  ### Use topological ordering
-  if(nrow(priorOpLikeDF) > 0){
-    priorOpLikeStatements = priorOpLikeDF %>%
-      dplyr::arrange(orderID) %>%
-      dplyr::pull(statement)
-  }
-
-  ###Create MODEL Statement
   # get all non-observed / non-formula nodes by default
   # that are not discrete distributions
   discDists = c("bernoulli","binomial","beta_binomial",
                 "negative_binomial","hypergeometric",
-                "poisson","multinomial","categorical",
-                "dirichlet_multinomial")
+                "poisson","multinomial","categorical")
   unobservedNodes = graphWithDim$nodes_df %>%
     dplyr::filter(obs == FALSE & distr == TRUE) %>%
     dplyr::filter(!(rhs %in% discDists))%>%
     dplyr::pull(auto_label)
+
+
 
   #group unobserved nodes by their rhs for later plotting by ggplot
   #all nodes sharing the same prior will be graphed on the same scale
@@ -302,27 +331,33 @@ sep = "\n")
 
   assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
 
-  modelStatement = paste0("gretaModel  = model(",
-                          paste0(unobservedNodes, collapse = ","),
-                          ")   #MODEL")
-
   ###Create POSTERIOR draws statement
   if (mcmc == TRUE) {  ##clear cacheEnv make sure priorGrp is restored
+    ## ensure expected numpyro environment is available
+    # Check if the environment is set up
+    if (!getOption("causact_env_setup", default = FALSE)) {
+      message("In order to use dag_numpyro() for computational Bayesian inference, you must configure a conda Python environment called 'r-causact'.")
+      message("To do this, run install_causact_deps().")
+      return(invisible())
+    }
+
     rmExpr = rlang::expr(rm(list = ls()))
     eval(rmExpr, envir = cacheEnv)  ## clear cacheEnv
     assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
-    meaningfulLabels(graphWithDim)  ###assign meaningful labels in cacheEnv
-    labelStatement = NULL
+  } # end if mcmc=TRUE
+
+  posteriorStatement = paste0("\n# computationally get posterior\nmcmc = MCMC(NUTS(",functionName,"), num_warmup = ",num_warmup,", num_samples = ",num_samples,")")
+
+  rngStatement = paste0("rng_key = random.PRNGKey(seed = ",
+                        seed,")")
+  if (!rlang::is_null(functionArguments)) {
+    runStatement = paste0("mcmc.run(rng_key,",functionArguments,")")
   } else {
-  labelStatement = paste0("meaningfulLabels(",
-                          graphName,
-                          ")") ###assign meaningful labels in cacheEnv
+    runStatement = paste0("mcmc.run(rng_key)")
   }
-  extraArgList = list(...)
-  extraArgString = paste0(paste0(names(extraArgList)," = ", as.character(extraArgList)), collapse = ",")
-  mcmcArgs = ifelse(extraArgString == " = ","gretaModel",paste("gretaModel",extraArgString, sep = ","))
-  posteriorStatement = paste0("draws       = mcmc(",mcmcArgs,")              #POSTERIOR\ndrawsDF     = replaceLabels(draws) %>% as.matrix() %>%
-                dplyr::as_tibble()           #POSTERIOR\ntidyDrawsDF = drawsDF %>% addPriorGroups()  #POSTERIOR\n")
+
+  ## format posterior dataframe
+  drawsDFStatement = "drawsDF = 17"
 
   ##########################################
   ###Aggregate all code
@@ -332,30 +367,45 @@ sep = "\n")
                      dimStatements,
                      coordLabelsStatements,
                      numPyFunStartStatement,
-                     priorOpLikeStatements,
                      modelStatement,
-                     labelStatement,
-                     posteriorStatement)
+                     posteriorStatement,
+                     rngStatement,
+                     runStatement,
+                     drawsDFStatement)
 
   #codeStatements
+  ## wrap python code in R to get posterior draws
+  codeRun = paste0('reticulate::py_run_string("\n',
+                   paste(codeStatements, collapse = '\n'),
+                   '"\n) ## END PYTHON STRING\n',
+                   "drawsDF = py$drawsDF")
 
-  ###print out greta Code as text for user to use
+  ###print out Code as text for user to use
   if(mcmc == FALSE){
-    codeForUser = paste0("## The below Python code will return a posterior distribution \n## for the given DAG. Use dag_numpyro(mcmc=TRUE) to return a data frame of\n## the posterior distribution: \n",
-         paste(codeStatements, collapse = '\n'))
+    codeForUser = paste0("\n## The below code will return a posterior distribution \n## for the given DAG. Use dag_numpyro(mcmc=TRUE) to return a\n## data frame of the posterior distribution: \n",codeRun)
     message(codeForUser)
   }
 
   ##EVALUATE CODE IN cacheEnv ENVIRONMENT
   ##make expression out of Code Statements
-  ###BELOW LINE COMMENTED FOR DAG_NUMPYRO TESTING
-  #codeExpr = parse(text = codeStatements)
+  ###BELOW LINE COMMENTED DURING DAG_NUMPYRO TESTING
+  codeExpr = parse(text = codeRun)
 
   ##eval expression - use original graph without DIM
   if(mcmc == TRUE) {
+
     eval(codeExpr, envir = cacheEnv) ## evaluate in other env
     ###return data frame of posterior draws
-    return(cacheEnv$drawsDF)
+    return(py$drawsDF)
   }
   return(invisible(codeForUser))  ## just print code
 }
+
+## install utility function
+#' Check if 'r-causact' Conda environment exists
+check_r_causact_env <- function() {
+  env_list <- reticulate::conda_list()
+  "r-causact" %in% env_list$name
+}
+
+

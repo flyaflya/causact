@@ -12,8 +12,7 @@
 #'
 #' @param
 #'   sd,sdlog,sigma,lambda,shape,rate,df,scale,shape1,shape2,alpha,beta,df1,df2,a,b,eta
-#'    positive parameters, `alpha` must be a vector for `dirichlet`
-#'   and `dirichlet_multinomial`.
+#'    positive parameters, `alpha` must be a vector for `dirichlet`.
 #'
 #' @param size,m,n,k positive integer parameter
 #'
@@ -27,12 +26,9 @@
 #'
 #' @param dimension the dimension of a multivariate distribution
 #'
-#' @param n_realisations the number of independent realisation of a multivariate
-#'   distribution
-#'
 #' @details The discrete probability distributions (`bernoulli`,
 #'   `binomial`, `negative_binomial`, `poisson`,
-#'   `multinomial`, `categorical`, `dirichlet_multinomial`) can
+#'   `multinomial`, `categorical`) can
 #'   be used when they have fixed values, but not as unknown variables.
 #'
 #'   For univariate distributions `dim` gives the dimensions of the array to create. Each element will be (independently)
@@ -42,8 +38,8 @@
 #'   one another).
 #'
 #'   For multivariate distributions (`multivariate_normal()`,
-#'   `multinomial()`, `categorical()`, `dirichlet()`, and
-#'   `dirichlet_multinomial()`) each row of the output and parameters
+#'   `multinomial()`, `categorical()`, and `dirichlet()`
+#'   each row of the output and parameters
 #'   corresponds to an independent realisation. If a single realisation or
 #'   parameter value is specified, it must therefore be a row vector (see
 #'   example). `n_realisations` gives the number of rows/realisations, and
@@ -63,13 +59,13 @@
 #'   between 0 and 1, and then transforming it to the required scale. See below
 #'   for an example.
 #'
-#'   Wherever possible, the parameterisations and argument names of greta
+#'   Wherever possible, the parameterisations and argument names of causact
 #'   distributions match commonly used R functions for distributions, such as
 #'   those in the `stats` or `extraDistr` packages. The following
-#'   table states the distribution function to which greta's implementation
-#'   corresponds:
+#'   table states the distribution function to which causact's implementation
+#'   corresponds (this code largely borrowed from the greta package):
 #'
-#'   \tabular{ll}{ greta \tab reference\cr `uniform` \tab
+#'   \tabular{ll}{ causact \tab reference\cr `uniform` \tab
 #'   [stats::dunif]\cr `normal` \tab
 #'   [stats::dnorm]\cr `lognormal` \tab
 #'   [stats::dlnorm]\cr `bernoulli` \tab
@@ -95,10 +91,6 @@
 #'   [stats::dmultinom]\cr `categorical` \tab
 #'   {[stats::dmultinom] (size = 1)}\cr `dirichlet`
 #'   \tab [extraDistr::ddirichlet]\cr
-#'   `dirichlet_multinomial` \tab
-#'   [extraDistr::ddirmnom]\cr `wishart` \tab
-#'   [stats::rWishart]\cr `lkj_correlation` \tab
-#'   [rethinking::dlkjcorr](https://rdrr.io/github/rmcelreath/rethinking/man/dlkjcorr.html)
 #'   }
 #'
 #' @examples
@@ -152,14 +144,22 @@ NULL
 #' @rdname distributions
 #' @export
 uniform <- function(min, max, dim = NULL) {
-  paste0("dist.Uniform(",min,",",max,")")
+  min_quo <- rlang::enquo(min)
+  min_name <- rlang::quo_name(min_quo)
+  max_quo <- rlang::enquo(max)
+  max_name <- rlang::quo_name(max_quo)
+  paste0("dist.Uniform(",min_name,",",max_name,")")
 }
 
 #' @rdname distributions
 #' @export
 normal <- function(mean, sd, dim = NULL, truncation = c(-Inf, Inf)) {
+  mean_quo <- rlang::enquo(mean)
+  mean_name <- rlang::quo_name(mean_quo)
+  sd_quo <- rlang::enquo(sd)
+  sd_name <- rlang::quo_name(sd_quo)
   if (identical(truncation, c(-Inf, Inf))){
-    numpyroCode = paste0("dist.Normal(",mean,",",sd,")") }
+    numpyroCode = paste0("dist.Normal(",mean_name,",",sd_name,")") }
   else {
     kwargs = NULL
     if (truncation[1] != -Inf) {
@@ -168,93 +168,145 @@ normal <- function(mean, sd, dim = NULL, truncation = c(-Inf, Inf)) {
     if (truncation[2] != Inf) {
       kwargs = paste0(kwargs,",high=",truncation[2])
     }
-    numpyroCode = paste0("dist.TruncatedNormal(",mean,",",sd,kwargs,")") }
+    numpyroCode = paste0("dist.TruncatedNormal(",mean_name,",",sd_name,kwargs,")") }
   return(numpyroCode)
   }
 
 #' @rdname distributions
 #' @export
 lognormal <- function(meanlog, sdlog, dim = NULL) {
-    paste0("dist.LogNormal(",meanlog,",",sdlog,")")
+  meanlog_quo <- rlang::enquo(meanlog)
+  meanlog_name <- rlang::quo_name(meanlog_quo)
+  sdlog_quo <- rlang::enquo(sdlog)
+  sdlog_name <- rlang::quo_name(sdlog_quo)
+  paste0("dist.LogNormal(",meanlog_name,",",sdlog_name,")")
 }
 
 #' @rdname distributions
 #' @export
 bernoulli <- function(prob, dim = NULL) {
-  paste0("dist.Bernoulli(",prob,")")
+  prob_quo <- rlang::enquo(prob)
+  prob_name <- rlang::quo_name(prob_quo)
+  paste0("dist.Bernoulli(",prob_name,")")
 }
 
 #' @rdname distributions
 #' @export
 binomial <- function(size, prob, dim = NULL) {
-  paste0("dist.Binomial(",size,",",prob,")")
+  size_quo <- rlang::enquo(size)
+  size_name <- rlang::quo_name(size_quo)
+  prob_quo <- rlang::enquo(prob)
+  prob_name <- rlang::quo_name(prob_quo)
+  paste0("dist.Binomial(",size_name,",",prob_name,")")
 }
 
 #' @rdname distributions
 #' @export
 negative_binomial <- function(size, prob, dim = NULL) {
-  paste0("dist.NegativeBinomial(",size,",",prob,")")
+  size_quo <- rlang::enquo(size)
+  size_name <- rlang::quo_name(size_quo)
+  prob_quo <- rlang::enquo(prob)
+  prob_name <- rlang::quo_name(prob_quo)
+  paste0("dist.NegativeBinomial(",size_name,",",prob_name,")")
 }
 
 #' @rdname distributions
 #' @export
 poisson <- function(lambda, dim = NULL) {
-  paste0("dist.Poisson(",lambda,")")
+  lambda_quo <- rlang::enquo(lambda)
+  lambda_name <- rlang::quo_name(lambda_quo)
+  paste0("dist.Poisson(",lambda_name,")")
 }
 
 #' @rdname distributions
 #' @export
 gamma <- function(shape, rate, dim = NULL) {
-  paste0("dist.Gamma(",shape,",",rate,")")
+  shape_quo <- rlang::enquo(shape)
+  shape_name <- rlang::quo_name(shape_quo)
+  rate_quo <- rlang::enquo(rate)
+  rate_name <- rlang::quo_name(rate_quo)
+  paste0("dist.Gamma(",shape_name,",",rate_name,")")
 }
 
 #' @rdname distributions
 #' @export
 inverse_gamma <- function(alpha, beta, dim = NULL, truncation = c(0, Inf)) {
-  paste0("dist.InverseGamma(",shape,",",rate,")")
+  alpha_quo <- rlang::enquo(alpha)
+  alpha_name <- rlang::quo_name(alpha_quo)
+  beta_quo <- rlang::enquo(beta)
+  beta_name <- rlang::quo_name(beta_quo)
+  paste0("dist.InverseGamma(",alpha_name,",",beta_name,")")
 }
 
 #' @rdname distributions
 #' @export
 weibull <- function(shape, scale, dim = NULL) {
-  distrib("dist.Weibull(", scale, ",",1/shape,")")
+  shape_quo <- rlang::enquo(shape)
+  shape_name <- rlang::quo_name(shape_quo)
+  scale_quo <- rlang::enquo(scale)
+  scale_name <- rlang::quo_name(scale_quo)
+  paste0("dist.Weibull(", scale_name, ",","1/",shape_name,")")
 }
 
 #' @rdname distributions
 #' @export
 exponential <- function(rate, dim = NULL) {
-  paste0("dist.Exponential(",lambda,")")
+  lambda_quo <- rlang::enquo(lambda)
+  lambda_name <- rlang::quo_name(lambda_quo)
+  paste0("dist.Exponential(",lambda_name,")")
 }
 
 #' @rdname distributions
 #' @export
 pareto <- function(a, b, dim = NULL) {
-  paste0("dist.Pareto(",a,",",b,")")
+  a_quo <- rlang::enquo(a)
+  a_name <- rlang::quo_name(a_quo)
+  b_quo <- rlang::enquo(b)
+  b_name <- rlang::quo_name(b_quo)
+  paste0("dist.Pareto(",a_name,",",b_name,")")
 }
 
 #' @rdname distributions
 #' @export
 student <- function(df, mu, sigma, dim = NULL, truncation = c(-Inf, Inf)) {
-  paste0("dist.StudentT(",df,",",mu,",",sigma,")")
+  df_quo <- rlang::enquo(df)
+  df_name <- rlang::quo_name(df_quo)
+  mu_quo <- rlang::enquo(mu)
+  mu_name <- rlang::quo_name(mu_quo)
+  sigma_quo <- rlang::enquo(sigma)
+  sigma_name <- rlang::quo_name(sigma_quo)
+  paste0("dist.StudentT(",df_name,",",mu_name,",",sigma_name,")")
 }
 
 #' @rdname distributions
 #' @export
 laplace <- function(mu, sigma, dim = NULL, truncation = c(-Inf, Inf)) {
-  paste0("dist.Laplace(",mu,",",sigma,")")
+  mu_quo <- rlang::enquo(mu)
+  mu_name <- rlang::quo_name(mu_quo)
+  sigma_quo <- rlang::enquo(sigma)
+  sigma_name <- rlang::quo_name(sigma_quo)
+  paste0("dist.Laplace(",mu_name,",",sigma_name,")")
 }
 
 #' @rdname distributions
 #' @export
 beta <- function(shape1, shape2, dim = NULL) {
-  paste0("dist.Laplace(",shape1,",",shape2,")")
+  a_quo <- rlang::enquo(shape1)
+  a_name <- rlang::quo_name(a_quo)
+  b_quo <- rlang::enquo(shape2)
+  b_name <- rlang::quo_name(b_quo)
+  paste0("dist.Laplace(",a_name,",",b_name,")")
 }
 
 #' @rdname distributions
 #' @export
 cauchy <- function(location, scale, dim = NULL, truncation = c(-Inf, Inf)) {
+  mu_quo <- rlang::enquo(location)
+  mu_name <- rlang::quo_name(mu_quo)
+  sigma_quo <- rlang::enquo(scale)
+  sigma_name <- rlang::quo_name(sigma_quo)
   if (identical(truncation, c(-Inf, Inf))){
-    numpyroCode = paste0("dist.Cauchy(",location,",",scale,")") }
+    numpyroCode = paste0("dist.Cauchy(",mu_name,",",sigma_name,")") }
   else {
     kwargs = NULL
     if (truncation[1] != -Inf) {
@@ -263,50 +315,70 @@ cauchy <- function(location, scale, dim = NULL, truncation = c(-Inf, Inf)) {
     if (truncation[2] != Inf) {
       kwargs = paste0(kwargs,",high=",truncation[2])
     }
-    numpyroCode = paste0("dist.TruncatedCauchy(",location,",",scale,kwargs,")") }
+    numpyroCode = paste0("dist.TruncatedCauchy(",mu_name,",",sigma_name,kwargs,")") }
   return(numpyroCode)
 }
 
 #' @rdname distributions
 #' @export
 chi_squared <- function(df, dim = NULL) {
-  paste0("dist.Chi2(",df,")")
+  df_quo <- rlang::enquo(df)
+  df_name <- rlang::quo_name(df_quo)
+  paste0("dist.Chi2(",df_name,")")
 }
 
 #' @rdname distributions
 #' @export
 logistic <- function(location, scale, dim = NULL, truncation = c(-Inf, Inf)) {
-  paste0("dist.Logistic(",location,",",scale,")")
+  mu_quo <- rlang::enquo(location)
+  mu_name <- rlang::quo_name(mu_quo)
+  scale_quo <- rlang::enquo(scale)
+  scale_name <- rlang::quo_name(scale_quo)
+  paste0("dist.Logistic(",mu_name,",",scale_name,")")
 }
 
 # nolint start
 #' @rdname distributions
 #' @export
 multivariate_normal <- function(mean, Sigma, dimension = NULL) {
+  mu_quo <- rlang::enquo(mean)
+  mu_name <- rlang::quo_name(mu_quo)
+  sigma_quo <- rlang::enquo(Sigma)
+  sigma_name <- rlang::quo_name(sigma_quo)
   # nolint end
-  paste0("dist.MultivariateNormal(",mean,",covariance_matrix=",Sigma,")")
+  paste0("dist.MultivariateNormal(",mu_name,",covariance_matrix=",sigma_name,")")
 }
 
 #' @rdname distributions
 #' @export
 lkj_correlation <- function(eta, dimension = 2) {
-  paste0("dist.Logistic(",dimension,",",eta,")")
+  eta_quo <- rlang::enquo(eta)
+  eta_name <- rlang::quo_name(eta_quo)
+  paste0("dist.Logistic(",dimension,",",eta_name,")")
 }
 
 #' @rdname distributions
 #' @export
 multinomial <- function(size, prob, dimension = NULL) {
-  paste0("dist.Multinomial(",size,",",prob,")")
+  size_quo <- rlang::enquo(size)
+  size_name <- rlang::quo_name(size_quo)
+  prob_quo <- rlang::enquo(prob)
+  prob_name <- rlang::quo_name(prob_quo)
+  paste0("dist.Multinomial(",size_name,",",prob_name,")")
 }
 
 #' @rdname distributions
 #' @export
 categorical <- function(prob, dimension = NULL) {
-  paste0("dist.Categorical(",prob,")")
+  prob_quo <- rlang::enquo(prob)
+  prob_name <- rlang::quo_name(prob_quo)
+  paste0("dist.Categorical(",prob_name,")")
 }
 
 #' @rdname distributions
 #' @export
 dirichlet <- function(alpha, dimension = NULL) {
-  paste0("dist.Dirichlet(",alpha,")")
+  alpha_quo <- rlang::enquo(alpha)
+  alpha_name <- rlang::quo_name(alpha_quo)
+  paste0("dist.Dirichlet(",alpha_name,")")
 }

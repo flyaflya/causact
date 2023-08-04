@@ -61,13 +61,13 @@ rhsDecompDistr = function(rhs) {
       distString[2:length(distString)]
   }
 
-  ## sort based on standard parameter ordering for greta or causact
+  ## sort based on standard parameter ordering
   allArgsDF = data.frame(argName = allArgs, stringsAsFactors = FALSE) %>%
     dplyr::left_join(namedArgDF, by = "argName") %>%
     dplyr::select(-position)
   rm(namedArgDF)
 
-  ## for all greta or causact distributions, one of the below words signals
+  ## for all distributions, one of the below words signals
   ## the transition from parameter arguments to other arguments
   numParents = min(which(allArgs %in% c("dim", "dimension", "n_realisations"))) - 1  ## get number of dist paramaters
   if(rlang::is_empty(numParents)){ numParents = nrow(allArgsDF) }  ## some distributions are missing dim argument, so assume (for now) all arguments are parameters
@@ -176,27 +176,27 @@ rhsDecomp = function(rhs) {
   simpleRHS = FALSE  ## assume complex expression
 
   ## handle cases where just distribution name is supplied
-  ## if function in greta or causact namespace, then assume distr
-  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind","icloglog","icauchit","log1pe","imultilogit","zeros","ones","greta_array","as_data","icloglog","icauchit","log1pe","imultlogit")
+  ## if function in causact namespace other than below, assume distr
+  notDistrFunctions = c("%*%","eigen","iprobit","ilogit","colMeans","apply","abind","icloglog","icauchit","log1pe","imultilogit","zeros","ones","as_data","icloglog","icauchit","log1pe","imultlogit")
 
   if (is.symbol(distExpr)) {
     fnName = rlang::as_string(distExpr)
-    if (fnName %in% getNamespaceExports("greta") &
+    if (fnName %in% getNamespaceExports("causact") &
         !(fnName %in% notDistrFunctions)) {
-      ## it is a greta distribution - add parantheses so not symbol
+      ## it is a causact distribution - add parantheses so not symbol
       distExpr = rlang::parse_expr(paste0(fnName, "()"))
     } else {
       distExpr = rlang::parse_expr(fnName)
-      if (!(fnName %in% getNamespaceExports("greta") &
+      if (!(fnName %in% getNamespaceExports("causact") &
           !(fnName %in% notDistrFunctions))) {
       simpleRHS = TRUE } ##expression is not complex
     }
   }
 
-  ## handle cases where greta namespace is used
+  ## handle cases where namespace is used
   distString = rlang::expr_text(distExpr)
-  if (startsWith(distString,"greta::")) {
-    distString = gsub("greta::","",distString)
+  if (startsWith(distString,"causact::")) {
+    distString = gsub("causact::","",distString)
     distExpr = rlang::parse_expr(distString)
     if(is.symbol(distExpr)) {  ## if now symbol, add parantheses
       distExpr = rlang::parse_expr(paste0(rlang::as_string(distExpr),"()"))
@@ -214,7 +214,7 @@ rhsDecomp = function(rhs) {
   ## return function name
   if(!simpleRHS) {fnName = rlang::call_name(distExpr)}
 
-  if (fnName %in% getNamespaceExports("greta") &
+  if (fnName %in% getNamespaceExports("causact") &
       !(fnName %in% notDistrFunctions)) {
     if (fnName %in% c("mixture","joint")) {
       z = rhsDecompMixJointDistr(!!distExpr)
@@ -231,7 +231,7 @@ rhsDecomp = function(rhs) {
 
 # ##testing code
 # tmp(normal)
-# tmp(greta::normal)
+# tmp(causact::normal)
 # tmp(normal(mean = 2, sd = 3))
 # tmp(normal(
 #   mean = 2,
@@ -619,20 +619,21 @@ getLevelNames = function(dataNode) {
 
 
 ##function to make diagonal matrix given vector of diagonal elements
-makeDiagMatrix = function(diagVec) {
 
-    #if (!is.vector(diagVec)) {stop("Need to input vector to makeDiagMatrix()")}
-
-    lengthDiag <- length(diagVec)
-    diagMatrix = greta::zeros(lengthDiag,lengthDiag)
-    i <- seq_len(lengthDiag)
-    diagMatrix[cbind(i, i)] <- diagVec
-    return(diagMatrix)
+makeDiagMatrix <- function(diagVec) {
+  if (!is.vector(diagVec)) {
+    stop("Input 'diagVec' must be a vector.")
   }
 
+  n <- length(diagVec)
+  diag_matrix <- diag(diagVec)
+
+  return(diag_matrix)
+}
+
+
 # below two functions allow one to get objectName
-# that becomes argument in meaningfulLabels()
-# when using dag_greta(mcmc=FALSE)
+# that becomes argument
 # see https://michaelbarrowman.co.uk/post/getting-a-variable-name-in-a-pipeline/
 get_lhs <- function(){
   calls <- sys.calls()

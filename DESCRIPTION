@@ -15,7 +15,7 @@ License: MIT + file LICENSE
 URL: https://github.com/flyaflya/causact, https://www.causact.com/
 BugReports: https://github.com/flyaflya/causact/issues
 SystemRequirements: Python and numpyro are needed for Bayesian inference computations; 
-    Python (>= 3.11.0) with header files and shared library;
+    python (>= 3.8) with header files and shared library;
     numpyro (= v0.12.1; https://https://num.pyro.ai/en/latest/index.html);
     arviz (= v0.15.1; https://https://python.arviz.org/en/stable/)
 Encoding: UTF-8
@@ -36,7 +36,8 @@ Imports:
     forcats (>= 0.5.0),
     htmlwidgets (>= 1.5.1),
     rstudioapi (>= 0.11),
-    lifecycle
+    lifecycle,
+    reticulate (>= 1.29)
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
@@ -49,8 +50,7 @@ VignetteBuilder: knitr
 Config/reticulate:
   list(
     packages = list(
-      list(package = "python", version = "3.11", pip = TRUE),
-      list(package = "numpyro[cpu]", version = "0.12.1", pip = TRUE),
-      list(package = "arviz", version = "0.15.1", pip = TRUE)
+      list(package = "jax[cpu]", pip = TRUE),
+      list(package = "numpyro[cpu]", pip = TRUE)
     )
   )
