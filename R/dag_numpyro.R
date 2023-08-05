@@ -71,13 +71,13 @@ dag_numpyro <- function(graph,
       errorMessage <- paste0("Given rendered Causact Graph. Check the declaration for a dag_render() call.")
     }
     else {
-      errorMessage <- paste0("Cannot run dag_greta() on given object as it is not a Causact Graph.")
+      errorMessage <- paste0("Cannot run dag_numpyro() on given object as it is not a Causact Graph.")
     }
     stop(errorMessage)
   }
   ## Now check the single class
   if(class_g != "causact_graph"){
-    errorMessage <- paste0("Cannot run dag_greta() on given object as it is not a Causact Graph.")
+    errorMessage <- paste0("Cannot run dag_numpyro() on given object as it is not a Causact Graph.")
     stop(errorMessage)
   }
 
@@ -141,6 +141,11 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
 ## note that above is from JAX numpy package, not numpy.\n"
 
   ###DATA:  Create Code for Data Lines (Nodes that are not in plates)
+  # Regular expression to match $ notation for column access in python
+  pattern <- "\\b(\\w+)\\$(\\w+)\\b"
+  replace_column_access <- function(match) {
+    paste0(match[1], "['", match[2], "']")
+  }
   lhsNodesDF = nodeDF %>%
     dplyr::filter(obs == TRUE | !is.na(data)) %>%
     dplyr::filter(!(label %in% plateDF$indexLabel)) %>%
@@ -148,7 +153,7 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
                              " = ",
                              "np.array(",
                              paste0("r.",
-                                    gsub("\\$", ".",data),
+                                    gsub(pattern, replace_column_access,data),
                              ")"))) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #DATA"))
 
@@ -313,7 +318,7 @@ sep = "\n")
 
   #group unobserved nodes by their rhs for later plotting by ggplot
   #all nodes sharing the same prior will be graphed on the same scale
-  # this code should be moved out of dag_greta at some point
+  # this code should be moved out of dag_numpyro at some point
   priorGroupDF = graphWithDim$nodes_df %>%
     dplyr::filter(obs == FALSE & distr == TRUE)
 
@@ -344,6 +349,7 @@ sep = "\n")
     rmExpr = rlang::expr(rm(list = ls()))
     eval(rmExpr, envir = cacheEnv)  ## clear cacheEnv
     assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
+    meaningfulLabels(graphWithDim)  ###assign meaningful labels in cacheEnv
   } # end if mcmc=TRUE
 
   posteriorStatement = paste0("\n# computationally get posterior\nmcmc = MCMC(NUTS(",functionName,"), num_warmup = ",num_warmup,", num_samples = ",num_samples,")")
@@ -357,7 +363,92 @@ sep = "\n")
   }
 
   ## format posterior dataframe
-  drawsDFStatement = "drawsDF = 17"
+  drawsStatement = "drawsDS = az.from_numpyro(mcmc"
+  dimToKeepStatement = "dimensions_to_keep = ['chain','draw'"
+  unstackToDFStatement = "# unstack plate variables to flatten dataframe as needed\n"
+  ## check if any dimensions (i.e. plates)
+  if (NROW(plateDimDF > 0)) {
+    drawsStatement = paste0(drawsStatement,",\n\tcoords = {'")
+    dLabels = unique(na.omit(modelCodeDF$dimLabel))
+    numDlabels = length(dLabels)
+
+    for (i in 1:numDlabels) {
+      dimToKeepStatement = paste0(dimToKeepStatement,
+                                  ",'",
+                                  dLabels[i],
+                                  "_dim'")
+      drawsStatement = paste0(drawsStatement,
+                              dLabels[i],
+                              "_dim': ",
+                              dLabels[i],
+                              "_crd")
+      unstackToDFStatement = paste0(unstackToDFStatement,
+          "for plateLabel in drawsDS['",
+          dLabels[i],"_dim']:")
+
+      ## build unstack statement right here
+      plateNodes = modelCodeDF %>%
+        filter(dimLabel == dLabels[i])
+      for (j in 1:NROW(plateNodes)) {
+        unstackToDFStatement =
+          paste0(unstackToDFStatement,
+                 "\n\tnew_varname = f'",
+                 plateNodes$auto_label[j],
+                 "_{plateLabel.values}'",
+                 "\n\tdrawsDS = drawsDS.assign(**{new_varname: drawsDS['",
+                 plateNodes$auto_label[j],
+                 "'].sel(",
+                 dLabels[i],
+                 "_dim = plateLabel)})")
+      }
+      # drop dimension of plate so unstacked DF can be transferred to R
+      unstackToDFStatement = paste0(unstackToDFStatement,
+                                    "\ndrawsDS = drawsDS.drop_dims('",
+                                    dLabels[i],
+                                    "_dim')")
+
+      ## finish dimToKeep and draws statements below
+
+      if (i == numDlabels) {  ## closing bracket
+        drawsStatement = paste0(drawsStatement,"},\n\tdims = {'")
+        dimToKeepStatement = paste0(dimToKeepStatement,
+                                    "]\n")
+      } else {
+        ## add comma to keep going
+        drawsStatement = paste0(drawsStatement,",\n\t\t'")
+      }
+    }
+    ## now loop over variables to add dimensionality
+    plateNodes = modelCodeDF %>% filter(!rlang::is_na(dimLabel))
+    numNodes = NROW(plateNodes)
+    for (i in 1:numNodes) {
+      drawsStatement = paste0(drawsStatement,
+                              plateNodes$auto_label[i],
+                              "': ['",
+                              plateNodes$dimLabel[i],
+                              "_dim']")
+      if (i == numNodes) {  ## closing bracket
+        drawsStatement = paste0(drawsStatement,
+                                "}\n\t")
+      } else {
+        ## add comma to keep going
+        drawsStatement = paste0(drawsStatement,",\n\t\t'")
+        }
+      }
+  } else { ## add closing bracket if no plates
+    dimToKeepStatement = paste0(dimToKeepStatement,
+                                "]\n")
+  }
+
+  ## close the statement
+  drawsStatement = paste0(drawsStatement,
+                            ").posterior\n# prepare xarray dataset for export to R dataframe")
+  drawsDFStatement =
+    "drawsDS = drawsDS.squeeze(drop = True ).drop_dims([dim for dim in drawsDS.dims if dim not in dimensions_to_keep])\n"
+  drawsDFStatement = paste0(dimToKeepStatement,
+                            drawsDFStatement,
+                            unstackToDFStatement,
+                            "\ndrawsDF = drawsDS.squeeze().to_dataframe()")
 
   ##########################################
   ###Aggregate all code
@@ -371,6 +462,7 @@ sep = "\n")
                      posteriorStatement,
                      rngStatement,
                      runStatement,
+                     drawsStatement,
                      drawsDFStatement)
 
   #codeStatements
@@ -396,7 +488,7 @@ sep = "\n")
 
     eval(codeExpr, envir = cacheEnv) ## evaluate in other env
     ###return data frame of posterior draws
-    return(py$drawsDF)
+    return(dplyr::as_tibble(py$drawsDF))
   }
   return(invisible(codeForUser))  ## just print code
 }

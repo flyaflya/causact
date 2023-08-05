@@ -48,5 +48,4 @@ dag_greta <- function(graph,
                       meaningfulLabels = TRUE,
                       ...) {
   message("This function is currently defunct.  It has been superseded by dag_numpyro() because of tricky installation issues related to the greta package's use of tensorflow.  If the greta package resolves those issues, this function may return, but please use dag_numpyro() as a direct replacement.")
-
 }

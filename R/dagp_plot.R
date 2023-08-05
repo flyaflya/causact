@@ -3,7 +3,7 @@
 #' `r lifecycle::badge('stable')`
 #'
 #' Plot the posterior distribution of all latent parameters using a dataframe of posterior draws from a `causact_graph` model.
-#' @param drawsDF the dataframe output of `dag_greta(mcmc=TRUE)` where each column is a parameter and each row a single draw from a representative sample.
+#' @param drawsDF the dataframe output of `dag_numpyro(mcmc=TRUE)` where each column is a parameter and each row a single draw from a representative sample.
 #' @param densityPlot If `TRUE`, each parameter gets its own density plot.  If `FALSE` (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
 #' @return a credible interval plot of all latent posterior distribution parameters.
 #' @examples
@@ -28,7 +28,7 @@
 #' graph %>% dag_render()
 #'
 #' # below requires Tensorflow installation
-#' drawsDF = graph %>% dag_greta(mcmc=TRUE)
+#' drawsDF = graph %>% dag_numpyro(mcmc=TRUE)
 #' drawsDF %>% dagp_plot()
 #' }
 #'
@@ -64,7 +64,7 @@
 #' graph %>% dag_render()
 #' \dontrun{
 #' # below requires Tensorflow installation
-#' drawsDF = graph %>% dag_greta(mcmc=TRUE)
+#' drawsDF = graph %>% dag_numpyro(mcmc=TRUE)
 #' drawsDF %>% dagp_plot()
 #' }
 #' @importFrom dplyr bind_rows filter group_by

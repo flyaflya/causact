@@ -252,7 +252,7 @@ rhsPriorComposition = function(graph) {
   ## get nodes which have prior information
   nodeDF = graph$nodes_df %>%
     dplyr::filter(distr == TRUE) %>%
-    select(.data$id,rhs,rhsID)
+    select("id",rhs,rhsID)
 
   ## retrieve non-NA argument list
   argDF = graph$arg_df %>%
@@ -288,7 +288,7 @@ rhsPriorComposition = function(graph) {
                                            paste0(", dim = ",indexLabel)),
                                     ")")) %>%
     dplyr::ungroup() %>%
-    select(.data$id,prior_rhs)
+    select("id",prior_rhs)
 
   ##update graph with new label
   graph$nodes_df = graph$nodes_df %>% left_join(auto_rhsDF, by = "id") %>%

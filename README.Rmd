@@ -26,13 +26,13 @@ knitr::opts_chunk$set(
 
 # causact
 
-_Accelerate Bayesian analytics workflows_ in R through interactive modelling, visualization, and inference.  Uses probabilistic graphical models as a unifying language for business stakeholders, statisticians, and programmers.  
+_Accelerate Bayesian analytics workflows_ in R through interactive modelling, visualization, and inference.  Uses probabilistic graphical models as a unifying language for business stakeholders, statisticians, and programmers. Due to its visual nature and simple model construction, `causact` serves as a great entry-point for newcomers to computational Bayesian inference. 
 
 ```{r demoGif, out.width = "40%", echo = FALSE, fig.align = "center"}
 knitr::include_graphics("man/figures/causactDemo.gif")
 ```
 
-This package relies on the sleek and elegant `greta` package for Bayesian inference. `greta`, in turn, is an interface into `TensorFlow` from R.  Future iterations of the `causact` package will aim to be a front-end into several universal probablistic programming languages (e.g. Stan, Turing, Gen, etc.). 
+This package is solely R-based, but behind the scenes, it relies on the `numpyro` Python package for Bayesian inference. 
 
 Using the `causact` package for Bayesian inference is featured in `A Business Analyst's Introduction to Business Analytics` available at https://www.causact.com/.
 
@@ -53,7 +53,14 @@ install.packages("remotes")
 remotes::install_github("flyaflya/causact")
 ```
 
-`causact` requires the `greta` package for Bayesian updating, which in turn, requires a specific version of `TensorFlow`.  Install both `greta` and `TensorFlow` using the instructions available here: https://www.causact.com/install-tensorflow-greta-and-causact.html. 
+While `causact` can be used for DAG visualization, getting Bayesian posteriors requires the `numpyro` package, which in turn, requires python and some other dependencies.  Install `numpyro` and other python dependencies by running the following after installing `causact`:
+
+```
+library(causact)
+install_causact_deps()
+```
+
+Please answer `Y` to any prompts for installing miniconda if needed.
 
 ## Usage 
 
@@ -109,18 +116,16 @@ graph %>% dag_render(shortLabel = TRUE)
 knitr::include_graphics("man/figures/cardPlotShortLabel.png")
 ```
 
-### See useful `greta` code without executing it (for debugging or learning)
+### See `numpyro` code without executing it (for debugging or learning)
 
 ```{r gretaCode, warning = FALSE, message = TRUE}
-library(greta)
-gretaCode = graph %>% dag_greta(mcmc = FALSE)
+numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 ```
 
-### Get posterior while automatically running the underlying `greta` code
+### Get posterior while automatically running the underlying `numpyro` code
 
 ```{r greta, warning = FALSE, message = FALSE}
-library(greta)
-drawsDF = graph %>% dag_greta()
+drawsDF = graph %>% dag_numpyro()
 drawsDF  ### see top of data frame
 ```
 
@@ -133,7 +138,7 @@ drawsDF %>% dagp_plot()
 
 ## Getting Help and Suggesting Improvements
 
-Whether you encounter a clear bug, have a suggestion for improvement, or just have a question, we are thrilled to help you out.  In all cases, please file a [GitHub issue](https://github.com/flyaflya/causact/issues).  If reporting a bug, please include a minimal reproducible example.  If encountering issues installing `greta`, please seek help at the [greta discussion forum](https://forum.greta-stats.org/).
+Whether you encounter a clear bug, have a suggestion for improvement, or just have a question, we are thrilled to help you out.  In all cases, please file a [GitHub issue](https://github.com/flyaflya/causact/issues).  If reporting a bug, please include a minimal reproducible example.  
 
 ## Contributing
 
@@ -149,7 +154,6 @@ For more info, see `A Business Analyst's Introduction to Business Analytics` ava
 > McElreath, Richard. Statistical rethinking: A Bayesian course with examples in R and Stan. Chapman and Hall/CRC, 2018.
 
 ```{r chimpsGraph, results ="hide", warning = FALSE, message = FALSE}
-library(greta)
 library(tidyverse)
 library(causact)
 
@@ -219,7 +223,7 @@ knitr::include_graphics("man/figures/chimpStatSL.png")
 ### Compute posterior
 
 ```{r chimpsGraphGreta, warning = FALSE, message = FALSE}
-drawsDF = graph %>% dag_greta()
+drawsDF = graph %>% dag_numpyro()
 ```
 
 ### Visualize posterior
@@ -234,7 +238,6 @@ drawsDF %>% dagp_plot()
 
 
 ```{r eightschoolsGraph, results ="hide", warning = FALSE, message = FALSE}
-library(greta)
 library(tidyverse)
 library(causact)
 
@@ -276,7 +279,7 @@ knitr::include_graphics("man/figures/eightSchoolStat.png")
 ### Compute posterior
 
 ```{r eightschoolsGraphGreta, warning = FALSE, message = FALSE}
-drawsDF = graph %>% dag_greta()
+drawsDF = graph %>% dag_numpyro()
 ```
 
 ### Visualize posterior
@@ -289,85 +292,3 @@ drawsDF %>% dagp_plot()
 knitr::include_graphics("man/figures/eightschoolsGraphPost-1.png")
 ```
 
-## Example Where Observed RV Is A Mixed RV
-
-```{r mixtureGraph, results ="hide", warning = FALSE, message = FALSE}
-#### use dirichlet instead
-library(greta)
-library(tidyverse)
-library(causact)
-
-## sample data - try to recover params
-x <- c(rpois(800, 3),rpois(200, 10))
-
-graph = dag_create() %>%  ## create generative DAG
-  dag_node("Mixed Var","x",
-           rhs = mixture(alpha,beta,
-                         weights = t(weights)),
-           data = x) %>%
-  dag_node("Count Var 1","alpha",
-           rhs = poisson(lambda1),
-           child = "x") %>%
-  dag_node("Count Var 2","beta",
-           rhs = poisson(lambda2),
-           child = "x") %>%
-  dag_node("Weight Vars","weights",
-           rhs = dirichlet(t(c(1,1))),
-           child = "x") %>%
-  dag_node("Exp Rate 1","lambda1",
-           rhs = uniform(1,5),
-           child = "alpha") %>%
-  dag_node("Exp Rate 2","lambda2",
-           rhs = uniform(6,20),
-           child = "beta")
-```
-
-### See graph
-
-```{r mixtureGraphRenderCode, eval = FALSE, warning = FALSE, message = FALSE}
-graph %>% dag_render()
-```
-
-```{r mixtureGraphRenderPlot, out.width = "100%", echo = FALSE}
-knitr::include_graphics("man/figures/mixture.png")
-```
-
-### Compute posterior
-
-```{r mixtureGraphHidden, results ="hide", warning = FALSE, message = FALSE, echo = FALSE}
-## put data right into graph... otherwise build_readme() gives error due to x being in a different environment
-graph = dag_create() %>%  ## create generative DAG
-  dag_node("Mixed Var","x",
-           rhs = mixture(alpha,beta,
-                         weights = t(weights)),
-           data = c(rpois(800, 3),rpois(200, 10))) %>%
-  dag_node("Count Var 1","alpha",
-           rhs = poisson(lambda1),
-           child = "x") %>%
-  dag_node("Count Var 2","beta",
-           rhs = poisson(lambda2),
-           child = "x") %>%
-  dag_node("Weight Vars","weights",
-           rhs = dirichlet(t(c(1,1))),
-           child = "x") %>%
-  dag_node("Exp Rate 1","lambda1",
-           rhs = uniform(1,5),
-           child = "alpha") %>%
-  dag_node("Exp Rate 2","lambda2",
-           rhs = uniform(6,20),
-           child = "beta")
-```
-
-```{r mixtureGraphGreta, warning = FALSE, message = FALSE, echo=-1}
-drawsDF = graph %>% dag_greta()
-```
-
-### Visualize posterior
-
-```{r mixtureGraphPost, out.width = "100%", eval = FALSE, fig.width = 9, fig.height = 6, warning = FALSE, message = FALSE}
-drawsDF %>% dagp_plot()
-```
-
-```{r mixtureGraphRenderPost, out.width = "100%", echo = FALSE}
-knitr::include_graphics("man/figures/mixturePost.png")
-```

@@ -2,7 +2,7 @@
 #' @description
 #' `r lifecycle::badge('experimental')`
 #'
-#' Store meaningful parameter labels prior to running `dag_greta()` of `greta::mcmc()`.  When `greta` creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta\[1,1\], beta\[2,1\], etc.).  Since parameter dimensionality is often determined by a `factor`, this function creates labels from the factors unqiue values.  `replaceLabels()` applies the text labels stored using this function to the `greta` output.  The meaningful parameter names are stored in an environment, `cacheEnv`.
+#' Store meaningful parameter labels as as part of running `dag_numpyro()`.  When `numpyro` creates posterior distributions for multi-dimensional parameters, it creates an often meaningless number system for the parameter (e.g. beta\[1,1\], beta\[2,1\], etc.).  Since parameter dimensionality is often determined by a `factor`, this function creates labels from the factors unqiue values.  `replaceLabels()` applies the text labels stored using this function to the `numpyro` output.  The meaningful parameter names are stored in an environment, `cacheEnv`.
 #' @param graph a `causact_graph` object.
 #' @return a data frame `meaningfulLabels` stored in an environment named `cacheEnv` that contains a lookup table between greta labels and meaningful labels.
 #'
