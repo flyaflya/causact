@@ -35,7 +35,7 @@
 #' }
 #' @importFrom dplyr bind_rows tibble left_join rowwise select add_row as_tibble group_indices row_number mutate filter
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
-#' @importFrom rlang enquo expr_text .data expr is_na
+#' @importFrom rlang enquo expr_text .data expr is_na eval_tidy parse_expr
 #' @importFrom igraph graph_from_data_frame topo_sort
 #' @importFrom tidyr gather
 #' @import reticulate
@@ -141,11 +141,30 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
 ## note that above is from JAX numpy package, not numpy.\n"
 
   ###DATA:  Create Code for Data Lines (Nodes that are not in plates)
-  # Regular expression to match $ notation for column access in python
-  pattern <- "\\b(\\w+)\\$(\\w+)\\b"
-  replace_column_access <- function(match) {
-    paste0(match[1], "['", match[2], "']")
-  }
+  ### replace any references to R-Objects with `.` in it to
+  ### a renamedObj.  Use new column called dataPy to store name
+  ### also handle spaces and colons
+  ##punctuation other than underscore
+  pattern <- "[^[:^punct:]_$]"
+  pattern2 <- "[[:space:]]"  #whitespace
+  nodeDF = nodeDF %>%
+    mutate(newPyName = grepl(pattern, data, perl = TRUE) |
+             grepl(pattern2, data, perl = TRUE)) %>%
+    mutate(dataPy = ifelse(newPyName,
+                           paste0("renamedForPy__",row_number()),
+                           data))
+  ## create new objects for access from Python if needed
+  renameDF = nodeDF %>% filter(newPyName) %>% select(data,dataPy)
+  if (NROW(renameDF) > 0) {
+    # Loop through each row and copy objects using assign()
+    for (i in 1:nrow(renameDF)) {
+      old_name <- renameDF$data[i]
+      new_name <- renameDF$dataPy[i]
+      ## this works, but might need to clean up global env
+      assign(new_name,eval(rlang::parse_expr(old_name)),globalenv())
+    }
+  }  ## end create new objects to overcome periods and hyphens
+
   lhsNodesDF = nodeDF %>%
     dplyr::filter(obs == TRUE | !is.na(data)) %>%
     dplyr::filter(!(label %in% plateDF$indexLabel)) %>%
@@ -153,7 +172,7 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
                              " = ",
                              "np.array(",
                              paste0("r.",
-                                    gsub(pattern, replace_column_access,data),
+                                    gsub("\\$", ".",dataPy),
                              ")"))) %>%
     dplyr::mutate(codeLine = paste0(abbrevLabelPad(codeLine), "   #DATA"))
 
@@ -167,7 +186,12 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
   }
 
   ###DIM:  Create code for plate dimensions
-    plateDimDF = plateDF %>% dplyr::filter(!is.na(dataNode))
+    plateDimDF = plateDF %>% dplyr::filter(!is.na(dataNode)) %>%
+      mutate(newPyName = grepl(pattern, data, perl = TRUE) |
+               grepl(pattern2, data, perl = TRUE)) %>%
+      mutate(dataPy = ifelse(newPyName,
+                             paste0("renamedForPy__",row_number()),
+                             data))
     if (nrow(plateDimDF) > 0) {
       plateDataStatements = paste(paste0(
         abbrevLabelPad(paste0(plateDimDF$indexLabel)),# four spaces to have invis _dim
@@ -489,6 +513,15 @@ sep = "\n")
     eval(codeExpr, envir = cacheEnv) ## evaluate in other env
     ###return data frame of posterior draws
     return(dplyr::as_tibble(py$drawsDF))
+  }
+
+  ##clean up any temporary variables from renaming
+  ##vars with hyphens or periods
+  if (NROW(renameDF) > 0){
+    for (i in 1:NROW(renameDF)) {
+      new_name <- renameDF$dataPy[i]
+      eval(rlang::parse_expr(paste0("rm(",new_name,", envir = globalenv())")))
+    }
   }
   return(invisible(codeForUser))  ## just print code
 }
