@@ -1,4 +1,4 @@
-test_that("greta code is created", {
+test_that("numpyro code is created", {
   graph = dag_create() %>%
     dag_node("Get Card","x",
              rhs = bernoulli(theta),
@@ -12,7 +12,7 @@ test_that("greta code is created", {
               addDataNode = TRUE)  %>%
     dag_plate("Observations", "i",
               nodeLabels = c("x","y"))
-  gretaCode = graph %>% dag_greta(mcmc = FALSE)
-  expect_type(gretaCode, "character")
+  mcmcCode = graph %>% dag_numpyro(mcmc = FALSE)
+  expect_type(mcmcCode, "character")
 })
 

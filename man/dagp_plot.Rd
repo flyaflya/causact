@@ -7,7 +7,7 @@
 dagp_plot(drawsDF, densityPlot = FALSE)
 }
 \arguments{
-\item{drawsDF}{the dataframe output of \code{dag_greta(mcmc=TRUE)} where each column is a parameter and each row a single draw from a representative sample.}
+\item{drawsDF}{the dataframe output of \code{dag_numpyro(mcmc=TRUE)} where each column is a parameter and each row a single draw from a representative sample.}
 
 \item{densityPlot}{If \code{TRUE}, each parameter gets its own density plot.  If \code{FALSE} (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.}
 }
@@ -27,9 +27,8 @@ z = runif(100))
 posteriorDF \%>\%
 dagp_plot(densityPlot = TRUE)
 
-# More complicated example requiring 'greta'
+# More complicated example requiring 'numpyro'
 \dontrun{
-library(greta)
 # Create a 2 node graph
 graph = dag_create() \%>\%
   dag_node("Get Card","y",
@@ -41,7 +40,7 @@ graph = dag_create() \%>\%
 graph \%>\% dag_render()
 
 # below requires Tensorflow installation
-drawsDF = graph \%>\% dag_greta(mcmc=TRUE)
+drawsDF = graph \%>\% dag_numpyro(mcmc=TRUE)
 drawsDF \%>\% dagp_plot()
 }
 
@@ -77,7 +76,7 @@ graph = dag_create() \%>\%
 graph \%>\% dag_render()
 \dontrun{
 # below requires Tensorflow installation
-drawsDF = graph \%>\% dag_greta(mcmc=TRUE)
+drawsDF = graph \%>\% dag_numpyro(mcmc=TRUE)
 drawsDF \%>\% dagp_plot()
 }
 }

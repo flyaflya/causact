@@ -14,9 +14,8 @@
 #' posteriorDF %>%
 #' dagp_plot(densityPlot = TRUE)
 #'
-#' # More complicated example requiring 'greta'
+#' # More complicated example requiring 'numpyro'
 #' \dontrun{
-#' library(greta)
 #' # Create a 2 node graph
 #' graph = dag_create() %>%
 #'   dag_node("Get Card","y",

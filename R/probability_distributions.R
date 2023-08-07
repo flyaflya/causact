@@ -21,7 +21,7 @@
 #'
 #' @param Sigma positive definite variance-covariance matrix parameter
 #'
-#' @param dim the dimensions of the greta array to be returned, either a scalar
+#' @param dim Currently ignored.  If `dag_greta` becomes functional again, this specifies the dimensions of the greta array to be returned, either a scalar
 #'   or a vector of positive integers. See details.
 #'
 #' @param dimension the dimension of a multivariate distribution
@@ -52,14 +52,7 @@
 #'   observed entries is 1. It's the user's responsibility to check their data
 #'   matches the distribution!
 #'
-#'   The parameters of `uniform` must be fixed, not greta arrays. This
-#'   ensures these values can always be transformed to a continuous scale to run
-#'   the samplers efficiently. However, a hierarchical `uniform` parameter
-#'   can always be created by defining a `uniform` variable constrained
-#'   between 0 and 1, and then transforming it to the required scale. See below
-#'   for an example.
-#'
-#'   Wherever possible, the parameterisations and argument names of causact
+#'   Wherever possible, the parameterizations and argument names of `causact`
 #'   distributions match commonly used R functions for distributions, such as
 #'   those in the `stats` or `extraDistr` packages. The following
 #'   table states the distribution function to which causact's implementation

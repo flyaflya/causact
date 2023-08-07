@@ -7,7 +7,7 @@ library(causact)
 ### greta example 0
 graph = dag_create() %>%
   dag_node("Sepal Length","y",
-           data = iris$Petal.Length,
+           data = iris$Sepal.Length,
            rhs = normal) %>%
   dag_node("Exp Sepal Length (Obs.)","mean",
            rhs = int + coef * x,
@@ -26,6 +26,7 @@ graph = dag_create() %>%
            data = iris$Petal.Length) %>%
   dag_plate("Observation","i",
            nodeLabels = c("y","mean","x"))
+library(tidyverse)
 graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 graph %>% dag_numpyro(mcmc = FALSE)
@@ -79,6 +80,9 @@ graph = dag_create() %>%
   dag_node("Predictors","design",
            data = attitude[, 2:7],
            keepAsDF = TRUE,
+           child = "mu") %>%
+  dag_node("Intercept","int",
+           rhs = normal(0,10),
            child = "mu") %>%
   dag_plate(descr = "Predictors",label = "j",
             nodeLabels = c("coefs"),
@@ -141,7 +145,7 @@ graph = dag_create() %>%
            rhs = c(int, coefs),
            child = "eta") %>%
   dag_node("Intercept","int",
-           rhs = variable(-Inf,Inf),
+           rhs = normal(0,10000),
            child = "beta") %>%
   dag_node("Slope Coefficients","coefs",
            rhs = normal(0,5),
@@ -160,6 +164,7 @@ drawsDF = graph %>% dag_numpyro()
 drawsDF %>% dagp_plot()
 
 ### greta example #5: Multiple Categorical Regression
+### NOT SUPPORTED YET
 designDF = as.data.frame(model.matrix(~ Species -1, iris))
 speciesCoding = colnames(designDF) %>% head(-1)
 graph = dag_create() %>%

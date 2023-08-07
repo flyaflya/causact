@@ -7,8 +7,7 @@
 #' @param num_warmups an integer value for the number of initial steps that will be discarded while the markov chain finds its way into the typical set.
 #' @param num_samples an integer value for the number of samples.
 #' @param seed an integer-valued random seed that serves as a starting point for a random number generator. By setting the seed to a specific value, you can ensure the reproducibility and consistency of your results.
-#' @param ... additional arguments to be passed onto `numpyro`.
-#' @return If `mcmc=TRUE`, returns a dataframe of posterior distribution samples corresponding to the input `causact_graph`.  Each column is a parameter and each row a draw from the posterior sample output.  If `mcmc=FALSE`, running `dag_numpyro` returns a character string of code that would help the user generate the posterior distribution
+#' @return If `mcmc=TRUE`, returns a dataframe of posterior distribution samples corresponding to the input `causact_graph`.  Each column is a parameter and each row a draw from the posterior sample output.  If `mcmc=FALSE`, running `dag_numpyro` returns a character string of code that would help the user generate the posterior distribution; useful for debugging.
 #'
 #' @examples
 #' graph = dag_create() %>%
@@ -115,6 +114,7 @@ dag_numpyro <- function(graph,
 
   ### Initialize all the code statements so that NULL
   ### values are skipped without Error
+  nameChangeStatements = NULL
   importStatements = NULL
   dataStatements = NULL
   plateDataStatements = NULL
@@ -134,10 +134,10 @@ import arviz as az
 from jax import random
 from numpyro.infer import MCMC, NUTS
 from jax.numpy import transpose as t
-from jax.numpy import (exp, log, log1p, expm1, abs,
-                       mean, sqrt, sign, round,
-                       cos, sin, tan, cosh, sinh, tanh,
-                       sum, prod, min, max, cumsum, cumprod )
+from jax.numpy import (exp, log, log1p, expm1, abs, mean,
+                 sqrt, sign, round, concatenate, atleast_1d,
+                 cos, sin, tan, cosh, sinh, tanh,
+                 sum, prod, min, max, cumsum, cumprod )
 ## note that above is from JAX numpy package, not numpy.\n"
 
   ###DATA:  Create Code for Data Lines (Nodes that are not in plates)
@@ -151,7 +151,7 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
     mutate(newPyName = grepl(pattern, data, perl = TRUE) |
              grepl(pattern2, data, perl = TRUE)) %>%
     mutate(dataPy = ifelse(newPyName,
-                           paste0("renamedForPy__",row_number()),
+                           paste0("renameNodeForPy__",row_number()),
                            data))
   ## create new objects for access from Python if needed
   renameDF = nodeDF %>% filter(newPyName) %>% select(data,dataPy)
@@ -162,6 +162,9 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
       new_name <- renameDF$dataPy[i]
       ## this works, but might need to clean up global env
       assign(new_name,eval(rlang::parse_expr(old_name)),globalenv())
+      nameChangeStatements = paste0(nameChangeStatements,
+                                    new_name, " = ",
+                                    old_name,"\n")
     }
   }  ## end create new objects to overcome periods and hyphens
 
@@ -187,17 +190,17 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
 
   ###DIM:  Create code for plate dimensions
     plateDimDF = plateDF %>% dplyr::filter(!is.na(dataNode)) %>%
-      mutate(newPyName = grepl(pattern, data, perl = TRUE) |
-               grepl(pattern2, data, perl = TRUE)) %>%
+      mutate(newPyName = grepl(pattern, dataNode, perl = TRUE) |
+               grepl(pattern2, dataNode, perl = TRUE)) %>%
       mutate(dataPy = ifelse(newPyName,
-                             paste0("renamedForPy__",row_number()),
-                             data))
+                             paste0("renameDimForPy__",row_number()),
+                             dataNode))
     if (nrow(plateDimDF) > 0) {
       plateDataStatements = paste(paste0(
         abbrevLabelPad(paste0(plateDimDF$indexLabel)),# four spaces to have invis _dim
                               " = ",
                               "pd.factorize(r.",
-        gsub("\\$", ".", plateDimDF$dataNode),
+        gsub("\\$", ".", plateDimDF$dataPy),
                               ",use_na_sentinel=True)[0]   #DIM"),
                               sep = "\n")
     ###make labels for dim variables = to label_dim
@@ -213,14 +216,29 @@ from jax.numpy import (exp, log, log1p, expm1, abs,
       abbrevLabelPad(paste0(plateDimDF$indexLabel,"_crd")),# four spaces to have invis _dim
       " = ",
       "pd.factorize(r.",
-      gsub("\\$", ".", plateDimDF$dataNode),
+      gsub("\\$", ".", plateDimDF$dataPy),
       ",use_na_sentinel=True)[1]   #DIM"),
 sep = "\n")
       functionArguments = paste(c(functionArguments,
                                 plateDimDF$indexLabel),
                                 collapse = ",")
 
+    }
+
+    ## create new objects for access from Python if needed
+    renameDIMDF = plateDimDF %>% filter(newPyName) %>% select(dataNode,dataPy)
+    if (NROW(renameDIMDF) > 0) {
+      # Loop through each row and copy objects using assign()
+      for (i in 1:nrow(renameDIMDF)) {
+        old_name <- renameDIMDF$dataNode[i]
+        new_name <- renameDIMDF$dataPy[i]
+        ## this works, but might need to clean up global env
+        assign(new_name,eval(rlang::parse_expr(old_name)),globalenv())
+        nameChangeStatements = paste0(nameChangeStatements,
+                                      new_name, " = ",
+                                      old_name, "\n")
       }
+    }  ## end create new objects to overcome periods and hyphens
 
     ### DEFINE NUMPYRO FUNCTION
     functionName = paste0(graphName,"_model")
@@ -270,11 +288,16 @@ sep = "\n")
                       auto_label,
                       " = npo.deterministic('",
                       auto_label, "', ",
-                      ## replace R power(^) with python power(**)
-                      gsub("\\^", "**", auto_rhs),
+                      ## replace R power(^) with python power(**) and matirx mult(%*%) with (@)
+                      gsub("%\\*%", "@",
+                           gsub("\\^", "**", auto_rhs)),
                       ")"),
                     codeLine)) %>%
       select(dimLabel,codeLine,auto_label)
+
+    ## create code to handle concatenation in Python
+    modelCodeDF = modelCodeDF %>%
+      mutate(codeLine = replace_c(codeLine))
 
   ###Create MODEL function BODY using codeLines from above
     # Using a for loop to iterate over rows
@@ -491,7 +514,8 @@ sep = "\n")
 
   #codeStatements
   ## wrap python code in R to get posterior draws
-  codeRun = paste0('reticulate::py_run_string("\n',
+  codeRun = paste0(nameChangeStatements,
+                   'reticulate::py_run_string("\n',
                    paste(codeStatements, collapse = '\n'),
                    '"\n) ## END PYTHON STRING\n',
                    "drawsDF = py$drawsDF")
@@ -533,4 +557,10 @@ check_r_causact_env <- function() {
   "r-causact" %in% env_list$name
 }
 
-
+# Function to replace 'c(' with 'concatenate(atleast_1d(' and ')' with '))'
+replace_c <- function(input_string) {
+  pattern <- "(^|\\s)c\\((.*?)\\)"
+  replacement <- "\\1concatenate(atleast_1d(\\2))"
+  modified_string <- gsub(pattern, replacement, input_string, perl = TRUE)
+  return(modified_string)
+}

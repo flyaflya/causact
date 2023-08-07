@@ -22,11 +22,9 @@ dag_numpyro(
 \item{seed}{an integer-valued random seed that serves as a starting point for a random number generator. By setting the seed to a specific value, you can ensure the reproducibility and consistency of your results.}
 
 \item{num_warmups}{an integer value for the number of initial steps that will be discarded while the markov chain finds its way into the typical set.}
-
-\item{...}{additional arguments to be passed onto \code{numpyro}.}
 }
 \value{
-If \code{mcmc=TRUE}, returns a dataframe of posterior distribution samples corresponding to the input \code{causact_graph}.  Each column is a parameter and each row a draw from the posterior sample output.  If \code{mcmc=FALSE}, running \code{dag_numpyro} returns a character string of code that would help the user generate the posterior distribution
+If \code{mcmc=TRUE}, returns a dataframe of posterior distribution samples corresponding to the input \code{causact_graph}.  Each column is a parameter and each row a draw from the posterior sample output.  If \code{mcmc=FALSE}, running \code{dag_numpyro} returns a character string of code that would help the user generate the posterior distribution; useful for debugging.
 }
 \description{
 Generate a representative sample of the posterior distribution.  The input graph object should be of class \code{causact_graph} and created using \code{dag_create()}.  The specification of a completely consistent joint distribution is left to the user.

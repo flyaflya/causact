@@ -43,6 +43,6 @@ test_that("big models are okay", {
   expect_equal(NROW(graph2$nodes_df), 12)
   renderGraph = graph2 %>% dag_render(shortLabel = 35, wrapWidth = 22)
   expect_type(renderGraph, "list")
-  gretaOut = graph2 %>% dag_greta(mcmc = FALSE, meaningfulLabels = FALSE)
-  expect_type(gretaOut, "character")
+  numpyroOut = graph2 %>% dag_numpyro(mcmc = FALSE)
+  expect_type(numpyroOut, "character")
 })

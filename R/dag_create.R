@@ -57,15 +57,6 @@ dag_create <- function() {
       stringsAsFactors = FALSE
     )[-1, ]
 
-  # Add custom attributes for DAG building
-  # graph$nodes_df$description[-1] = as.character(NA)
-  # graph$nodes_df$distr[-1] = as.character(NA)
-  # graph$nodes_df$formulaString[-1] = as.character(NA)
-  # graph$nodes_df$fullDistLabel[-1] = as.character(NA)
-  # graph$nodes_df$data[-1] = as.character(NA)
-  # graph$nodes_df$userSpecifiedArgs[-1] = as.logical(NA)
-  # graph$nodes_df$gretaRHS[-1] = as.character(NA)
-
   ## add two df's to store plate index information
   # Create an empty index data frame (`idf`)
   pidf <-

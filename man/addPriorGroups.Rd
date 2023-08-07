@@ -7,7 +7,7 @@
 addPriorGroups(drawsDF)
 }
 \arguments{
-\item{drawsDF}{the dataframe created by  \code{dag_greta()} where each row represents one draw of MCMC output.  Two columns are expected, \code{param} - the parameter name, \code{value} - the realized value, and a third column, \code{priorGroup}, is appended as an integer grouping parameters by their prior distributions. The data for this third column is stored in an environment called \code{cacheEnv} when the \code{dag_greta()} function is called.  Any parameters with the same prior end up in the same prior group.  Used by \code{dagp_plot()} to group parameters when plotted.}
+\item{drawsDF}{the dataframe created by  \code{dag_numpyro()} where each row represents one draw of MCMC output.  Two columns are expected, \code{param} - the parameter name, \code{value} - the realized value, and a third column, \code{priorGroup}, is appended as an integer grouping parameters by their prior distributions. The data for this third column is stored in an environment called \code{cacheEnv} when the \code{dag_numpyro()} function is called.  Any parameters with the same prior end up in the same prior group; used by \code{dagp_plot()} to group parameters when plotted.}
 }
 \value{
 a tidy dataframe of posterior draws. Useful for passing to \code{dagp_plot()} or for creating plots using \code{ggplot()}.
