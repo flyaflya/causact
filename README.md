@@ -54,6 +54,15 @@ dependencies by running the following after installing `causact`:
 
 Please answer `Y` to any prompts for installing miniconda if needed.
 
+If you need to access an older version where the `dag_greta()` function
+is still operational, install `v0.4.2` of the `causact` package (this is
+NOT recommended):
+
+    ### DO NOT RUN THESE LINES UNLESS YOU NEED
+    ### dag_greta() for your previous code to work
+    install.packages("remotes")
+    remotes::install_github("flyaflya/causact@0.4.2")
+
 ## Usage
 
 Example taken from
@@ -162,20 +171,19 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 drawsDF = graph %>% dag_numpyro()
 drawsDF  ### see top of data frame
 #> # A tibble: 4,000 × 4
-#>    `theta_Toyota Corolla` `theta_Subaru Outback` `theta_Kia Forte`
-#>                     <dbl>                  <dbl>             <dbl>
-#>  1                  0.186                  0.627             0.243
-#>  2                  0.218                  0.607             0.234
-#>  3                  0.200                  0.627             0.261
-#>  4                  0.231                  0.626             0.236
-#>  5                  0.225                  0.615             0.278
-#>  6                  0.232                  0.624             0.257
-#>  7                  0.202                  0.710             0.318
-#>  8                  0.173                  0.587             0.258
-#>  9                  0.216                  0.592             0.283
-#> 10                  0.180                  0.666             0.180
+#>    theta_Toyota.Corolla theta_Subaru.Outback theta_Kia.Forte theta_Jeep.Wrangler
+#>                   <dbl>                <dbl>           <dbl>               <dbl>
+#>  1                0.186                0.627           0.243               0.801
+#>  2                0.218                0.607           0.234               0.900
+#>  3                0.200                0.627           0.261               0.892
+#>  4                0.231                0.626           0.236               0.792
+#>  5                0.225                0.615           0.278               0.793
+#>  6                0.232                0.624           0.257               0.807
+#>  7                0.202                0.710           0.318               0.791
+#>  8                0.173                0.587           0.258               0.885
+#>  9                0.216                0.592           0.283               0.891
+#> 10                0.180                0.666           0.180               0.805
 #> # ℹ 3,990 more rows
-#> # ℹ 1 more variable: `theta_Jeep Wrangler` <dbl>
 ```
 
 ### Get quick view of posterior distribution

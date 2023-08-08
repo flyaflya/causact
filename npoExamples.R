@@ -21,7 +21,14 @@ graph = dag_create() %>%
 graph %>% dag_render()
 drawsDF = graph %>% dag_numpyro()
 drawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot(abbrevLabels = TRUE)
 drawsDF %>% dagp_plot(densityPlot = TRUE)
+drawsDF %>% dagp_plot(densityPlot = TRUE, abbrevLabels = TRUE)
+
+drawsDF %>%
+  mutate(indicatorFunction =
+           theta_Kia.Forte > theta_Toyota.Corolla) %>%
+  summarize(pctOfDraws = mean(indicatorFunction))
 
 ### greta example 0
 graph = dag_create() %>%
@@ -193,7 +200,8 @@ graph = dag_create() %>%
            rhs = categorical(prob)) %>%
   dag_node("Category Probabilities","prob",
            child = "y",
-           rhs = imultilogit(eta)) %>%
+           #rhs = imultilogit(eta)
+           ) %>%
   dag_node("Linear Predictor","eta",
            rhs = X %*% beta,
            child = "prob") %>%
@@ -209,12 +217,12 @@ graph = dag_create() %>%
             nodeLabels = "beta",
             data = c("Intercept",colnames(iris[,1:4]))) %>%
   dag_plate("Category Codes","K",
-            nodeLabels = "beta",
+            nodeLabels = c("beta"),
             data = speciesCoding)
 
 graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
-drawsDF = graph %>% dag_numpyro()
+drawsDF = graph %>% dag_numpyro(mcmc = FALSE)
 drawsDF %>% dagp_plot()
 
 ### using mixture example

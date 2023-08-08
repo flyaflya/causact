@@ -713,3 +713,19 @@ abort_call_input_type <- function(arg, call = caller_env()) {
     call = call
   )
 }
+
+## install utility function
+#' Check if 'r-causact' Conda environment exists
+check_r_causact_env <- function() {
+  env_list <- reticulate::conda_list()
+  "r-causact" %in% env_list$name
+}
+
+# Function to replace 'c(' with 'concatenate(atleast_1d(' and ')' with '))'
+replace_c <- function(input_string) {
+  pattern <- "(^|\\s)c\\((.*?)\\)"
+  replacement <- "\\1concatenate(atleast_1d(\\2))"
+  modified_string <- gsub(pattern, replacement, input_string, perl = TRUE)
+  return(modified_string)
+}
+

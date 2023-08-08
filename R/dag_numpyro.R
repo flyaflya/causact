@@ -84,6 +84,13 @@ dag_numpyro <- function(graph,
     stop(errorMessage)
   }
 
+  ## clear cache environment for storing mcmc results
+  if (mcmc) {
+    rmExpr = rlang::expr(rm(list = ls()))
+    eval(rmExpr, envir = cacheEnv)
+    options("reticulate.engine.environment" = cacheEnv)
+    } ## clear cacheEnv
+
   ###get dimension information
   graphWithDim = graph %>% dag_dim()
 
@@ -164,8 +171,9 @@ from jax.numpy import (exp, log, log1p, expm1, abs, mean,
     for (i in 1:nrow(renameDF)) {
       old_name <- renameDF$data[i]
       new_name <- renameDF$dataPy[i]
-      ## this works, but might need to clean up global env
-      assign(new_name,eval(rlang::parse_expr(old_name)),globalenv())
+      assign(new_name,
+             eval(rlang::parse_expr(old_name)),
+             cacheEnv)
       nameChangeStatements = paste0(nameChangeStatements,
                                     new_name, " = ",
                                     old_name,"\n")
@@ -236,8 +244,8 @@ sep = "\n")
       for (i in 1:nrow(renameDIMDF)) {
         old_name <- renameDIMDF$dataNode[i]
         new_name <- renameDIMDF$dataPy[i]
-        ## this works, but might need to clean up global env
-        assign(new_name,eval(rlang::parse_expr(old_name)),globalenv())
+        ## this works, but might need to clean up env
+        assign(new_name,eval(rlang::parse_expr(old_name)),cacheEnv)
         nameChangeStatements = paste0(nameChangeStatements,
                                       new_name, " = ",
                                       old_name, "\n")
@@ -385,8 +393,6 @@ sep = "\n")
   priorGroupDF = priorGroupDF %>%
     dplyr::left_join(grpIndexDF, by = "auto_rhs")
 
-  assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
-
   ###Create POSTERIOR draws statement
   if (mcmc == TRUE) {  ##clear cacheEnv make sure priorGrp is restored
     ## ensure expected numpyro environment is available
@@ -396,9 +402,6 @@ sep = "\n")
       message("To do this, run install_causact_deps().")
       return(invisible())
     }
-
-    rmExpr = rlang::expr(rm(list = ls()))
-    eval(rmExpr, envir = cacheEnv)  ## clear cacheEnv
     assign("priorGroupDF", priorGroupDF, envir = cacheEnv)
     meaningfulLabels(graphWithDim)  ###assign meaningful labels in cacheEnv
   } # end if mcmc=TRUE
@@ -540,31 +543,9 @@ sep = "\n")
 
     eval(codeExpr, envir = cacheEnv) ## evaluate in other env
     ###return data frame of posterior draws
-    return(dplyr::as_tibble(py$drawsDF))
+    return(dplyr::as_tibble(py$drawsDF, .name_repair = "universal"))
   }
 
-  ##clean up any temporary variables from renaming
-  ##vars with hyphens or periods
-  if (NROW(renameDF) > 0){
-    for (i in 1:NROW(renameDF)) {
-      new_name <- renameDF$dataPy[i]
-      eval(rlang::parse_expr(paste0("rm(",new_name,", envir = globalenv())")))
-    }
-  }
   return(invisible(codeForUser))  ## just print code
 }
 
-## install utility function
-#' Check if 'r-causact' Conda environment exists
-check_r_causact_env <- function() {
-  env_list <- reticulate::conda_list()
-  "r-causact" %in% env_list$name
-}
-
-# Function to replace 'c(' with 'concatenate(atleast_1d(' and ')' with '))'
-replace_c <- function(input_string) {
-  pattern <- "(^|\\s)c\\((.*?)\\)"
-  replacement <- "\\1concatenate(atleast_1d(\\2))"
-  modified_string <- gsub(pattern, replacement, input_string, perl = TRUE)
-  return(modified_string)
-}

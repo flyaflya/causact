@@ -9,7 +9,7 @@
 #' # view the graph with `dag_render()`.
 #' dag_create()
 #' @return a list object of class `causact_graph` consisting of 6 dataframes.  Each data frame is responsible for storing information about nodes, edges, plates, and the relationships among them.
-#' @importFrom lifecycle badge function
+#' @importFrom lifecycle badge
 #' @export
 
 dag_create <- function() {

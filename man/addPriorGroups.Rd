@@ -15,5 +15,5 @@ a tidy dataframe of posterior draws. Useful for passing to \code{dagp_plot()} or
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 
-Add a column to tidy dataframe of draws that groups parameters by their prior distribution.  All parameters with the same prior distribution recieve the same index.
+Add a column to a tidy dataframe of draws that groups parameters by their prior distribution.  All parameters with the same prior distribution receive the same index.
 }

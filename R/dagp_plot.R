@@ -5,6 +5,7 @@
 #' Plot the posterior distribution of all latent parameters using a dataframe of posterior draws from a `causact_graph` model.
 #' @param drawsDF the dataframe output of `dag_numpyro(mcmc=TRUE)` where each column is a parameter and each row a single draw from a representative sample.
 #' @param densityPlot If `TRUE`, each parameter gets its own density plot.  If `FALSE` (recommended usage), parameters are grouped into facets based on whether they share the same prior or not.  10 and 90 percent credible intervals are displayed for the posterior distributions.
+#' @param abbrevLabels If `TRUE`, long labels on the plot are abbreviated to 10 characters.  If `FALSE` the entire label is used.
 #' @return a credible interval plot of all latent posterior distribution parameters.
 #' @examples
 #' # A simple example
@@ -76,10 +77,18 @@
 #' @export
 
 
-dagp_plot = function(drawsDF,densityPlot = FALSE) { # case where untidy posterior draws are provided
+dagp_plot = function(drawsDF,densityPlot = FALSE, abbrevLabels = FALSE) { # case where untidy posterior draws are provided
   q95 <- density <- reasonableIntervalWidth <- credIQR <- shape <- param <- NULL ## place holder to pass devtools::check
+
   if (densityPlot == TRUE) {
-    plot = drawsDF %>% tidyr::gather() %>%
+    if (abbrevLabels) {  ## shorten labels if desired
+      drawsDF = drawsDF %>%
+        tidyr::gather() %>%
+        dplyr::mutate(key = abbreviate(key, minlength = 10))} else {
+          drawsDF = drawsDF %>%
+            tidyr::gather()
+        }
+    plot = drawsDF %>% ## start with tidy draws
       ggplot2::ggplot(ggplot2::aes(x = value,
                           y = ggplot2::after_stat(density))) +
       ggplot2::geom_density(ggplot2::aes(fill = key)) +
@@ -92,8 +101,14 @@ dagp_plot = function(drawsDF,densityPlot = FALSE) { # case where untidy posterio
     plotList = list()
     ## filter out NA's like from LKJ prior (we do not know how to plot this)
     tryCatch({
+      if (abbrevLabels) {  ## shorten labels if desired
+        drawsDF = drawsDF %>%
+          addPriorGroups() %>%
+          dplyr::mutate(param = abbreviate(param, minlength = 10))} else {
+            drawsDF = drawsDF %>%
+              addPriorGroups()
+          }
       drawsDF = drawsDF %>%
-      addPriorGroups() %>%
         dplyr::mutate(priorGroup = ifelse(is.na(priorGroup),999999,priorGroup)) %>%
       dplyr::filter(!is.na(priorGroup)) ##if try works, erase this line
     priorGroups = unique(drawsDF$priorGroup)

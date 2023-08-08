@@ -7,9 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
-
-This vignette illustrates how to use the `causact` package to reduce the friction experienced while going from business issues to computational Bayesian models, inference, and insight.  The package is easy-to-use, intuitive, and provides a visual interface to computational Bayesian inference, and allows `R` to access a probabilistic programming language (PPL).  To get started load the required packages:
+This vignette illustrates how to use the `causact` package to reduce the friction experienced while going from business issues to computational Bayesian models, inference, and insight.  The package is easy-to-use, intuitive, and provides a visual interface to computational Bayesian inference, and allows `R` to access a probabilistic programming language (PPL).  To get started load `causact` package:
 
 
 ```r
@@ -132,7 +130,7 @@ graph %>% dag_render()
 
 <img src="theta44-1.png" title="Figure 3: A generative DAG for the credit card example." alt="Figure 3: A generative DAG for the credit card example." width="52%" style="display: block; margin: auto;" />
 
-The above generative recipe implies there is only one _true_ $\theta$ value - which is unknown so we place a flat uniform prior over all possible values for $\theta$. Given $\theta$, 1,000 observations are outcomes of Bernoulli trials using that one $\theta$ value.  The posterior distribution reallocates plausibility among $\theta$ values to those most consistent with our prior and data.  A representative sample from the posterior distribution is easily obtained using `dag_numpyro`:
+The above generative recipe implies there is only one _true_ $\theta$ value - which is unknown so we place a flat uniform prior over all possible values for $\theta$. Given $\theta$, 1,000 observations are outcomes of Bernoulli trials using that one $\theta$ value.  The posterior distribution reallocates plausibility among $\theta$ values to those most consistent with our prior and data.  A representative sample from the posterior distribution is easily obtained using `dag_numpyro()`:
 
 
 ```r
@@ -188,7 +186,7 @@ Now, when we get the posterior distribution from our code, we get a representati
 
 ```r
 ## get representative sample
-drawsDF = graph %>% dag_numpyro(warmup = 400)
+drawsDF = graph %>% dag_numpyro()
 ```
 
 Visualizing the posterior yields:
@@ -202,7 +200,7 @@ drawsDF %>% dagp_plot()
 
 Notice, the index names for the four `theta` values are automatically generated as abbreviated versions of the unique labels found in `carModelDF$carModel`.
 
-Digesting the psoterior plot, notice that credible interval widths are different for the different `theta` values.  For example, the probability interval for the Toyota Corolla is more narrow than the interval for the other cars.  This is simply because there is more data regarding Toyota Corolla drivers than the other vehicles.  With more data, we get more confident in our estimate. Here is a quick way to see the distribution of car models across our observations:
+Digesting the posterior plot, notice that credible interval widths are different for the different `theta` values.  For example, the probability interval for the Toyota Corolla is more narrow than the interval for the other cars.  This is simply because there is more data regarding Toyota Corolla drivers than the other vehicles.  With more data, we get more confident in our estimate. Here is a quick way to see the distribution of car models across our observations:
 
 
 ```r
@@ -221,13 +219,13 @@ carModelDF %>%
 
 ### Making A Probabilistic Statement With An Indicator Function
 
-In the previous posterior plot, notice the overlapping beliefs regarding the _true_ sign-up probability for drivers of the Toyota Corolla and Kia Forte.  Based on this, a reasonable query might be what is the probability that `theta_KiaForte` > `theta_ToytCrll`? As a typical workflow, use an indicator function on the posterior draws to answer the question.  So, to answer "what is the probability that `theta_KiaForte` > `theta_ToytCrll`?", we compute:
+In the previous posterior plot, notice the overlapping beliefs regarding the _true_ sign-up probability for drivers of the Toyota Corolla and Kia Forte.  Based on this, a reasonable query might be what is the probability that `theta_Kia Forte` > `theta_ToyotaCorolla`? As a typical workflow, use an indicator function on the posterior draws to answer the question.  So, to answer "what is the probability that `theta_Kia.Forte` > `theta_Toyota.Corolla`?", we compute:
 
 
 ```r
 drawsDF %>%
   mutate(indicatorFunction =
-           theta_KiaForte > theta_ToytCrll) %>%
+           theta_Kia.Forte > theta_Toyota.Corolla) %>%
   summarize(pctOfDraws = mean(indicatorFunction))
 #> # A tibble: 1 x 1
 #>   pctOfDraws

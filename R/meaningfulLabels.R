@@ -87,7 +87,6 @@ meaningfulLabels = function(graph) {
       ## with str_sort used and numeric = TRUE argument
       ## below assumes this sort is used
       newNamesDF = do.call(expand.grid,namesDF$levelNames) %>%
-        dplyr::mutate_all(function(x){abbreviate(x, minlength = 8)}) %>%
         tidyr::unite(label, sep = "_") %>%
         dplyr::mutate(bigLabel = paste0(uniqueLabels[i],"_",label))
 
