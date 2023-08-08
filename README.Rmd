@@ -28,6 +28,8 @@ knitr::opts_chunk$set(
 
 _Accelerate Bayesian analytics workflows_ in R through interactive modelling, visualization, and inference.  Uses probabilistic graphical models as a unifying language for business stakeholders, statisticians, and programmers. Due to its visual nature and simple model construction, `causact` serves as a great entry-point for newcomers to computational Bayesian inference. 
 
+> All introductory Bayesian models and many advanced models are well-supported in the `causact` package; using multi-variate distributions like the multi-variate normal, multi-nomial, or dirichlet distribution are harder to implement as is using directed acyclic graphs with nested or overlapping plates.  Improvements to model construction for those more complex models is forthcoming.
+
 ```{r demoGif, out.width = "40%", echo = FALSE, fig.align = "center"}
 knitr::include_graphics("man/figures/causactDemo.gif")
 ```
@@ -130,6 +132,8 @@ knitr::include_graphics("man/figures/cardPlotShortLabel.png")
 ```{r gretaCode, warning = FALSE, message = TRUE}
 numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 ```
+
+> note: if you have used older versions of causact, please know that dag_numpyro() is a drop-in replacement for dag_greta().
 
 ### Get posterior while automatically running the underlying `numpyro` code
 

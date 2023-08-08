@@ -21,6 +21,13 @@ and programmers. Due to its visual nature and simple model construction,
 `causact` serves as a great entry-point for newcomers to computational
 Bayesian inference.
 
+> All introductory Bayesian models and many advanced models are
+> well-supported in the `causact` package; using multi-variate
+> distributions like the multi-variate normal, multi-nomial, or
+> dirichlet distribution are harder to implement as is using directed
+> acyclic graphs with nested or overlapping plates. Improvements to
+> model construction for those more complex models is forthcoming.
+
 <img src="man/figures/causactDemo.gif" width="40%" style="display: block; margin: auto;" />
 
 This package is solely R-based, but behind the scenes, it relies on the
@@ -164,6 +171,9 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> ) ## END PYTHON STRING
 #> drawsDF = py$drawsDF
 ```
+
+> note: if you have used older versions of causact, please know that
+> dag_numpyro() is a drop-in replacement for dag_greta().
 
 ### Get posterior while automatically running the underlying `numpyro` code
 
