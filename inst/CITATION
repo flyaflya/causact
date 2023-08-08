@@ -1,0 +1,11 @@
+bibentry(
+  bibtype  = "Article",
+  title    = "Generative DAGs as an Interface Into Probabilistic Programming with the R Package causact",
+  author   = "Adam J. Fleischhacker and Thi Hong Nhung Nguyen",
+  journal  = "The Journal of Open Source Software",
+  year     = 2022,
+  volume   = 7,
+  number   = 76,
+  pages    = 4415,
+  doi      = "10.21105/joss.04415"
+)
