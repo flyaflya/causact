@@ -4,7 +4,7 @@
 #'
 #' @param graph a graph object of class `causact_graph` representing a complete and conistent specification of a joint distribution.
 #' @param mcmc a logical value indicating whether to sample from the posterior distribution.  When `mcmc=FALSE`, the numpyro code is printed to the console, but not executed.  The user can cut and paste the code to another script for running line-by-line.  This option is most useful for debugging purposes. When `mcmc=TRUE`, the code is executed and outputs a dataframe of posterior draws.
-#' @param num_warmups an integer value for the number of initial steps that will be discarded while the markov chain finds its way into the typical set.
+#' @param num_warmup an integer value for the number of initial steps that will be discarded while the markov chain finds its way into the typical set.
 #' @param num_samples an integer value for the number of samples.
 #' @param seed an integer-valued random seed that serves as a starting point for a random number generator. By setting the seed to a specific value, you can ensure the reproducibility and consistency of your results.
 #' @return If `mcmc=TRUE`, returns a dataframe of posterior distribution samples corresponding to the input `causact_graph`.  Each column is a parameter and each row a draw from the posterior sample output.  If `mcmc=FALSE`, running `dag_numpyro` returns a character string of code that would help the user generate the posterior distribution; useful for debugging.
@@ -37,6 +37,7 @@
 #' @importFrom rlang enquo expr_text .data expr is_na eval_tidy parse_expr
 #' @importFrom igraph graph_from_data_frame topo_sort
 #' @importFrom tidyr gather
+#' @importFrom stats na.omit
 #' @import reticulate
 #' @export
 
@@ -54,6 +55,9 @@ dag_numpyro <- function(graph,
   #   )
   # )
   # Sys.setenv(RETICULATE_AUTOCONFIGURE = FALSE)
+
+  ## initialize to pass devtools check
+  newPyName <- dataPy <- id <- auto_data <- dimID <- dec <- NULL ## place holder to pass devtools::check
 
   ## get graph object name for label statement
   graphName = rlang::as_name(rlang::ensym(graph))
@@ -416,7 +420,7 @@ sep = "\n")
   ## check if any dimensions (i.e. plates)
   if (NROW(plateDimDF > 0)) {
     drawsStatement = paste0(drawsStatement,",\n\tcoords = {'")
-    dLabels = unique(na.omit(modelCodeDF$dimLabel))
+    dLabels = unique(stats::na.omit(modelCodeDF$dimLabel))
     numDlabels = length(dLabels)
 
     for (i in 1:numDlabels) {
@@ -452,7 +456,7 @@ sep = "\n")
       unstackToDFStatement = paste0(unstackToDFStatement,
                                     "\ndrawsDS = drawsDS.drop_dims('",
                                     dLabels[i],
-                                    "_dim')")
+                                    "_dim')\n")
 
       ## finish dimToKeep and draws statements below
 

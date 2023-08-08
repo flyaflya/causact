@@ -61,6 +61,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom rlang enquo get_expr UQ
 #' @importFrom utils head
+#' @importFrom lifecycle badge
 #' @export
 
 dag_plate <- function(graph,

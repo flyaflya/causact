@@ -10,6 +10,7 @@
 #' @import rlang
 #' @importFrom purrr map
 #' @importFrom tidyr unite
+#' @importFrom lifecycle badge
 #' @export
 
 meaningfulLabels = function(graph) {

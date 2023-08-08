@@ -11,10 +11,8 @@
 #' @param mean,meanlog,location,mu unconstrained parameters
 #'
 #' @param
-#'   sd,sdlog,sigma,lambda,shape,rate,df,scale,shape1,shape2,alpha,beta,df1,df2,a,b,eta
+#'   sd,sdlog,sigma,lambda,shape,rate,df,scale,shape1,shape2,alpha,beta,a,b,eta,size
 #'    positive parameters, `alpha` must be a vector for `dirichlet`.
-#'
-#' @param size,m,n,k positive integer parameter
 #'
 #' @param prob probability parameter (`0 < prob < 1`), must be a vector for
 #'   `multinomial` and `categorical`
@@ -24,7 +22,10 @@
 #' @param dim Currently ignored.  If `dag_greta` becomes functional again, this specifies the dimensions of the greta array to be returned, either a scalar
 #'   or a vector of positive integers. See details.
 #'
-#' @param dimension the dimension of a multivariate distribution
+#' @param truncation a length-two vector giving values between which to truncate
+#'   the distribution.
+#'
+#' @param dimension Currently ignored.  If `dag_greta` becomes functional again, this specifies, the dimension of a multivariate distribution
 #'
 #' @details The discrete probability distributions (`bernoulli`,
 #'   `binomial`, `negative_binomial`, `poisson`,
@@ -244,7 +245,7 @@ weibull <- function(shape, scale, dim = NULL) {
 #' @rdname distributions
 #' @export
 exponential <- function(rate, dim = NULL) {
-  lambda_quo <- rlang::enquo(lambda)
+  lambda_quo <- rlang::enquo(rate)
   lambda_name <- rlang::quo_name(lambda_quo)
   paste0("dist.Exponential(",lambda_name,")")
 }

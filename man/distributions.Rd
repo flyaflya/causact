@@ -84,16 +84,17 @@ or a vector of positive integers. See details.}
 
 \item{mean, meanlog, location, mu}{unconstrained parameters}
 
-\item{sd, sdlog, sigma, lambda, shape, rate, df, scale, shape1, shape2, alpha, beta, df1, df2, a, b, eta}{positive parameters, \code{alpha} must be a vector for \code{dirichlet}.}
+\item{sd, sdlog, sigma, lambda, shape, rate, df, scale, shape1, shape2, alpha, beta, a, b, eta, size}{positive parameters, \code{alpha} must be a vector for \code{dirichlet}.}
+
+\item{truncation}{a length-two vector giving values between which to truncate
+the distribution.}
 
 \item{prob}{probability parameter (\verb{0 < prob < 1}), must be a vector for
 \code{multinomial} and \code{categorical}}
 
-\item{size, m, n, k}{positive integer parameter}
-
 \item{Sigma}{positive definite variance-covariance matrix parameter}
 
-\item{dimension}{the dimension of a multivariate distribution}
+\item{dimension}{Currently ignored.  If \code{dag_greta} becomes functional again, this specifies, the dimension of a multivariate distribution}
 }
 \description{
 These functions can be used to define random variables in a

@@ -6,6 +6,7 @@
 #' @param drawsDF the dataframe created by  `dag_numpyro()` where each row represents one draw of MCMC output.  Two columns are expected, `param` - the parameter name, `value` - the realized value, and a third column, `priorGroup`, is appended as an integer grouping parameters by their prior distributions. The data for this third column is stored in an environment called `cacheEnv` when the `dag_numpyro()` function is called.  Any parameters with the same prior end up in the same prior group; used by `dagp_plot()` to group parameters when plotted.
 #' @return a tidy dataframe of posterior draws. Useful for passing to `dagp_plot()` or for creating plots using `ggplot()`.
 #' @importFrom dplyr select left_join bind_rows arrange
+#' @importFrom lifecycle badge
 #' @export
 
 

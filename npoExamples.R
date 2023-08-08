@@ -4,6 +4,25 @@
 library(tidyverse)
 library(causact)
 
+graph = dag_create() %>%
+  dag_node("Get Card","x",
+           rhs = bernoulli(theta),
+           data = carModelDF$getCard) %>%
+  dag_node("Signup Probability","theta",
+           rhs = uniform(0,1),
+           child = "x") %>%
+  dag_plate("Car Model", "y",
+            data = carModelDF$carModel,
+            nodeLabels = "theta",
+            addDataNode = TRUE)  %>%
+  dag_plate("Observations", "i",
+            nodeLabels = c("x","y"))
+
+graph %>% dag_render()
+drawsDF = graph %>% dag_numpyro()
+drawsDF %>% dagp_plot()
+drawsDF %>% dagp_plot(densityPlot = TRUE)
+
 ### greta example 0
 graph = dag_create() %>%
   dag_node("Sepal Length","y",

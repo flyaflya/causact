@@ -16,6 +16,7 @@
 #'   dag_edge(from = "X", to = "Y") %>%
 #'   dag_render(shortLabel = TRUE)
 #' @importFrom dplyr bind_rows
+#' @importFrom lifecycle badge
 #' @export
 
 dag_edge <- function(graph,

@@ -18,6 +18,7 @@
 #' }
 #'
 #' @examples
+#' \dontrun{
 #' library(greta)
 #' graph = dag_create() %>%
 #'   dag_node("Get Card","y",
@@ -35,12 +36,12 @@
 #'
 #' graph %>% dag_render()
 #' gretaCode = graph %>% dag_greta(mcmc=FALSE)
-#' \dontrun{
 #' ## default functionality returns a data frame
 #' # below requires Tensorflow installation
 #' drawsDF = graph %>% dag_greta()
 #' drawsDF %>% dagp_plot()
 #' }
+#' @importFrom lifecycle badge
 #' @export
 
 dag_greta <- function(graph,

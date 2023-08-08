@@ -17,15 +17,14 @@ coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)]
 *Accelerate Bayesian analytics workflows* in R through interactive
 modelling, visualization, and inference. Uses probabilistic graphical
 models as a unifying language for business stakeholders, statisticians,
-and programmers.
+and programmers. Due to its visual nature and simple model construction,
+`causact` serves as a great entry-point for newcomers to computational
+Bayesian inference.
 
 <img src="man/figures/causactDemo.gif" width="40%" style="display: block; margin: auto;" />
 
-This package relies on the sleek and elegant `greta` package for
-Bayesian inference. `greta`, in turn, is an interface into `TensorFlow`
-from R. Future iterations of the `causact` package will aim to be a
-front-end into several universal probablistic programming languages
-(e.g. Stan, Turing, Gen, etc.).
+This package is solely R-based, but behind the scenes, it relies on the
+`numpyro` Python package for Bayesian inference.
 
 Using the `causact` package for Bayesian inference is featured in
 `A Business Analyst's Introduction to Business Analytics` available at
@@ -45,10 +44,15 @@ or the development version from GitHub:
     install.packages("remotes")
     remotes::install_github("flyaflya/causact")
 
-`causact` requires the `greta` package for Bayesian updating, which in
-turn, requires a specific version of `TensorFlow`. Install both `greta`
-and `TensorFlow` using the instructions available here:
-<https://www.causact.com/install-tensorflow-greta-and-causact.html>.
+While `causact` can be used for DAG visualization, getting Bayesian
+posteriors requires the `numpyro` package, which in turn, requires
+python and some other dependencies. Install `numpyro` and other python
+dependencies by running the following after installing `causact`:
+
+    library(causact)
+    install_causact_deps()
+
+Please answer `Y` to any prompts for installing miniconda if needed.
 
 ## Usage
 
@@ -59,6 +63,17 @@ with the packages `dag_foo()` functions further described here:
 <https://www.causact.com/causact-quick-inference-with-generative-dags.html#causact-quick-inference-with-generative-dags>
 
 ### Create beautiful model visualizations.
+
+    #> Initializing python, numpyro, and other dependencies. This may take up to 15 seconds...
+    #> Initializing python, numpyro, and other dependencies. This may take up to 15 seconds...COMPLETED!
+    #> 
+    #> Attaching package: 'causact'
+    #> The following objects are masked from 'package:stats':
+    #> 
+    #>     binomial, poisson
+    #> The following objects are masked from 'package:base':
+    #> 
+    #>     beta, gamma
 
 ``` r
 library(causact)
@@ -86,59 +101,81 @@ graph %>% dag_render(shortLabel = TRUE)
 
 <img src="man/figures/cardPlotShortLabel.png" width="50%" />
 
-### See useful `greta` code without executing it (for debugging or learning)
+### See `numpyro` code without executing it (for debugging or learning)
 
 ``` r
-library(greta)
+numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> 
-#> Attaching package: 'greta'
-#> The following objects are masked from 'package:stats':
+#> ## The below code will return a posterior distribution 
+#> ## for the given DAG. Use dag_numpyro(mcmc=TRUE) to return a
+#> ## data frame of the posterior distribution: 
+#> reticulate::py_run_string("
+#> import numpy as np
+#> import numpyro as npo
+#> import numpyro.distributions as dist
+#> import pandas as pd
+#> import arviz as az
+#> from jax import random
+#> from numpyro.infer import MCMC, NUTS
+#> from jax.numpy import transpose as t
+#> from jax.numpy import (exp, log, log1p, expm1, abs, mean,
+#>                  sqrt, sign, round, concatenate, atleast_1d,
+#>                  cos, sin, tan, cosh, sinh, tanh,
+#>                  sum, prod, min, max, cumsum, cumprod )
+#> ## note that above is from JAX numpy package, not numpy.
 #> 
-#>     binomial, cov2cor, poisson
-#> The following objects are masked from 'package:base':
+#> y = np.array(r.carModelDF.getCard)   #DATA
+#> x      = pd.factorize(r.carModelDF.carModel,use_na_sentinel=True)[0]   #DIM
+#> x_dim  = len(np.unique(x))   #DIM
+#> x_crd  = pd.factorize(r.carModelDF.carModel,use_na_sentinel=True)[1]   #DIM
+#> def graph_model(y,x):
+#>  ## Define random variables and their relationships
+#>  with npo.plate('x_dim',x_dim):
+#>      theta = npo.sample('theta', dist.Laplace(2,2))
+#>  y = npo.sample('y', dist.Bernoulli(theta[x]),obs=y)
 #> 
-#>     %*%, apply, backsolve, beta, chol2inv, colMeans, colSums, diag,
-#>     eigen, forwardsolve, gamma, identity, rowMeans, rowSums, sweep,
-#>     tapply
-gretaCode = graph %>% dag_greta(mcmc = FALSE)
-#> ## The below greta code will return a posterior distribution 
-#> ## for the given DAG. Either copy and paste this code to use greta
-#> ## directly, evaluate the output object using 'eval', or 
-#> ## or (preferably) use dag_greta(mcmc=TRUE) to return a data frame of
-#> ## the posterior distribution: 
-#> y <- as_data(carModelDF$getCard)   #DATA
-#> x      <- as.factor(carModelDF$carModel)   #DIM
-#> x_dim  <- length(unique(x))   #DIM
-#> theta  <- beta(shape1 = 2, shape2 = 2, dim = x_dim)   #PRIOR
-#> distribution(y) <- bernoulli(prob = theta[x])   #LIKELIHOOD
-#> gretaModel  <- model(theta)   #MODEL
-#> meaningfulLabels(graph)
-#> draws       <- mcmc(gretaModel)              #POSTERIOR
-#> drawsDF     <- replaceLabels(draws) %>% as.matrix() %>%
-#>                 dplyr::as_tibble()           #POSTERIOR
-#> tidyDrawsDF <- drawsDF %>% addPriorGroups()  #POSTERIOR
+#> # computationally get posterior
+#> mcmc = MCMC(NUTS(graph_model), num_warmup = 1000, num_samples = 4000)
+#> rng_key = random.PRNGKey(seed = 111)
+#> mcmc.run(rng_key,y,x)
+#> drawsDS = az.from_numpyro(mcmc,
+#>  coords = {'x_dim': x_crd},
+#>  dims = {'theta': ['x_dim']}
+#>  ).posterior
+#> # prepare xarray dataset for export to R dataframe
+#> dimensions_to_keep = ['chain','draw','x_dim']
+#> drawsDS = drawsDS.squeeze(drop = True ).drop_dims([dim for dim in drawsDS.dims if dim not in dimensions_to_keep])
+#> # unstack plate variables to flatten dataframe as needed
+#> for plateLabel in drawsDS['x_dim']:
+#>  new_varname = f'theta_{plateLabel.values}'
+#>  drawsDS = drawsDS.assign(**{new_varname: drawsDS['theta'].sel(x_dim = plateLabel)})
+#> drawsDS = drawsDS.drop_dims('x_dim')
+#> 
+#> drawsDF = drawsDS.squeeze().to_dataframe()"
+#> ) ## END PYTHON STRING
+#> drawsDF = py$drawsDF
 ```
 
-### Get posterior while automatically running the underlying `greta` code
+### Get posterior while automatically running the underlying `numpyro` code
 
 ``` r
-library(greta)
-drawsDF = graph %>% dag_greta()
+drawsDF = graph %>% dag_numpyro()
 drawsDF  ### see top of data frame
-#> # A tibble: 4,000 x 4
-#>    theta_JpWrnglr theta_KiaForte theta_SbrOtbck theta_ToytCrll
-#>             <dbl>          <dbl>          <dbl>          <dbl>
-#>  1          0.869          0.209          0.573          0.209
-#>  2          0.823          0.158          0.488          0.219
-#>  3          0.872          0.137          0.656          0.195
-#>  4          0.821          0.285          0.613          0.196
-#>  5          0.821          0.285          0.613          0.196
-#>  6          0.821          0.285          0.613          0.196
-#>  7          0.854          0.206          0.643          0.193
-#>  8          0.815          0.284          0.638          0.184
-#>  9          0.815          0.284          0.638          0.184
-#> 10          0.837          0.313          0.611          0.189
-#> # ... with 3,990 more rows
+#> # A tibble: 4,000 × 4
+#>    `theta_Toyota Corolla` `theta_Subaru Outback` `theta_Kia Forte`
+#>                     <dbl>                  <dbl>             <dbl>
+#>  1                  0.186                  0.627             0.243
+#>  2                  0.218                  0.607             0.234
+#>  3                  0.200                  0.627             0.261
+#>  4                  0.231                  0.626             0.236
+#>  5                  0.225                  0.615             0.278
+#>  6                  0.232                  0.624             0.257
+#>  7                  0.202                  0.710             0.318
+#>  8                  0.173                  0.587             0.258
+#>  9                  0.216                  0.592             0.283
+#> 10                  0.180                  0.666             0.180
+#> # ℹ 3,990 more rows
+#> # ℹ 1 more variable: `theta_Jeep Wrangler` <dbl>
 ```
 
 ### Get quick view of posterior distribution
@@ -147,7 +184,14 @@ drawsDF  ### see top of data frame
 drawsDF %>% dagp_plot()
 ```
 
-<img src="man/figures/gretaPost-1.png" title="Credible interval plots." alt="Credible interval plots." width="70%" />
+<div class="figure">
+
+<img src="man/figures/gretaPost-1.png" alt="Credible interval plots." width="70%" />
+<p class="caption">
+Credible interval plots.
+</p>
+
+</div>
 
 ## Getting Help and Suggesting Improvements
 
@@ -155,9 +199,7 @@ Whether you encounter a clear bug, have a suggestion for improvement, or
 just have a question, we are thrilled to help you out. In all cases,
 please file a [GitHub
 issue](https://github.com/flyaflya/causact/issues). If reporting a bug,
-please include a minimal reproducible example. If encountering issues
-installing `greta`, please seek help at the [greta discussion
-forum](https://forum.greta-stats.org/).
+please include a minimal reproducible example.
 
 ## Contributing
 
@@ -185,7 +227,6 @@ additional examples are shown below.
 > examples in R and Stan. Chapman and Hall/CRC, 2018.
 
 ``` r
-library(greta)
 library(tidyverse)
 library(causact)
 
@@ -196,7 +237,7 @@ graph = dag_create() %>%
            rhs = bernoulli(p),
            data = causact::chimpanzeesDF$pulled_left) %>%
   dag_node("Probability of Pull", "p",
-           rhs = ilogit(alpha + gamma + beta),
+           rhs = 1 / (1 + exp(-((alpha + gamma + beta)))),
            child = "L") %>%
   dag_node("Actor Intercept","alpha",
            rhs = normal(alphaBar, sigma_alpha),
@@ -251,7 +292,7 @@ graph %>% dag_render(shortLabel = TRUE)
 ### Compute posterior
 
 ``` r
-drawsDF = graph %>% dag_greta()
+drawsDF = graph %>% dag_numpyro()
 ```
 
 ### Visualize posterior
@@ -269,7 +310,6 @@ drawsDF %>% dagp_plot()
 > Hall/CRC, 2013.
 
 ``` r
-library(greta)
 library(tidyverse)
 library(causact)
 
@@ -309,7 +349,7 @@ graph %>% dag_render()
 ### Compute posterior
 
 ``` r
-drawsDF = graph %>% dag_greta()
+drawsDF = graph %>% dag_numpyro()
 ```
 
 ### Visualize posterior
@@ -319,54 +359,3 @@ drawsDF %>% dagp_plot()
 ```
 
 <img src="man/figures/eightschoolsGraphPost-1.png" width="100%" />
-
-## Example Where Observed RV Is A Mixed RV
-
-``` r
-#### use dirichlet instead
-library(greta)
-library(tidyverse)
-library(causact)
-
-## sample data - try to recover params
-x <- c(rpois(800, 3),rpois(200, 10))
-
-graph = dag_create() %>%  ## create generative DAG
-  dag_node("Mixed Var","x",
-           rhs = mixture(alpha,beta,
-                         weights = t(weights)),
-           data = x) %>%
-  dag_node("Count Var 1","alpha",
-           rhs = poisson(lambda1),
-           child = "x") %>%
-  dag_node("Count Var 2","beta",
-           rhs = poisson(lambda2),
-           child = "x") %>%
-  dag_node("Weight Vars","weights",
-           rhs = dirichlet(t(c(1,1))),
-           child = "x") %>%
-  dag_node("Exp Rate 1","lambda1",
-           rhs = uniform(1,5),
-           child = "alpha") %>%
-  dag_node("Exp Rate 2","lambda2",
-           rhs = uniform(6,20),
-           child = "beta")
-```
-
-### See graph
-
-``` r
-graph %>% dag_render()
-```
-
-<img src="man/figures/mixture.png" width="100%" />
-
-### Compute posterior
-
-### Visualize posterior
-
-``` r
-drawsDF %>% dagp_plot()
-```
-
-<img src="man/figures/mixturePost.png" width="100%" />

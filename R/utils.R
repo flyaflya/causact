@@ -1,6 +1,6 @@
 #' @importFrom forcats fct_relevel
 #' @importFrom stringr str_sort str_detect
-#' @importFrom rlang ensym as_name call_standardise
+#' @importFrom rlang ensym as_name get_expr set_expr is_primitive eval_bare get_env node_car is_call
 #### assume RHS is a distribution
 #### if distribution, isolate distribution name,
 #### parameter names/values, and argument names/values
@@ -142,7 +142,7 @@ rhsDecompMixJointDistr = function(rhs) {
 
   ## get params (i.e. dists passed via ... to mix)
   ## and non-param arguments like dim as list
-  argList = as.list(rlang::call_standardise(distExpr)[-1])
+  argList = as.list(call_standardize(distExpr)[-1])
   argNames = names(argList)
   argValues = as.character(argList)
 
@@ -209,7 +209,7 @@ rhsDecomp = function(rhs) {
     fnName = NA}
 
   ## standardize the call
-  if(!simpleRHS) {distExpr = rlang::call_standardise(distExpr)}
+  if(!simpleRHS) {distExpr = call_standardize(distExpr)}
 
   ## return function name
   if(!simpleRHS) {fnName = rlang::call_name(distExpr)}
@@ -672,4 +672,44 @@ get_name <- function(x){
     rlang::as_name(lhs)
 }
 
+## take this function from rlang as they are deprecating it
+## change from standardise to standardize
+call_standardize <- function(call, env = caller_env()) {
 
+  expr <- rlang::get_expr(call)
+  if (!is_call(expr)) {
+    abort_call_input_type("call")
+  }
+
+  # The call name might be a literal, not necessarily a symbol
+  env <- rlang::get_env(call, env)
+  fn <- rlang::eval_bare(rlang::node_car(expr), env)
+
+  if (rlang::is_primitive(fn)) {
+    call
+  } else {
+    matched <- match.call(fn, expr)
+    rlang::set_expr(call, matched)
+  }
+}
+
+## adapted from rlang - avoid using cli like rlang does
+.style_inline <- function(x, span, fallback = "`%s`") {
+  if (is.null(fallback)) {
+    x
+  } else if (is.function(fallback)) {
+    fallback(x)
+  } else {
+    sprintf(fallback, x)
+  }
+}
+.format_inline <- function(x, span, fallback = "`%s`") {
+    .style_inline(x, span, fallback = fallback)
+}
+format_arg    <- function(x) .format_inline(x, "arg", "`%s`")
+abort_call_input_type <- function(arg, call = caller_env()) {
+  abort(
+    sprintf("%s must be a quoted call.", format_arg(arg)),
+    call = call
+  )
+}

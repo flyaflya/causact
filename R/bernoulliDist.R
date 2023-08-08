@@ -12,6 +12,7 @@
 #' #Return a random result of a Bernoulli trial given `prob`.
 #' rbern(n =1, prob = 0.5)
 #' @importFrom stats rbinom
+#' @importFrom lifecycle badge
 #' @export
 
 

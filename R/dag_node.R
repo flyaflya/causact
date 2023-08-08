@@ -63,6 +63,7 @@
 #' }
 #' @importFrom dplyr bind_rows filter
 #' @importFrom rlang is_empty UQ enexpr enquo expr_text quo_name eval_tidy
+#' @importFrom lifecycle badge
 
 #' @export
 

@@ -32,7 +32,6 @@ Imports:
     igraph (>= 1.2.5),
     stringr (>= 1.4.0),
     cowplot (>= 1.0.0),
-    coda (>= 0.19.3),
     forcats (>= 0.5.0),
     htmlwidgets (>= 1.5.1),
     rstudioapi (>= 0.11),

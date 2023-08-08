@@ -31,6 +31,7 @@ This function is currently defunct.  It has been superseded by \code{dag_numpyro
 Generate a representative sample of the posterior distribution.  The input graph object should be of class \code{causact_graph} and created using \code{dag_create()}.  The specification of a completely consistent joint distribution is left to the user.  Helpful error messages are scheduled for future versions of the \code{causact} package.
 }
 \examples{
+\dontrun{
 library(greta)
 graph = dag_create() \%>\%
   dag_node("Get Card","y",
@@ -48,7 +49,6 @@ graph = dag_create() \%>\%
 
 graph \%>\% dag_render()
 gretaCode = graph \%>\% dag_greta(mcmc=FALSE)
-\dontrun{
 ## default functionality returns a data frame
 # below requires Tensorflow installation
 drawsDF = graph \%>\% dag_greta()

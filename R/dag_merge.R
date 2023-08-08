@@ -44,6 +44,7 @@
 #'   dag_edge(from=c("pA","pB"), to=c("TP")) %>%
 #'   dag_render()
 #' @importFrom dplyr bind_rows
+#' @importFrom lifecycle badge
 #' @export
 
 dag_merge <- function(graph1,...){

@@ -19,6 +19,7 @@
 #' @importFrom stringr str_replace
 #' @importFrom DiagrammeR create_node_df create_graph add_node_df create_edge_df
 #' @importFrom rlang .data
+#' @importFrom lifecycle badge
 #' @export
 
 
@@ -131,12 +132,12 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   ## if rhs represents distribution, use "label ~ distribution(args)
   ## if rhs is blank, use "label"
   eqDF = nodeDF %>%
-    dplyr::select(.data$id, auto_label, rhs, rhsID, distr) %>%
+    dplyr::select("id", auto_label, rhs, rhsID, distr) %>%
     dplyr::left_join(eqLineDF, by = "rhsID") %>%
     dplyr::mutate(eqLine = ifelse(!distr & !is.na(rhs), paste0(auto_label," = ",rhs),
                            ifelse(is.na(rhs), auto_label,
                                   paste0(auto_label, " ~ ", rhs, "(", argList, ")")))) %>%
-    dplyr::select(.data$id, eqLine)
+    dplyr::select("id", eqLine)
 
   ### create nodeDF as DiagrammeR data frame
   ##create clusterNameDF to map nodes to plates

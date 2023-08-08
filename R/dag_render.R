@@ -24,6 +24,7 @@
 #' @importFrom dplyr select rename mutate filter left_join
 #' @importFrom dplyr case_when as_tibble as_data_frame
 #' @return Returns an object of class `grViz` and `htmlwidget` that is also rendered in the RStudio viewer for interactive buidling of graphical models.
+#' @importFrom lifecycle badge
 #' @export
 
 dag_render <- function(graph,

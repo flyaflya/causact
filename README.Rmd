@@ -164,7 +164,7 @@ graph = dag_create() %>%
            rhs = bernoulli(p),
            data = causact::chimpanzeesDF$pulled_left) %>%
   dag_node("Probability of Pull", "p",
-           rhs = ilogit(alpha + gamma + beta),
+           rhs = 1 / (1 + exp(-((alpha + gamma + beta)))),
            child = "L") %>%
   dag_node("Actor Intercept","alpha",
            rhs = normal(alphaBar, sigma_alpha),
@@ -212,7 +212,7 @@ knitr::include_graphics("man/figures/chimpStat.png")
 
 ### Communicate with stakeholders for whom the statistics might be distracting
 
-```{r chimpsGraphRenderSL, eval = FALSE, warning = FALSE, message = FALSE}
+```{r chimpsGraphRenderSL, eval=FALSE, message=FALSE, warning=FALSE}
 graph %>% dag_render(shortLabel = TRUE)
 ```
 

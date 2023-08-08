@@ -6,8 +6,10 @@
 ^\.httr-oauth$
 ^README.Rmd$
 ^gretaExamples.R$
+^npoExamples.R$
 ^eightSchools.R$
 ^graphics.*$
+^graph.png$
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
@@ -21,5 +23,5 @@
 ^vignettes/precompile.R$
 ^doc$
 ^Meta$
-RgretaStuff/
+^\RgretaStuff\$
 

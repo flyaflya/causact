@@ -17,11 +17,11 @@ dag_numpyro(
 
 \item{mcmc}{a logical value indicating whether to sample from the posterior distribution.  When \code{mcmc=FALSE}, the numpyro code is printed to the console, but not executed.  The user can cut and paste the code to another script for running line-by-line.  This option is most useful for debugging purposes. When \code{mcmc=TRUE}, the code is executed and outputs a dataframe of posterior draws.}
 
+\item{num_warmup}{an integer value for the number of initial steps that will be discarded while the markov chain finds its way into the typical set.}
+
 \item{num_samples}{an integer value for the number of samples.}
 
 \item{seed}{an integer-valued random seed that serves as a starting point for a random number generator. By setting the seed to a specific value, you can ensure the reproducibility and consistency of your results.}
-
-\item{num_warmups}{an integer value for the number of initial steps that will be discarded while the markov chain finds its way into the typical set.}
 }
 \value{
 If \code{mcmc=TRUE}, returns a dataframe of posterior distribution samples corresponding to the input \code{causact_graph}.  Each column is a parameter and each row a draw from the posterior sample output.  If \code{mcmc=FALSE}, running \code{dag_numpyro} returns a character string of code that would help the user generate the posterior distribution; useful for debugging.
