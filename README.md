@@ -46,7 +46,8 @@ You can install the current release version of the package from CRAN:
 
     install.packages("causact")
 
-or the development version from GitHub:
+or the development version from GitHub (recommended as of August 2023
+until next CRAN release):
 
     install.packages("remotes")
     remotes::install_github("flyaflya/causact")

@@ -42,13 +42,13 @@ Using the `causact` package for Bayesian inference is featured in `A Business An
 
 ## Installation
 
-You can install the current release version of the package from CRAN (recommended):
+You can install the current release version of the package from CRAN:
 
 ```
 install.packages("causact")
 ```
 
-or the development version from GitHub:
+or the development version from GitHub (recommended as of August 2023 until next CRAN release):
 
 ```
 install.packages("remotes")
