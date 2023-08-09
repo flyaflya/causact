@@ -717,8 +717,12 @@ abort_call_input_type <- function(arg, call = caller_env()) {
 ## install utility function
 #' Check if 'r-causact' Conda environment exists
 check_r_causact_env <- function() {
-  env_list <- reticulate::conda_list()
-  "r-causact" %in% env_list$name
+  tryCatch({
+    env_list <- reticulate::conda_list()
+    result <- "r-causact" %in% env_list$name
+  }, error = function(e) {
+    result <- FALSE
+  })
 }
 
 # Function to replace 'c(' with 'concatenate(atleast_1d(' and ')' with '))'
