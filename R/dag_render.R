@@ -63,11 +63,11 @@ dag_render <- function(graph,
 
   dot_code = graph %>%
     dag_diagrammer(shortLabel = sLabel, wrapWidth = ww) %>%
-    generate_dot2()
+    DiagrammeR::generate_dot()
 
   # Generate a `grViz` object
   grVizObject <-
-    grViz2(
+    DiagrammeR::grViz(
       diagram = dot_code,
       width = width,
       height = height)
