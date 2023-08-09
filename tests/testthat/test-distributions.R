@@ -7,5 +7,11 @@ test_that("distributions have good output", {
   expect_equal(uniformString, "dist.Uniform(0,8)")
   studentString = causact::student(df=3,mu=8,sigma=7)
   expect_equal(studentString, "dist.StudentT(3,8,7)")
+  poissonString = causact::poisson(lambda = 9)
+  expect_equal(poissonString, "dist.Poisson(9)")
+  logNorm = causact::lognormal(meanlog = 9, 10)
+  expect_equal(logNorm, "dist.LogNormal(9,10)")
+  binomStr = causact::binomial("numTrials","succProb")
+  expect_equal(binomStr, "dist.Binomial(numTrials,succProb)")
 })
 

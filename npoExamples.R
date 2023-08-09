@@ -186,7 +186,7 @@ graph = dag_create() %>%
 
 graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
-drawsDF = graph %>% dag_numpyro()
+drawsDF = graph %>% dag_numpyro(mcmc = FALSE)
 drawsDF %>% dagp_plot()
 
 ### greta example #5: Multiple Categorical Regression
