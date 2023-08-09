@@ -14,68 +14,113 @@ coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)]
 
 # causact
 
-*Accelerate Bayesian analytics workflows* in R through interactive
-modelling, visualization, and inference. Uses probabilistic graphical
-models as a unifying language for business stakeholders, statisticians,
-and programmers. Due to its visual nature and simple model construction,
-`causact` serves as a great entry-point for newcomers to computational
-Bayesian inference.
+*Accelerate computational Bayesian inference workflows* in R through
+interactive modelling, visualization, and inference. The package
+leverages directed acyclic graphs (DAGs) to create a unified language
+language for business stakeholders, statisticians, and programmers. Due
+to its visual nature and simple model construction, `causact` serves as
+a great entry-point for newcomers to computational Bayesian inference.
 
-> All introductory Bayesian models and many advanced models are
-> well-supported in the `causact` package; using multi-variate
-> distributions like the multi-variate normal, multi-nomial, or
-> dirichlet distribution are harder to implement as is using directed
-> acyclic graphs with nested or overlapping plates. Improvements to
-> model construction for those more complex models is forthcoming.
+*Accelerate your R-based computational Bayesian inference processes*
+using interactive modeling, visualization, and inference capabilities
+offered by `causact`. Harnessing the power of directed acyclic graphs
+(DAGs), the package establishes a cohesive language that bridges the gap
+between business stakeholders, statisticians, and programmers. With its
+intuitive visual interface and straightforward model construction,
+causact proves to be an ideal starting platform for individuals new to
+the realm of computational Bayesian inference.
+
+> The `causact` package offers robust support for both foundational and
+> advanced Bayesian models. While introductory models are well-covered,
+> the utilization of multi-variate distributions such as multi-variate
+> normal, multi-nomial, or dirichlet distributions, along with the
+> implementation of directed acyclic graphs featuring nested or
+> overlapping plates, may present certain challenges. However, ongoing
+> enhancements are in the pipeline to facilitate the construction of
+> these intricate models.
 
 <img src="man/figures/introScreenshot.png" width="40%" style="display: block; margin: auto;" />
 
-This package is solely R-based, but behind the scenes, it relies on the
-`numpyro` Python package for Bayesian inference.
+While proficiency in R is the only requirement for users of this
+package, it also functions as a comprehensive probabilistic programming
+language, seamlessly incorporating the `numpyro` Python package to
+facilitate Bayesian inference without the need to learn any syntax
+outside of the package or R.
 
-Using the `causact` package for Bayesian inference is featured in
-`A Business Analyst's Introduction to Business Analytics` available at
-<https://www.causact.com/>.
+For enhanced learning, the `causact` package for Bayesian inference is
+featured in `A Business Analyst's Introduction to Business Analytics`
+available at <https://www.causact.com/>.
 
 > Feedback and encouragement is appreciated via github issues or Twitter
 > (<https://twitter.com/preposterior>).
 
-## Installation
+## Installation Guide
 
-You can install the current release version of the package from CRAN:
+To install the `causact` package, follow the steps outlined below:
 
-    install.packages("causact")
+### CRAN Release Version
 
-or the development version from GitHub (recommended as of August 2023
-until next CRAN release):
+For the current stable release, which is tailored to integrate with the
+`greta` package and uses `dag_greta()` to access sampling, employ the
+following command:
 
-    install.packages("remotes")
-    remotes::install_github("flyaflya/causact")
+``` r
+install.packages("causact")
+```
 
-While `causact` can be used for DAG visualization, getting Bayesian
-posteriors requires the `numpyro` package, which in turn, requires
-python and some other dependencies. Install `numpyro` and other python
-dependencies by running the following after installing `causact`:
+### Development Release (Recommended)
 
-    ## NOTE: Posit Cloud installation requires 4GB Ram
-    library(causact)
-    install_causact_deps()
+The forthcoming version uses the `numpyro` package for faster inference
+and easier installation than the current CRAN release. This recommended
+development version can be installed directly from GitHub and is
+particularly advantageous from August 2023 until the subsequent CRAN
+release:
 
-> NOTE: When installing on Posit Cloud, temporarily set your project’s
-> RAM to 4GB during install (remember to APPLY CHANGES), otherwise you
-> will see `Error: Error creating conda environment [exit code 137]`.
-> After install, you can return the settings to 1GB of RAM.
+``` r
+install.packages("remotes")
+remotes::install_github("flyaflya/causact")
+```
 
-Please answer `Y` to any prompts for installing miniconda if needed.
+### Essential Dependencies
 
-If you need to access an older version where the `dag_greta()` function
-is still operational, install `v0.4.2` of the `causact` package (this is
-NOT recommended):
+To harness the full potential of `causact` for DAG visualization and
+Bayesian posterior analysis, it’s vital to ensure proper integration
+with the `numpyro` package. Given the Python-based nature of `numpyro`,
+a few essential dependencies must be in place. Execute the following
+commands after installing `causact`:
 
-    ### DO NOT RUN THESE LINES UNLESS YOU HAVE
-    ### dag_greta() used in previously written code
-    install.packages("remotes")
-    remotes::install_github("flyaflya/causact@0.4.2")
+``` r
+library(causact)
+install_causact_deps()
+```
+
+> **Note**: If opting for installation on Posit Cloud, temporarily
+> adjust your project’s RAM to 4GB during the installation process
+> (remember to APPLY CHANGES). This preemptive measure helps avoid
+> encountering an
+> `Error: Error creating conda environment [exit code 137]`. After
+> installation, feel free to revert the settings to 1GB of RAM.
+
+If prompted, respond with `Y` to any inquiries related to installing
+miniconda.
+
+### Retrograde Compatibility (Not Advised)
+
+In cases where legacy compatibility is paramount and you still rely on
+the operationality of the `dag_greta()` function, consider installing
+`v0.4.2` of the `causact` package. However, it’s essential to emphasize
+that this approach is **not recommended** for general usage:
+
+``` r
+### EXERCISE CAUTION BEFORE EXECUTING THESE LINES
+### Only proceed if dag_greta() is integral to your existing codebase
+install.packages("remotes")
+remotes::install_github("flyaflya/causact@0.4.2")
+```
+
+Your judicious choice of installation method will ensure a seamless and
+effective integration of the `causact` package into your computational
+toolkit.
 
 ## Usage
 
@@ -124,7 +169,46 @@ graph %>% dag_render(shortLabel = TRUE)
 
 <img src="man/figures/cardPlotShortLabel.png" width="50%" />
 
-### See `numpyro` code without executing it (for debugging or learning)
+### Get posterior while automatically running the underlying `numpyro` code
+
+``` r
+drawsDF = graph %>% dag_numpyro()
+drawsDF  ### see top of data frame
+#> # A tibble: 4,000 × 4
+#>    theta_Toyota.Corolla theta_Subaru.Outback theta_Kia.Forte theta_Jeep.Wrangler
+#>                   <dbl>                <dbl>           <dbl>               <dbl>
+#>  1                0.186                0.627           0.243               0.801
+#>  2                0.218                0.607           0.234               0.900
+#>  3                0.200                0.627           0.261               0.892
+#>  4                0.231                0.626           0.236               0.792
+#>  5                0.225                0.615           0.278               0.793
+#>  6                0.232                0.624           0.257               0.807
+#>  7                0.202                0.710           0.318               0.791
+#>  8                0.173                0.587           0.258               0.885
+#>  9                0.216                0.592           0.283               0.891
+#> 10                0.180                0.666           0.180               0.805
+#> # ℹ 3,990 more rows
+```
+
+> **Note**: if you have used older versions of causact, please know that
+> dag_numpyro() is a drop-in replacement for dag_greta().
+
+### Get quick view of posterior distribution
+
+``` r
+drawsDF %>% dagp_plot()
+```
+
+<div class="figure">
+
+<img src="man/figures/gretaPost-1.png" alt="Credible interval plots." width="70%" />
+<p class="caption">
+Credible interval plots.
+</p>
+
+</div>
+
+### OPTIONAL: See `numpyro` code without executing it (for debugging or learning)
 
 ``` r
 numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
@@ -178,45 +262,6 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> ) ## END PYTHON STRING
 #> drawsDF = py$drawsDF
 ```
-
-> note: if you have used older versions of causact, please know that
-> dag_numpyro() is a drop-in replacement for dag_greta().
-
-### Get posterior while automatically running the underlying `numpyro` code
-
-``` r
-drawsDF = graph %>% dag_numpyro()
-drawsDF  ### see top of data frame
-#> # A tibble: 4,000 × 4
-#>    theta_Toyota.Corolla theta_Subaru.Outback theta_Kia.Forte theta_Jeep.Wrangler
-#>                   <dbl>                <dbl>           <dbl>               <dbl>
-#>  1                0.186                0.627           0.243               0.801
-#>  2                0.218                0.607           0.234               0.900
-#>  3                0.200                0.627           0.261               0.892
-#>  4                0.231                0.626           0.236               0.792
-#>  5                0.225                0.615           0.278               0.793
-#>  6                0.232                0.624           0.257               0.807
-#>  7                0.202                0.710           0.318               0.791
-#>  8                0.173                0.587           0.258               0.885
-#>  9                0.216                0.592           0.283               0.891
-#> 10                0.180                0.666           0.180               0.805
-#> # ℹ 3,990 more rows
-```
-
-### Get quick view of posterior distribution
-
-``` r
-drawsDF %>% dagp_plot()
-```
-
-<div class="figure">
-
-<img src="man/figures/gretaPost-1.png" alt="Credible interval plots." width="70%" />
-<p class="caption">
-Credible interval plots.
-</p>
-
-</div>
 
 ## Getting Help and Suggesting Improvements
 
