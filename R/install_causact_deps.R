@@ -82,6 +82,13 @@ install_causact_deps <-
     }
 
     message("Installing python, numpyro, and other dependencies. This may take a few minutes.  If requested to install miniconda, please answer 'Y' or yes to the prompts.")
+
+    tryCatch({
+      reticulate::conda_binary()
+    }, error = function(e) {
+      reticulate::install_miniconda()
+    })
+
     reticulate::py_install(
       packages       = packages,
       envname        = envname,
