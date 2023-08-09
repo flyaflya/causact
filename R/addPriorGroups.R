@@ -29,12 +29,12 @@ addPriorGroups = function(drawsDF) {
 
   ## add priorGroup to rootLabel
   priorGroupMappingDF = rootLabelsDF %>%
-    dplyr::left_join(priorGroupDF, by = c("rootLabel" = "label")) %>%
+    dplyr::left_join(priorGroupDF, by = c("rootLabel" = "label"), relationship = "many-to-many") %>%
     dplyr::select(label = newNames, priorGroup) %>%
     dplyr::bind_rows(priorGroupDF)
 
   tidyDrawsDF = drawsDF %>% gather() %>%
-    dplyr::left_join(priorGroupMappingDF, by = c("key" = "label")) %>%
+    dplyr::left_join(priorGroupMappingDF, by = c("key" = "label"), relationship = "many-to-many") %>%
     dplyr::rename(param = key) %>%
     dplyr::arrange(priorGroup,.data$param)
 
