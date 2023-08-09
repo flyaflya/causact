@@ -72,8 +72,8 @@ If you need to access an older version where the `dag_greta()` function
 is still operational, install `v0.4.2` of the `causact` package (this is
 NOT recommended):
 
-    ### DO NOT RUN THESE LINES UNLESS YOU NEED
-    ### dag_greta() for your previous code to work
+    ### DO NOT RUN THESE LINES UNLESS YOU HAVE
+    ### dag_greta() used in previously written code
     install.packages("remotes")
     remotes::install_github("flyaflya/causact@0.4.2")
 

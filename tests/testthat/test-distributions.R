@@ -13,5 +13,11 @@ test_that("distributions have good output", {
   expect_equal(logNorm, "dist.LogNormal(9,10)")
   binomStr = causact::binomial("numTrials","succProb")
   expect_equal(binomStr, "dist.Binomial(numTrials,succProb)")
+  expect_equal(bernoulli(0.5), "dist.Bernoulli(0.5)")
+  expect_equal(negative_binomial(10, 0.5), "dist.NegativeBinomial(10,0.5)")
+  expect_equal(gamma(1,2), "dist.Gamma(1,2)")
+  expect_equal(inverse_gamma(1,2), "dist.InverseGamma(1,2)")
+  expect_equal(weibull(3,4), "dist.Weibull(4,1/3)")
+  expect_equal(cauchy(1,2), "dist.Cauchy(1,2)")
 })
 
