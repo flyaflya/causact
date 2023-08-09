@@ -20,7 +20,7 @@ SystemRequirements: Python and numpyro are needed for Bayesian inference computa
     arviz (= v0.15.1; https://https://python.arviz.org/en/stable/)
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 4.1.1)
+Depends: R (>= 4.1.0)
 Imports:
     DiagrammeR (>= 1.0.9),
     dplyr (>= 1.0.8),
@@ -33,7 +33,6 @@ Imports:
     stringr (>= 1.4.1),
     cowplot (>= 1.1.0),
     forcats (>= 0.5.0),
-    htmlwidgets (>= 1.5.2),
     rstudioapi (>= 0.11),
     lifecycle (>= 1.0.2),
     reticulate (>= 1.30)
