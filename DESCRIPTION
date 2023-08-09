@@ -20,23 +20,23 @@ SystemRequirements: Python and numpyro are needed for Bayesian inference computa
     arviz (= v0.15.1; https://https://python.arviz.org/en/stable/)
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.2.0)
+Depends: R (>= 4.1.1)
 Imports:
-    DiagrammeR (>= 1.0.7),
-    dplyr (>= 0.8.5),
+    DiagrammeR (>= 1.0.9),
+    dplyr (>= 1.0.8),
     magrittr (>= 1.5),
-    ggplot2 (>= 3.3.0),
-    rlang (>= 0.4.6),
-    purrr (>= 0.3.4),
-    tidyr (>= 1.0.3),
-    igraph (>= 1.2.5),
-    stringr (>= 1.4.0),
-    cowplot (>= 1.0.0),
+    ggplot2 (>= 3.4.0),
+    rlang (>= 1.0.2),
+    purrr (>= 1.0.0),
+    tidyr (>= 1.1.4),
+    igraph (>= 1.2.7),
+    stringr (>= 1.4.1),
+    cowplot (>= 1.1.0),
     forcats (>= 0.5.0),
-    htmlwidgets (>= 1.5.1),
+    htmlwidgets (>= 1.5.2),
     rstudioapi (>= 0.11),
-    lifecycle,
-    reticulate (>= 1.29)
+    lifecycle (>= 1.0.2),
+    reticulate (>= 1.30)
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
@@ -50,6 +50,7 @@ Config/reticulate:
   list(
     packages = list(
       list(package = "jax[cpu]", pip = TRUE),
-      list(package = "numpyro[cpu]", pip = TRUE)
+      list(package = "numpyro[cpu]", pip = TRUE),
+      list(package = "arviz", pip = TRUE)
     )
   )
