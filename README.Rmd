@@ -31,7 +31,7 @@ _Accelerate Bayesian analytics workflows_ in R through interactive modelling, vi
 > All introductory Bayesian models and many advanced models are well-supported in the `causact` package; using multi-variate distributions like the multi-variate normal, multi-nomial, or dirichlet distribution are harder to implement as is using directed acyclic graphs with nested or overlapping plates.  Improvements to model construction for those more complex models is forthcoming.
 
 ```{r demoGif, out.width = "40%", echo = FALSE, fig.align = "center"}
-knitr::include_graphics("man/figures/causactDemo.gif")
+knitr::include_graphics("man/figures/introScreenshot.png")
 ```
 
 This package is solely R-based, but behind the scenes, it relies on the `numpyro` Python package for Bayesian inference. 

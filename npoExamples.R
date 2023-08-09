@@ -1,7 +1,3 @@
-### Script contains five examples from
-### https://greta-stats.org/articles/example_models.html
-
-library(tidyverse)
 library(causact)
 
 graph = dag_create() %>%
@@ -21,6 +17,9 @@ graph = dag_create() %>%
 graph %>% dag_render()
 drawsDF = graph %>% dag_numpyro()
 drawsDF %>% dagp_plot()
+
+
+
 drawsDF %>% dagp_plot(abbrevLabels = TRUE)
 drawsDF %>% dagp_plot(densityPlot = TRUE)
 drawsDF %>% dagp_plot(densityPlot = TRUE, abbrevLabels = TRUE)

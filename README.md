@@ -28,7 +28,7 @@ Bayesian inference.
 > acyclic graphs with nested or overlapping plates. Improvements to
 > model construction for those more complex models is forthcoming.
 
-<img src="man/figures/causactDemo.gif" width="40%" style="display: block; margin: auto;" />
+<img src="man/figures/introScreenshot.png" width="40%" style="display: block; margin: auto;" />
 
 This package is solely R-based, but behind the scenes, it relies on the
 `numpyro` Python package for Bayesian inference.
