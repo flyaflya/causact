@@ -58,9 +58,12 @@ remotes::install_github("flyaflya/causact")
 While `causact` can be used for DAG visualization, getting Bayesian posteriors requires the `numpyro` package, which in turn, requires python and some other dependencies.  Install `numpyro` and other python dependencies by running the following after installing `causact`:
 
 ```
+## NOTE: Posit Cloud installation requires 4GB Ram
 library(causact)
 install_causact_deps()
 ```
+
+> NOTE: When installing on Posit Cloud, temporarily set your project's RAM to 4GB during install (remember to APPLY CHANGES), otherwise you will see `Error: Error creating conda environment [exit code 137]`. After install, you can return the settings to 1GB of RAM.
 
 Please answer `Y` to any prompts for installing miniconda if needed.
 
