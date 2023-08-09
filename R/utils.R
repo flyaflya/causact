@@ -124,47 +124,47 @@ rhsDecompFormula = function(rhs) {
   return(z)
 }
 
-rhsDecompMixJointDistr = function(rhs) {
-  ## read in expression as a quosure
-  distExpr = rlang::enexpr(rhs)
-  distString = as.character(distExpr)
-
-  ## create data frame of named arguments and their position
-  namedArgDF = data.frame(
-    position = as.integer(NA),
-    argName = as.character(NA),
-    argValue = as.character(NA),
-    stringsAsFactors = FALSE
-  )[-1, ]
-
-  ## get top function name (note: this assumes namespace is stripped)
-  fnName = rlang::call_name(distExpr)
-
-  ## get params (i.e. dists passed via ... to mix)
-  ## and non-param arguments like dim as list
-  argList = as.list(call_standardize(distExpr)[-1])
-  argNames = names(argList)
-  argValues = as.character(argList)
-
-  paramIndices = which(names(argList)=="")
-  argIndices = which(!(names(argList)==""))
-
-  argDF = data.frame(argName = argNames[argIndices],
-                       argValue = argValues[argIndices],
-                       stringsAsFactors = FALSE)
-
-  paramDF = data.frame(argName = argValues[paramIndices],
-                       argValue = argValues[paramIndices],
-                       stringsAsFactors = FALSE)
-
-  z = list(
-    distr = TRUE,
-    fcn = fnName,
-    paramDF = paramDF,
-    argDF = argDF
-  )
-  return(z)
-}
+# rhsDecompMixJointDistr = function(rhs) {
+#   ## read in expression as a quosure
+#   distExpr = rlang::enexpr(rhs)
+#   distString = as.character(distExpr)
+#
+#   ## create data frame of named arguments and their position
+#   namedArgDF = data.frame(
+#     position = as.integer(NA),
+#     argName = as.character(NA),
+#     argValue = as.character(NA),
+#     stringsAsFactors = FALSE
+#   )[-1, ]
+#
+#   ## get top function name (note: this assumes namespace is stripped)
+#   fnName = rlang::call_name(distExpr)
+#
+#   ## get params (i.e. dists passed via ... to mix)
+#   ## and non-param arguments like dim as list
+#   argList = as.list(call_standardize(distExpr)[-1])
+#   argNames = names(argList)
+#   argValues = as.character(argList)
+#
+#   paramIndices = which(names(argList)=="")
+#   argIndices = which(!(names(argList)==""))
+#
+#   argDF = data.frame(argName = argNames[argIndices],
+#                        argValue = argValues[argIndices],
+#                        stringsAsFactors = FALSE)
+#
+#   paramDF = data.frame(argName = argValues[paramIndices],
+#                        argValue = argValues[paramIndices],
+#                        stringsAsFactors = FALSE)
+#
+#   z = list(
+#     distr = TRUE,
+#     fcn = fnName,
+#     paramDF = paramDF,
+#     argDF = argDF
+#   )
+#   return(z)
+# }
 
 
 ### function to decompose rhs argument
@@ -216,11 +216,7 @@ rhsDecomp = function(rhs) {
 
   if (fnName %in% getNamespaceExports("causact") &
       !(fnName %in% notDistrFunctions)) {
-    if (fnName %in% c("mixture","joint")) {
-      z = rhsDecompMixJointDistr(!!distExpr)
-      } else {  ##standard distribution
         z = rhsDecompDistr(!!distExpr)
-      }
   } else {
     z = rhsDecompFormula(!!distExpr)
   }
@@ -615,20 +611,6 @@ getLevelNames = function(dataNode) {
   ),
   env = rlang::global_env())
   return(nameVector)
-}
-
-
-##function to make diagonal matrix given vector of diagonal elements
-
-makeDiagMatrix <- function(diagVec) {
-  if (!is.vector(diagVec)) {
-    stop("Input 'diagVec' must be a vector.")
-  }
-
-  n <- length(diagVec)
-  diag_matrix <- diag(diagVec)
-
-  return(diag_matrix)
 }
 
 
