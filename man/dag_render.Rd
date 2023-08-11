@@ -9,7 +9,9 @@ dag_render(
   shortLabel = FALSE,
   wrapWidth = 24,
   width = NULL,
-  height = NULL
+  height = NULL,
+  fillColor = "aliceblue",
+  fillColorObs = "cadetblue"
 )
 }
 \arguments{
@@ -22,6 +24,10 @@ dag_render(
 \item{width}{a numeric value.  an optional parameter for specifying the width of the resulting graphic in pixels.}
 
 \item{height}{a numeric value.  an optional parameter for specifying the height of the resulting graphic in pixels.}
+
+\item{fillColor}{a valid R color to be used as the default node fill color during \code{dag_render()}.}
+
+\item{fillColorObs}{a valid R color to be used as the fill color for observed nodes during \code{dag_render()}.}
 }
 \value{
 Returns an object of class \code{grViz} and \code{htmlwidget} that is also rendered in the RStudio viewer for interactive buidling of graphical models.

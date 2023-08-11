@@ -4,7 +4,13 @@
 \alias{dag_diagrammer}
 \title{Convert graph to Diagrammer object for visualization}
 \usage{
-dag_diagrammer(graph, wrapWidth = 24, shortLabel = FALSE)
+dag_diagrammer(
+  graph,
+  wrapWidth = 24,
+  shortLabel = FALSE,
+  fillColor = "aliceblue",
+  fillColorObs = "cadetblue"
+)
 }
 \arguments{
 \item{graph}{a graph object of class \code{causact_graph} created using \code{dag_create()}.}
@@ -12,6 +18,10 @@ dag_diagrammer(graph, wrapWidth = 24, shortLabel = FALSE)
 \item{wrapWidth}{a required character label that describes the node.}
 
 \item{shortLabel}{a longer more descriptive character label for the node.}
+
+\item{fillColor}{a valid R color to be used as the default node fill color.}
+
+\item{fillColorObs}{a valid R color to be used as the fill color for observed nodes.}
 }
 \value{
 a graph object of class \code{dgr_graph}.  Useful for further customizing graph displays using the \code{DiagrammeR} package.

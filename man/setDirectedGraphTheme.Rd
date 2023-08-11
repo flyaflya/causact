@@ -4,10 +4,18 @@
 \alias{setDirectedGraphTheme}
 \title{Set DiagrammeR defaults for graphical models}
 \usage{
-setDirectedGraphTheme(dgrGraph)
+setDirectedGraphTheme(
+  dgrGraph,
+  fillColor = "aliceblue",
+  fillColorObs = "cadetblue"
+)
 }
 \arguments{
 \item{dgrGraph}{A DiagrammeR graph}
+
+\item{fillColor}{Default R color for filling nodes.}
+
+\item{fillColorObs}{R color for filling obeserved nodes.}
 }
 \value{
 An updated version of \code{dgrGraph} with good defaults for

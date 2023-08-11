@@ -3,6 +3,8 @@
 #' `setDirectedGraph` returns a graph with good defaults.
 #'
 #' @param dgrGraph A DiagrammeR graph
+#' @param fillColor Default R color for filling nodes.
+#' @param fillColorObs R color for filling obeserved nodes.
 #' @return An updated version of `dgrGraph` with good defaults for
 #'   graphical models.
 #' @examples

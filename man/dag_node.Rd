@@ -23,7 +23,7 @@ dag_node(
 
 \item{descr}{a longer more descriptive character label for the node.}
 
-\item{label}{a shorter character label for referencing the node (e.g. "X","beta").}
+\item{label}{a shorter character label for referencing the node (e.g. "X","beta").  Labels with \code{.} in the name will be replaced by \verb{_} to ensure inter-operability with Python.}
 
 \item{rhs}{either a distribution such as \verb{uniform, normal, lognormal, bernoulli,} etc. or an R expression. Valid values include \code{normal(mu,sigma)}, \code{normal}, and \code{normal(6,2)}.  R computation/expression examples include \code{alpha+beta*x},\code{c(int, coefs)}, or \code{1 / exp(-(alpha + beta * x))}.  Concatenation using \code{c()} is NOT supported.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.  Common R arithmetic and geometric operators are supported, but less common R expressions may yield errors when running \code{dag_numpyro()}.}
 

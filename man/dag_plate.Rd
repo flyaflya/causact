@@ -19,7 +19,7 @@ dag_plate(
 
 \item{descr}{a longer more descriptive label for the cluster/plate.}
 
-\item{label}{a short character string to use as an index.}
+\item{label}{a short character string to use as an index.  Any \code{.} in the names is automatically replaced by \verb{_} for interoperability with Python.}
 
 \item{nodeLabels}{a character vector of node labels or descriptions to include in the list of nodes.}
 
