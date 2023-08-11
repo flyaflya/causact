@@ -715,3 +715,13 @@ replace_c <- function(input_string) {
   return(modified_string)
 }
 
+# Replace periods with an alternative character (e.g., underscore)
+make_unique_No_periods <- function(vec) {
+  vec[is.na(vec)] <- "NA_placeholder"
+  unique_names <- make.names(vec, unique = TRUE)
+  unique_names <- gsub("\\.", "_", unique_names)
+  unique_names[unique_names == "NA_placeholder"] <- NA
+  return(unique_names)
+}
+
+

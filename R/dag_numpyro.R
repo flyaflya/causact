@@ -34,7 +34,7 @@
 #' }
 #' @importFrom dplyr bind_rows tibble left_join rowwise select add_row as_tibble group_indices row_number mutate filter
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
-#' @importFrom rlang enquo expr_text .data expr is_na eval_tidy parse_expr
+#' @importFrom rlang enquo expr_text .data expr is_na eval_tidy parse_expr warn
 #' @importFrom igraph graph_from_data_frame topo_sort
 #' @importFrom tidyr gather
 #' @importFrom stats na.omit
@@ -85,10 +85,21 @@ dag_numpyro <- function(graph,
   }
 
   ## clear cache environment for storing mcmc results
+  ## also verify numpyro is available
   if (mcmc) {
     rmExpr = rlang::expr(rm(list = ls()))
     eval(rmExpr, envir = cacheEnv)
     options("reticulate.engine.environment" = cacheEnv)
+    pyPacks <- reticulate::py_list_packages()
+    packs_to_check <- c("numpyro", "arviz", "xarray")
+    existVector = sapply(packs_to_check,
+                         function(element) {
+                           any(element %in%
+                                 pyPacks$package)
+                         })
+    if (!(all(existVector))){
+      rlang::warn("It is likely you need to restart R for dag_numpyro() to make causact's required connection to Python; numpyro or other dependencies are missing from the currently connected Python.  Please restart R, then load the causact package with library(causact).")
+    }
     } ## clear cacheEnv
 
   ###get dimension information

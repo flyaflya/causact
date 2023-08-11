@@ -23,9 +23,9 @@ drawsDF %>% dagp_plot(densityPlot = TRUE)
 drawsDF %>% dagp_plot(densityPlot = TRUE, abbrevLabels = TRUE)
 
 drawsDF %>%
-  mutate(indicatorFunction =
+  dplyr::mutate(indicatorFunction =
            theta_Kia.Forte > theta_Toyota.Corolla) %>%
-  summarize(pctOfDraws = mean(indicatorFunction))
+  dplyr::summarize(pctOfDraws = mean(indicatorFunction))
 
 ### greta example 0
 graph = dag_create() %>%
@@ -184,6 +184,7 @@ graph = dag_create() %>%
 graph %>% dag_render()
 graph %>% dag_render(shortLabel = TRUE)
 drawsDF = graph %>% dag_numpyro(mcmc = FALSE)
+drawsDF = graph %>% dag_numpyro(mcmc = TRUE)
 drawsDF %>% dagp_plot()
 
 ### greta example #5: Multiple Categorical Regression

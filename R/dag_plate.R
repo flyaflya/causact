@@ -5,7 +5,7 @@
 #' Given a graph object of class `causact_graph`, create collections of nodes that should be repeated i.e. represent multiple instances of a random variable, random vector, or random matrix.  When nodes are on more than one plate, graph rendering will treat each unique combination of plates as separate plates.
 #' @param graph a graph object of class `dgr_graph` created using `dag_create()`.
 #' @param descr a longer more descriptive label for the cluster/plate.
-#' @param label a short character string to use as an index.
+#' @param label a short character string to use as an index.  Any `.` in the names is automatically replaced by `_` for interoperability with Python.
 #' @param nodeLabels a character vector of node labels or descriptions to include in the list of nodes.
 #' @param data a vector representing the categorical data whose unique values become the plate index.  To use with `addDataNode = TRUE`, this vector should represent observations of a variable that can be coerced to a factor.
 #' @param addDataNode a logical value.  When `addDataNode = TRUE`, the code attempts to add a node of observed data that is used as an index for extracting the correct parameter from parent nodes that are on the newly created plate.  Verify the graphical model using `dag_render()` to ensure correct behavior.
@@ -99,6 +99,10 @@ dag_plate <- function(graph,
   ## rhs used for adding distribution to observed node
   ## for plates, the observed node is added automatically
   rhsExpr = rlang::enexpr(rhs) ##distribution or formula
+
+  ### replace . with hyphens for interoperability w/ Python
+  label = make_unique_No_periods(label)
+  nodeLabels = make_unique_No_periods(nodeLabels)
 
   ### get nodeIDS for enterned node labels
   ### node labels can be labels, descr, or data
