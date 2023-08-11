@@ -6,6 +6,8 @@
 #' @param graph a graph object of class `causact_graph` created using `dag_create()`.
 #' @param wrapWidth a required character label that describes the node.
 #' @param shortLabel a longer more descriptive character label for the node.
+#' @param fillColor a valid R color to be used as the default node fill color.
+#' @param fillColorObs a valid R color to be used as the fill color for observed nodes.
 #' @return a graph object of class `dgr_graph`.  Useful for further customizing graph displays using the `DiagrammeR` package.
 #' @examples
 #' library("DiagrammeR")
@@ -23,7 +25,7 @@
 #' @export
 
 
-dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
+dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE, fillColor = "aliceblue", fillColorObs = "cadetblue") {
 
   shape <- NULL ## place holder to pass devtools::check
 
@@ -163,7 +165,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
     dplyr::mutate(type = ifelse(obs == TRUE,"obs","latent"),
     shape = ifelse(.data$dec == TRUE, "rect", "ellipse"),
     peripheries = ifelse((distr == TRUE | is.na(rhs)) & det == FALSE,1,2),
-    fillcolor = ifelse(obs == TRUE,"cadetblue","aliceblue"),
+    fillcolor = ifelse(obs == TRUE,fillColorObs,fillColor),
            label = ifelse(descLine == eqLine,descLine,paste0(descLine,"\n",eqLine))) %>%  ###poor man's version of shortLabel
     dplyr::select("id",label,type,"shape",peripheries,fillcolor,auto_descr) %>%
     dplyr::left_join(clusterNameDF, by = "id") %>%
@@ -224,7 +226,7 @@ dag_diagrammer = function(graph, wrapWidth = 24, shortLabel = FALSE) {
   }
 
   ###update global graph attributes
-  dgr_graph = dgr_graph %>% causact::setDirectedGraphTheme()
+  dgr_graph = dgr_graph %>% causact::setDirectedGraphTheme(fillColor = fillColor, fillColorObs = fillColorObs)
 
   return(dgr_graph)
 }

@@ -9,6 +9,8 @@
 #' @param wrapWidth a numeric value.  Used to restrict width of nodes.  Default is wrap text after 24 characters.
 #' @param width a numeric value.  an optional parameter for specifying the width of the resulting graphic in pixels.
 #' @param height a numeric value.  an optional parameter for specifying the height of the resulting graphic in pixels.
+#' @param fillColor a valid R color to be used as the default node fill color during `dag_render()`.
+#' @param fillColorObs a valid R color to be used as the fill color for observed nodes during `dag_render()`.
 #' @examples
 #' # Render a simple graph
 #' dag_create() %>%
@@ -31,7 +33,9 @@ dag_render <- function(graph,
                        shortLabel = FALSE,
                        wrapWidth = 24,
                        width = NULL,
-                       height = NULL) {
+                       height = NULL,
+                       fillColor = "aliceblue",
+                       fillColorObs = "cadetblue") {
 
   ## First validate that the first argument is indeed a causact_graph
   class_g <- class(graph)
@@ -62,7 +66,7 @@ dag_render <- function(graph,
   }
 
   dot_code = graph %>%
-    dag_diagrammer(shortLabel = sLabel, wrapWidth = ww) %>%
+    dag_diagrammer(shortLabel = sLabel, wrapWidth = ww, fillColor = fillColor, fillColorObs = fillColorObs) %>%
     DiagrammeR::generate_dot()
 
   # Generate a `grViz` object

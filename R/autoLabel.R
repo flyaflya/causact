@@ -12,11 +12,16 @@ autoLabel = function(graph){
                                 graph$nodes_df$descr)
 
   ### if label is NA, use abbreviated description
-  graph$nodes_df$auto_label = ifelse(is.na(graph$nodes_df$label),
-                                abbreviate(make.names(
-                                  graph$nodes_df$auto_descr,
-                                  TRUE)),
-                                graph$nodes_df$label)
+  graph$nodes_df$auto_label = ifelse(
+    is.na(graph$nodes_df$label),
+    abbreviate(make_unique_No_periods(
+      graph$nodes_df$auto_descr)),
+    graph$nodes_df$label)
+  ### make unique node names without periods
 
   return(graph)
 }
+
+
+
+

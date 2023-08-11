@@ -13,7 +13,7 @@
 #' @return return a `dgrGraph` object with the color and shape defaults used by the `causact` package.
 #' @export
 
-setDirectedGraphTheme = function(dgrGraph) {
+setDirectedGraphTheme = function(dgrGraph, fillColor = "aliceblue", fillColorObs = "cadetblue") {
   ## set global attributes
   tempGR = dgrGraph %>%
     DiagrammeR::add_global_graph_attrs(attr = "layout",
@@ -61,8 +61,8 @@ setDirectedGraphTheme = function(dgrGraph) {
 
   ## update attributes for specific node types
   n_nodes <- nrow(tempGR$nodes_df)
-  tempGR$nodes_df$fillcolor = rep("aliceblue", n_nodes)
-  tempGR$nodes_df$fillcolor[tempGR$nodes_df$type == "obs"] = "cadetblue"
+  tempGR$nodes_df$fillcolor = rep(fillColor, n_nodes)
+  tempGR$nodes_df$fillcolor[tempGR$nodes_df$type == "obs"] = fillColorObs
   tempGR$nodes_df$fillcolor[tempGR$nodes_df$type == "censObs"] = "aliceblue;0.5:cadetblue"
   #tempGR$nodes_df$shape[tempGR$nodes_df$shape == "rect"] = "rect"
 
