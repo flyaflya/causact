@@ -5,7 +5,7 @@
 #' Add a node to an existing `causact_graph` object. The graph object should be of class `causact_graph` and created using `dag_create()`.
 #' @param graph a graph object of class `causact_graph`.  An initial object gets created using `dag_create()`.
 #' @param descr a longer more descriptive character label for the node.
-#' @param label a shorter character label for referencing the node (e.g. "X","beta").  Labels with `.` in the name will be replaced by `_` to ensure inter-operability with Python.
+#' @param label a shorter character label for referencing the node (e.g. "X","beta").  Labels with `.` in the name will be replaced by `_` to ensure inter-operability with Python.  Additionally, Python reserved words, like `lambda` should not be used.
 #' @param rhs either a distribution such as `uniform, normal, lognormal, bernoulli,` etc. or an R expression. Valid values include `normal(mu,sigma)`, `normal`, and `normal(6,2)`.  R computation/expression examples include `alpha+beta*x`,`c(int, coefs)`, or `1 / exp(-(alpha + beta * x))`.  Concatenation using `c()` is NOT supported.  If a distribution is given, this is a random/stochastic node, if a formula is given it is a deterministic node once given the values of its parents.  Quotes should not be used as all function/computations should consist of R objects, functions, and constants.  Common R arithmetic and geometric operators are supported, but less common R expressions may yield errors when running `dag_numpyro()`.
 #' @param child an optional character vector of existing node labels.  Directed edges from the newly created node to the supplied nodes will be created.
 #' @param data a vector or data frame (with observations in rows and variables in columns).
