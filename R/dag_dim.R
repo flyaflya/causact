@@ -68,24 +68,24 @@ dag_dim <- function(graph) {
 
     if(!is.na(dataValOfNode)){
       dimDF = dimDF %>%
-        dplyr::add_row(dimID = dimID,
+        dplyr::add_row(dimID = dimIdOfNode,
                        nodeID = nodeIDX,
                        dimType = "row",
                        dimDataSource = dataValOfNode,
                        dimValue = getRowDim(dataValOfNode,4)) %>%
-        dplyr::add_row(dimID = dimID,
+        dplyr::add_row(dimID = dimIdOfNode,
                        nodeID = nodeIDX,
                        dimType = "column",
                        dimDataSource = dataValOfNode,
                        dimValue = getColDim(dataValOfNode,4))
     } else {
       dimDF = dimDF %>%
-        dplyr::add_row(dimID = dimID,
+        dplyr::add_row(dimID = dimIdOfNode,
                        nodeID = nodeIDX,
                        dimType = "row",
                        dimDataSource = as.character(NA),
                        dimValue = 1) %>%
-        dplyr::add_row(dimID = dimID,
+        dplyr::add_row(dimID = dimIdOfNode,
                        nodeID = nodeIDX,
                        dimType = "column",
                        dimDataSource = as.character(NA),

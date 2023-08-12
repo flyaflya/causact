@@ -187,6 +187,43 @@ drawsDF = graph %>% dag_numpyro(mcmc = FALSE)
 drawsDF = graph %>% dag_numpyro(mcmc = TRUE)
 drawsDF %>% dagp_plot()
 
+###example from Peter R.
+library(tidyverse)
+set.seed(2022)
+n <- 100
+
+shoulder_height <- runif(n, 15, 110)
+kg_cm <- 0.7
+ic <- 2
+weight <- rnorm(n, shoulder_height * kg_cm + ic, 5)
+dfd <- tibble(height = shoulder_height, weight = weight, species = "dog")
+
+shoulder_height <- runif(n, 20, 30)
+kg_cm <- 0.125
+ic <- 1
+weight <- rnorm(n, shoulder_height * kg_cm + ic, 1) # 3-5 kg
+dfc <- tibble(height = shoulder_height, weight = weight, species = "cat")
+
+df <- bind_rows(dfd, dfc)
+
+graph <- dag_create() %>%
+  dag_node("weight", "w", rhs = normal(mu, sigma), data = df$weight) %>%
+  dag_node("sigma", "sigma", rhs = exponential(h_sigma), child = "w") %>%
+  dag_node("h_sigma", "h_sigma", rhs = exponential(1), child='sigma') %>%
+  dag_node("mu", "mu", rhs = specieseffect + heighteffect*h, child = "w") %>%
+  dag_node("specieseffect", "specieseffect", rhs = normal(h_species_mu, h_species_sigma), child = "mu") %>%
+  dag_node("h_species_mu", "h_species_mu", rhs = normal(0, 1), child = "specieseffect") %>%
+  dag_node("h_species_sigma", "h_species_sigma", rhs = exponential(1), child = "specieseffect") %>%
+  dag_node("height", "h", data = df$height, child = "mu") %>%
+  dag_node("heighteffect", "heighteffect", rhs = normal(h_height_mu, h_height_sigma), child = "mu") %>%
+  dag_node("h_height_mu", "h_height_mu", rhs = normal(0, 1), child = "heighteffect") %>%
+  dag_node("h_height_sigma", "h_height_sigma", rhs = exponential(1), child = "heighteffect") %>%
+  dag_plate("Species Effect", "j", nodeLabels = c("heighteffect","specieseffect", "sigma"), data = df$species) %>%
+  dag_plate("Observations", "i", nodeLabels = c("w","mu","h"))
+graph %>% dag_render()
+drawsDF <- graph %>% dag_numpyro()
+drawsDF %>% dagp_plot()
+
 ### greta example #5: Multiple Categorical Regression
 ### NOT SUPPORTED YET
 designDF = as.data.frame(model.matrix(~ Species -1, iris))
