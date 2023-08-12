@@ -21,15 +21,6 @@ language for business stakeholders, statisticians, and programmers. Due
 to its visual nature and simple model construction, `causact` serves as
 a great entry-point for newcomers to computational Bayesian inference.
 
-*Accelerate your R-based computational Bayesian inference processes*
-using interactive modeling, visualization, and inference capabilities
-offered by `causact`. Harnessing the power of directed acyclic graphs
-(DAGs), the package establishes a cohesive language that bridges the gap
-between business stakeholders, statisticians, and programmers. With its
-intuitive visual interface and straightforward model construction,
-causact proves to be an ideal starting platform for individuals new to
-the realm of computational Bayesian inference.
-
 > The `causact` package offers robust support for both foundational and
 > advanced Bayesian models. While introductory models are well-covered,
 > the utilization of multi-variate distributions such as multi-variate
@@ -37,7 +28,7 @@ the realm of computational Bayesian inference.
 > implementation of directed acyclic graphs featuring nested or
 > overlapping plates, may present certain challenges. However, ongoing
 > enhancements are in the pipeline to facilitate the construction of
-> these intricate models.
+> these more intricate models.
 
 <img src="man/figures/introScreenshot.png" width="40%" style="display: block; margin: auto;" />
 
