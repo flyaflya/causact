@@ -105,6 +105,8 @@ dag_numpyro <- function(graph,
   ###get dimension information
   graphWithDim = graph %>% dag_dim()
 
+  ### line to handle nested or intersecting
+
   ###update rhs information for labelling computer code
   graphWithDim = rhsPriorComposition(graphWithDim)
   graphWithDim = rhsOperationComposition(graphWithDim)
@@ -272,14 +274,13 @@ sep = "\n")
 
     ### alter nodeDF to have numpyro code
     ### first, add unobserved distribution node code
-    modelCodeDF =     nodeDF %>%
+    modelCodeDF = nodeDF %>%
     ## get rid of data only nodes - not part of likelihood
     filter(!(obs == TRUE & distr == FALSE)) %>%
     ## narrow down columns to useful ones
     select(id, rhs, obs, rhsID, distr, auto_label, auto_data, dimID, auto_rhs, dec, det, nodeOrder) %>%
     ## add in plate dimension labels
-    left_join(dimDF %>% filter(dimType == "plate") %>%
-                select(dimID, dimLabel), by = "dimID") %>%
+    left_join(getPlateStatements(graphWithDim), by = join_by(id == nodeID, auto_label == auto_label)) %>%
     rowwise() %>%
     ## create code lines for unobserved RV's
     mutate(codeLine = NA) %>% ##init column
@@ -291,7 +292,7 @@ sep = "\n")
                       auto_label, "', ",
                       rlang::eval_tidy(
                         rlang::parse_expr(auto_rhs)),
-                      ")"),
+                      ")\n"),
                     codeLine)) %>%
     ## create code lines for observed RV's - likelihoods
     mutate(codeLine =
@@ -302,7 +303,7 @@ sep = "\n")
                       auto_label, "', ",
                       rlang::eval_tidy(
                         rlang::parse_expr(auto_rhs)),
-                      ",obs=",auto_label,")"),
+                      ",obs=",auto_label,")\n"),
                     codeLine)) %>%
     ## create code lines for deterministic RV's -- operations
     mutate(codeLine =
@@ -314,13 +315,14 @@ sep = "\n")
                       ## replace R power(^) with python power(**) and matirx mult(%*%) with (@)
                       gsub("%\\*%", "@",
                            gsub("\\^", "**", auto_rhs)),
-                      ")"),
+                      ")\n"),
                     codeLine)) %>%
-      select(dimLabel,codeLine,auto_label)
+      select(dimLabel = indexLabel,codeLine,auto_label,plateStmnt,numTabsForNode,plateLabelling,varLabelling,selLabelling)
 
     ## create code to handle concatenation in Python
     modelCodeDF = modelCodeDF %>%
-      mutate(codeLine = replace_c(codeLine))
+      mutate(codeLine = replace_c(codeLine)) %>%
+      mutate(numTabsForNode = ifelse(rlang::is_na(numTabsForNode),1,numTabsForNode))
 
   ###Create MODEL function BODY using codeLines from above
     # Using a for loop to iterate over rows
@@ -328,9 +330,9 @@ sep = "\n")
     modelStatement = "\t## Define random variables and their relationships"
     for (i in 1:nrow(modelCodeDF)) {
       currDimLabel = modelCodeDF$dimLabel[i]
+      numTabs = modelCodeDF$numTabsForNode[i]
       ## node not on plate
       if (rlang::is_na(currDimLabel)) {
-        numTabs = 1
         ## for not null add to existing statements
         if (!(rlang::is_null(modelStatement))) {
           modelStatement =
@@ -349,27 +351,16 @@ sep = "\n")
       }
       ## additional line for starting plate
       if (!rlang::is_na(currDimLabel) & !identical(currDimLabel,prevDimLabel)) {
-        numTabs = 1
-        newLine = paste0("with npo.plate('",
-                         currDimLabel,"_dim",
-                         "',",currDimLabel,
-                         "_dim):")
-        modelStatement = paste(modelStatement,
-                               paste0(paste(rep("\t",
-                                        numTabs),
-                                   collapse = ""),
-                                    newLine),
-              sep = "\n")
+        newLine = modelCodeDF$plateStmnt[i]
+        modelStatement = paste0(modelStatement,"\n",
+                               newLine)
       }
       ## node on plate
       if (!rlang::is_na(currDimLabel)) {
-        numTabs = 2
         modelStatement =
-          paste(modelStatement,paste0(paste(rep("\t",
-                                          numTabs),
-                                      collapse = ""),
-                                     modelCodeDF$codeLine[i]),
-                sep = "\n")
+          paste0(modelStatement,
+                 paste(rep("\t",numTabs),collapse = ""),
+                 modelCodeDF$codeLine[i])
       }
       prevDimLabel = currDimLabel
     }
@@ -434,7 +425,7 @@ sep = "\n")
   ## check if any dimensions (i.e. plates)
   if (NROW(plateDimDF > 0)) {
     drawsStatement = paste0(drawsStatement,",\n\tcoords = {'")
-    dLabels = unique(stats::na.omit(modelCodeDF$dimLabel))
+    dLabels = unique(stats::na.omit(dimDF$dimLabel))
     numDlabels = length(dLabels)
 
     for (i in 1:numDlabels) {
@@ -447,31 +438,6 @@ sep = "\n")
                               "_dim': ",
                               dLabels[i],
                               "_crd")
-      unstackToDFStatement = paste0(unstackToDFStatement,
-          "for plateLabel in drawsDS['",
-          dLabels[i],"_dim']:")
-
-      ## build unstack statement right here
-      plateNodes = modelCodeDF %>%
-        filter(dimLabel == dLabels[i])
-      for (j in 1:NROW(plateNodes)) {
-        unstackToDFStatement =
-          paste0(unstackToDFStatement,
-                 "\n\tnew_varname = f'",
-                 plateNodes$auto_label[j],
-                 "_{plateLabel.values}'",
-                 "\n\tdrawsDS = drawsDS.assign(**{new_varname: drawsDS['",
-                 plateNodes$auto_label[j],
-                 "'].sel(",
-                 dLabels[i],
-                 "_dim = plateLabel)})")
-      }
-      # drop dimension of plate so unstacked DF can be transferred to R
-      unstackToDFStatement = paste0(unstackToDFStatement,
-                                    "\ndrawsDS = drawsDS.drop_dims('",
-                                    dLabels[i],
-                                    "_dim')\n")
-
       ## finish dimToKeep and draws statements below
 
       if (i == numDlabels) {  ## closing bracket
@@ -484,14 +450,21 @@ sep = "\n")
       }
     }
     ## now loop over variables to add dimensionality
-    plateNodes = modelCodeDF %>% filter(!rlang::is_na(dimLabel))
+    plateNodes = dimDF %>% filter(dimType == "plate") %>%
+      arrange(nodeID,dimLabel) %>%
+      mutate(dimLabel = paste0("'",dimLabel,"_dim","'")) %>%
+      group_by(nodeID) %>%
+      summarize(nodeID = dplyr::first(nodeID),
+                indexLabel = paste0("[",
+                                    paste0(dimLabel, collapse = ","),
+                                    "]")) %>% left_join(nodeDF %>% select(id,auto_label), by = join_by(nodeID == id))
+
     numNodes = NROW(plateNodes)
     for (i in 1:numNodes) {
       drawsStatement = paste0(drawsStatement,
                               plateNodes$auto_label[i],
-                              "': ['",
-                              plateNodes$dimLabel[i],
-                              "_dim']")
+                              "': ",
+                              plateNodes$indexLabel[i])
       if (i == numNodes) {  ## closing bracket
         drawsStatement = paste0(drawsStatement,
                                 "}\n\t")
@@ -505,6 +478,41 @@ sep = "\n")
                                 "]\n")
   }
 
+  ## for unstacking code
+  unstackDF = modelCodeDF %>%
+    select(auto_label, dimLabel, plateLabelling,
+           varLabelling, selLabelling, numTabsForNode) %>%
+    filter(!rlang::is_na(dimLabel)) %>%
+    group_by(dimLabel) %>%
+    summarize(forLoop = dplyr::first(plateLabelling),
+              newVar = paste0(strrep("\t",numTabsForNode-1),
+                              paste0("new_varname = f'",
+                                     auto_label,"_",
+                                     varLabelling,"'\n",
+                                     strrep("\t",numTabsForNode-1),
+                                     "drawsDS = drawsDS.assign(**{new_varname:drawsDS['",auto_label,"'].sel(",
+                                     selLabelling,
+                                     ")})"),
+                              collapse = "\n")) %>%
+    ### create consolidated loop code for unstacking
+    mutate(unStackLine = paste0(forLoop,newVar, sep = "\n"))
+
+  ## create unstack statement
+  unstackToDFStatement = paste0(unstackToDFStatement,
+                                unstackDF$unStackLine,
+                                collapse = "\n")
+  ## drop all plate dims
+  if (NROW(plateDimDF > 0)){
+    dropState = paste0("drawsDS = drawsDS.drop_dims([",
+                       paste0(paste0("'",unique(na.omit(dimDF$dimLabel)),
+                                     "_dim'"),
+                              collapse = ","),
+                       "])")
+    } else {
+      dropState = ""
+    }
+
+
   ## close the statement
   drawsStatement = paste0(drawsStatement,
                             ").posterior\n# prepare xarray dataset for export to R dataframe")
@@ -513,6 +521,7 @@ sep = "\n")
   drawsDFStatement = paste0(dimToKeepStatement,
                             drawsDFStatement,
                             unstackToDFStatement,
+                            dropState,
                             "\ndrawsDF = drawsDS.squeeze().to_dataframe()")
 
   ##########################################
@@ -536,7 +545,7 @@ sep = "\n")
                    'reticulate::py_run_string("\n',
                    paste(codeStatements, collapse = '\n'),
                    '"\n) ## END PYTHON STRING\n',
-                   "drawsDF = py$drawsDF")
+                   "drawsDF = reticulate::py$drawsDF")
 
   ###print out Code as text for user to use
   if(mcmc == FALSE){

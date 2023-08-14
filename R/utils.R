@@ -248,31 +248,34 @@ rhsPriorComposition = function(graph) {
   ## get nodes which have prior information
   nodeDF = graph$nodes_df %>%
     dplyr::filter(distr == TRUE) %>%
-    select("id",rhs,rhsID)
+    dplyr::select("id",rhs,rhsID)
 
   ## retrieve non-NA argument list
   argDF = graph$arg_df %>%
     dplyr::filter(!is.na(argValue))
 
   ## get plate information for dim argument of priors
-  plateDimDF = graph$plate_index_df %>%
-    dplyr::filter(!is.na(dataNode)) %>% ##only plates with data
-    dplyr::left_join(graph$plate_node_df, by = "indexID") %>%
+  graphWithDim = graph %>% dag_dim()
+  plateDimDF = graphWithDim$dim_df %>%
+    dplyr::select(nodeID,dimType,indexLabel=dimLabel)
+  if (NROW(plateDimDF %>% filter(dimType == "plate"))>0){
+    plateDimDF =
+      getPlateStatements(graphWithDim)
+  }
+  plateDimDF = plateDimDF  %>%
     dplyr::select(nodeID,indexLabel)
 
   ## create label for the rhs for these nodes
   auto_rhsDF = nodeDF %>% dplyr::left_join(argDF, by = "rhsID") %>%
     dplyr::mutate(argValue = ifelse(is.na(argDimLabels),argValue,
                                     paste0(argValue,"[",
-                                           ifelse(stringr::str_detect(argDimLabels,","),
-                                                  paste0("cbind(", argDimLabels,")"),
-                                                  argDimLabels),  ## use cbind for R indexing
+                                           argDimLabels,
                                            "]"))) %>% ## add extraction index to label
     dplyr::group_by(.data$id,rhsID,rhs) %>%
     dplyr::summarize(args = paste0(argName," = ",argValue,collapse = ", "), .groups = "drop_last") %>%
     dplyr::left_join(plateDimDF, by = c("id" = "nodeID")) %>%
     dplyr::mutate(indexLabel = ifelse(is.na(indexLabel) | indexLabel == "NA","",indexLabel)) %>%
-    dplyr::mutate(indexLabel = ifelse(indexLabel == "","",paste0(indexLabel,"_dim"))) %>%
+    #dplyr::mutate(indexLabel = ifelse(indexLabel == "","",paste0(indexLabel,"_dim"))) %>%
     dplyr::group_by(.data$id,rhsID,rhs,args) %>%
     dplyr::summarize(indexLabel = paste0(indexLabel, collapse = ","), .groups = "drop_last") %>%
     dplyr::mutate(indexLabel = ifelse(stringr::str_detect(indexLabel,","),
@@ -280,8 +283,6 @@ rhsPriorComposition = function(graph) {
                                       indexLabel)) %>%
     dplyr::mutate(indexLabel = ifelse(indexLabel == "",as.character(NA),indexLabel)) %>%
     dplyr::mutate(prior_rhs = paste0(rhs,"(",args,
-                                    ifelse(is.na(indexLabel),"",
-                                           paste0(", dim = ",indexLabel)),
                                     ")")) %>%
     dplyr::ungroup() %>%
     select("id",prior_rhs)
@@ -724,4 +725,57 @@ make_unique_No_periods <- function(vec) {
   return(unique_names)
 }
 
+## getNumpyro plate statements and index labels for nodes
+getPlateStatements = function(graphWithDim) {
+  dim_DF = graphWithDim$dim_df
+  nodeDF = graphWithDim$nodes_df
+  addNonSummarizedPlateStatesDF = dim_DF %>%
+    dplyr::filter(dimType == "plate") %>%
+    dplyr::select(nodeID, dimLabel) %>%
+    ## do alphabetical order
+    dplyr::arrange(nodeID, dimLabel) %>%
+    group_by(nodeID) %>%
+    dplyr::mutate(dimNum = row_number(),
+           plateState = paste0(strrep("\t",dimNum),
+                               "with npo.plate('",
+                               dimLabel,"_dim","',",
+                               dimLabel,"_dim):\n"),
+           plateLabelState = paste0(strrep("\t",dimNum-1),
+                               "for ",
+                               dimLabel,"_da in drawsDS['",
+                               dimLabel,"_dim']:\n"),
+           varNameStmnt = paste0("{",dimLabel,"_da.values","}"),
+           selStmnt = paste0(dimLabel,"_dim = ",dimLabel,"_da"))
+  ## do not pass empty df to avoid error
+  if (NROW(addNonSummarizedPlateStatesDF) > 0) {
+    plateStatesDF =
+    addNonSummarizedPlateStatesDF %>%
+    summarize(nodeID = dplyr::first(nodeID),
+              plateStmnt = paste0(plateState,
+                                  collapse = ""),
+              numTabsForNode = max(dimNum) + 1,
+              indexLabel = paste0("[",
+                                  paste0(dimLabel, collapse = ","),
+                                  "]"),
+              plateLabelling = paste0(plateLabelState,
+                                  collapse = ""),
+              varLabelling = paste0(varNameStmnt,
+                                    collapse = "_"),
+              selLabelling = paste0(selStmnt,
+                                    collapse = ",")) %>%
+    left_join(nodeDF %>% select(id,auto_label), by = join_by(nodeID == id))} else {
+      plateStatesDF =
+        addNonSummarizedPlateStatesDF %>%
+        dplyr::summarize(nodeID = as.integer(NA),
+                  plateStmnt = as.character(NA),
+                  numTabsForNode = as.integer(NA),
+                  indexLabel = as.character(NA),
+                  plateLabelling = as.character(NA),
+                  varLabelling = as.character(NA),
+                  selLabelling = as.character(NA)) %>%
+        dplyr::left_join(nodeDF %>% select(id,auto_label), by = join_by(nodeID == id))
+    }
+
+  return(plateStatesDF)
+}
 

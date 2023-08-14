@@ -105,7 +105,7 @@ graph = dag_create() %>%
            keepAsDF = TRUE,
            child = "mu") %>%
   dag_node("Intercept","int",
-           rhs = normal(0,10),
+           rhs = normal(0,11),
            child = "mu") %>%
   dag_plate(descr = "Predictors",label = "j",
             nodeLabels = c("coefs"),
@@ -210,15 +210,18 @@ graph <- dag_create() %>%
   dag_node("weight", "w", rhs = normal(mu, sigma), data = df$weight) %>%
   dag_node("sigma", "sigma", rhs = exponential(h_sigma), child = "w") %>%
   dag_node("h_sigma", "h_sigma", rhs = exponential(1), child='sigma') %>%
-  dag_node("mu", "mu", rhs = specieseffect + heighteffect*h, child = "w") %>%
+  dag_node("mu", "mu", rhs = specieseffect + heighteffect*h + monk, child = "w") %>%
   dag_node("specieseffect", "specieseffect", rhs = normal(h_species_mu, h_species_sigma), child = "mu") %>%
+  dag_node("monkeyWrench","monk",
+           rhs = normal(0,1),
+           child = "mu") %>%
   dag_node("h_species_mu", "h_species_mu", rhs = normal(0, 1), child = "specieseffect") %>%
   dag_node("h_species_sigma", "h_species_sigma", rhs = exponential(1), child = "specieseffect") %>%
   dag_node("height", "h", data = df$height, child = "mu") %>%
   dag_node("heighteffect", "heighteffect", rhs = normal(h_height_mu, h_height_sigma), child = "mu") %>%
   dag_node("h_height_mu", "h_height_mu", rhs = normal(0, 1), child = "heighteffect") %>%
   dag_node("h_height_sigma", "h_height_sigma", rhs = exponential(1), child = "heighteffect") %>%
-  dag_plate("Species Effect", "j", nodeLabels = c("heighteffect","specieseffect", "sigma"), data = df$species) %>%
+  dag_plate("Species Effect", "j", nodeLabels = c("specieseffect", "sigma", "heighteffect"), data = df$species) %>%
   dag_plate("Observations", "i", nodeLabels = c("w","mu","h"))
 graph %>% dag_render()
 drawsDF <- graph %>% dag_numpyro()
