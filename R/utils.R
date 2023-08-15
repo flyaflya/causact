@@ -1,6 +1,7 @@
 #' @importFrom forcats fct_relevel
 #' @importFrom stringr str_sort str_detect
 #' @importFrom rlang ensym as_name get_expr set_expr is_primitive eval_bare get_env node_car is_call
+#' @importFrom dplyr bind_rows tibble left_join rowwise select add_row as_tibble group_indices row_number mutate filter join_by
 #### assume RHS is a distribution
 #### if distribution, isolate distribution name,
 #### parameter names/values, and argument names/values
