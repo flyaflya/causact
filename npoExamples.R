@@ -224,6 +224,7 @@ graph <- dag_create() %>%
   dag_plate("Species Effect", "j", nodeLabels = c("specieseffect", "sigma", "heighteffect"), data = df$species) %>%
   dag_plate("Observations", "i", nodeLabels = c("w","mu","h"))
 graph %>% dag_render()
+graph %>% dag_numpyro(FALSE)
 drawsDF <- graph %>% dag_numpyro()
 drawsDF %>% dagp_plot()
 

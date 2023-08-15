@@ -32,7 +32,7 @@
 #' drawsDF = graph %>% dag_numpyro()
 #' drawsDF %>% dagp_plot()
 #' }
-#' @importFrom dplyr bind_rows tibble left_join rowwise select add_row as_tibble group_indices row_number mutate filter
+#' @importFrom dplyr bind_rows tibble left_join rowwise select add_row as_tibble group_indices row_number mutate filter join_by
 #' @importFrom DiagrammeR create_graph add_global_graph_attrs
 #' @importFrom rlang enquo expr_text .data expr is_na eval_tidy parse_expr warn
 #' @importFrom igraph graph_from_data_frame topo_sort
@@ -57,7 +57,7 @@ dag_numpyro <- function(graph,
   # Sys.setenv(RETICULATE_AUTOCONFIGURE = FALSE)
 
   ## initialize to pass devtools check
-  newPyName <- dataPy <- id <- auto_data <- dimID <- dec <- NULL ## place holder to pass devtools::check
+  newPyName <- dataPy <- id <- auto_data <- dimID <- dec <- plateStmnt <- numTabsForNode <- plateLabelling <- varLabelling <- selLabelling <- forLoop <- newVar <- dimNum <- plateState <- plateLabelState <- varNameStmnt <- id <- selStmnt <- NULL ## place holder to pass devtools::check
 
   ## get graph object name for label statement
   graphName = rlang::as_name(rlang::ensym(graph))
