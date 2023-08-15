@@ -24,19 +24,19 @@ a great entry-point for newcomers to computational Bayesian inference.
 > The `causact` package offers robust support for both foundational and
 > advanced Bayesian models. While introductory models are well-covered,
 > the utilization of multi-variate distributions such as multi-variate
-> normal, multi-nomial, or dirichlet distributions, along with the
-> implementation of directed acyclic graphs featuring nested or
-> overlapping plates, may present certain challenges. However, ongoing
-> enhancements are in the pipeline to facilitate the construction of
-> these more intricate models.
+> normal, multi-nomial, or dirichlet distributions, may not work as
+> expected. There are ongoing enhancements in the pipeline to facilitate
+> construction of these more intricate models.
 
 <img src="man/figures/introScreenshot.png" width="40%" style="display: block; margin: auto;" />
 
 While proficiency in R is the only requirement for users of this
-package, it also functions as a comprehensive probabilistic programming
+package, it also functions as a introductory probabilistic programming
 language, seamlessly incorporating the `numpyro` Python package to
 facilitate Bayesian inference without the need to learn any syntax
-outside of the package or R.
+outside of the package or R. Furthermore, the package streamlines the
+process of indexing categorical variables, which often presents a
+complex syntax hurdle for those new to computational Bayesian methods.
 
 For enhanced learning, the `causact` package for Bayesian inference is
 featured in `A Business Analyst's Introduction to Business Analytics`
@@ -51,9 +51,9 @@ To install the `causact` package, follow the steps outlined below:
 
 ### CRAN Release Version
 
-For the current stable release, which is tailored to integrate with the
-`greta` package and uses `dag_greta()` to access sampling, employ the
-following command:
+For the current stable release, which is tailored to integrate with
+`greta` package and uses the soon-to-be-superseded `dag_greta()`
+function to access sampling, employ the following command:
 
 ``` r
 install.packages("causact")
@@ -230,7 +230,9 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #>  ## Define random variables and their relationships
 #>  with npo.plate('x_dim',x_dim):
 #>      theta = npo.sample('theta', dist.Laplace(2,2))
+#> 
 #>  y = npo.sample('y', dist.Bernoulli(theta[x]),obs=y)
+#> 
 #> 
 #> # computationally get posterior
 #> mcmc = MCMC(NUTS(graph_model), num_warmup = 1000, num_samples = 4000)
@@ -244,14 +246,13 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> dimensions_to_keep = ['chain','draw','x_dim']
 #> drawsDS = drawsDS.squeeze(drop = True ).drop_dims([dim for dim in drawsDS.dims if dim not in dimensions_to_keep])
 #> # unstack plate variables to flatten dataframe as needed
-#> for plateLabel in drawsDS['x_dim']:
-#>  new_varname = f'theta_{plateLabel.values}'
-#>  drawsDS = drawsDS.assign(**{new_varname: drawsDS['theta'].sel(x_dim = plateLabel)})
-#> drawsDS = drawsDS.drop_dims('x_dim')
-#> 
+#> for x_da in drawsDS['x_dim']:
+#>  new_varname = f'theta_{x_da.values}'
+#>  drawsDS = drawsDS.assign(**{new_varname:drawsDS['theta'].sel(x_dim = x_da)})
+#> drawsDS = drawsDS.drop_dims(['x_dim'])
 #> drawsDF = drawsDS.squeeze().to_dataframe()"
 #> ) ## END PYTHON STRING
-#> drawsDF = py$drawsDF
+#> drawsDF = reticulate::py$drawsDF
 ```
 
 ## Getting Help and Suggesting Improvements

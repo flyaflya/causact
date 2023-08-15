@@ -28,13 +28,13 @@ knitr::opts_chunk$set(
 
 _Accelerate computational Bayesian inference workflows_ in R through interactive modelling, visualization, and inference.  The package leverages directed acyclic graphs (DAGs) to create a unified language language for business stakeholders, statisticians, and programmers. Due to its visual nature and simple model construction, `causact` serves as a great entry-point for newcomers to computational Bayesian inference. 
 
-> The `causact` package offers robust support for both foundational and advanced Bayesian models. While introductory models are well-covered, the utilization of multi-variate distributions such as multi-variate normal, multi-nomial, or dirichlet distributions, along with the implementation of directed acyclic graphs featuring nested or overlapping plates, may present certain challenges. However, ongoing enhancements are in the pipeline to facilitate the construction of these more intricate models.
+> The `causact` package offers robust support for both foundational and advanced Bayesian models. While introductory models are well-covered, the utilization of multi-variate distributions such as multi-variate normal, multi-nomial, or dirichlet distributions, may not work as expected. There are ongoing enhancements in the pipeline to facilitate  construction of these more intricate models.
 
 ```{r demoGif, out.width = "40%", echo = FALSE, fig.align = "center"}
 knitr::include_graphics("man/figures/introScreenshot.png")
 ```
 
-While proficiency in R is the only requirement for users of this package, it also functions as a comprehensive probabilistic programming language, seamlessly incorporating the `numpyro` Python package to facilitate Bayesian inference without the need to learn any syntax outside of the package or R.
+While proficiency in R is the only requirement for users of this package, it also functions as a introductory probabilistic programming language, seamlessly incorporating the `numpyro` Python package to facilitate Bayesian inference without the need to learn any syntax outside of the package or R.  Furthermore, the package streamlines the process of indexing categorical variables, which often presents a complex syntax hurdle for those new to computational Bayesian methods.
 
 For enhanced learning, the `causact` package for Bayesian inference is featured in `A Business Analyst's Introduction to Business Analytics` available at https://www.causact.com/.
 
@@ -46,7 +46,7 @@ To install the `causact` package, follow the steps outlined below:
 
 ### CRAN Release Version
 
-For the current stable release, which is tailored to integrate with the `greta` package and uses `dag_greta()` to access sampling, employ the following command:
+For the current stable release, which is tailored to integrate with `greta` package and uses the soon-to-be-superseded `dag_greta()` function to access sampling, employ the following command:
 
 ```r
 install.packages("causact")
