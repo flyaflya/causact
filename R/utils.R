@@ -727,6 +727,7 @@ make_unique_No_periods <- function(vec) {
 
 ## getNumpyro plate statements and index labels for nodes
 getPlateStatements = function(graphWithDim) {
+  dimNum <- id <- plateLabelState <- plateState <- selStmnt <- varNameStmnt <- NULL
   dim_DF = graphWithDim$dim_df
   nodeDF = graphWithDim$nodes_df
   addNonSummarizedPlateStatesDF = dim_DF %>%
