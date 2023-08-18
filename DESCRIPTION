@@ -1,7 +1,7 @@
 Package: causact
 Type: Package
-Title: Accelerated Bayesian Analytics with DAGs
-Version: 0.5.0
+Title: Fast, Easy, and Visual Bayesian Inference With DAGs and numpyro
+Version: 0.5.1
 Authors@R: c(person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre","cph")),
     person("Daniela", "Dapena", role = "ctb"),
     person("Rose", "Nguyen", role = "ctb"),
