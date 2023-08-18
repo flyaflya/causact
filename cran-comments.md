@@ -1,11 +1,7 @@
-This is a patch release to accommodate `greta::variable` as a valid distribution for flat priors, to include a vignette as part of the package, and to automate some unit tests.
-
-## Resubmission
-This is a resubmission to CRAN that fixes a broken link in the README.md.
-
+This is a minor release that removes any dependency on the greta package.  Unfortunately, greta's Python integration has an extremely challenging installation process for M1/M2 mac machines which is not even available from CRAN.  This release introduces dag_numpyro() as a drop-in replacement for dag_greta() which is both easier to install and faster running. 
 ## Test environments
-* local R installation, R 4.1.1
-* ubuntu 16.04 (on travis-ci), R 4.1.1
+* local R installation, R 4.3.1
+* ubuntu 16.04 (on travis-ci), R 4.3.1
 * win-builder (devel)
 
 ## R CMD check results
