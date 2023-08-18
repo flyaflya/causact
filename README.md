@@ -10,6 +10,7 @@ coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)]
 [![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6949489.svg)](https://doi.org/10.5281/zenodo.6949489)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.04415/status.svg)](https://doi.org/10.21105/joss.04415)
+
 <!-- badges: end -->
 
 # causact
@@ -49,23 +50,22 @@ available at <https://www.causact.com/>.
 
 To install the `causact` package, follow the steps outlined below:
 
-### CRAN Release Version
+### CRAN Release Version (Recommended)
 
 For the current stable release, which is tailored to integrate with
-`greta` package and uses the soon-to-be-superseded `dag_greta()`
-function to access sampling, employ the following command:
+Python’s `numpyro` package, employ the following command:
 
 ``` r
 install.packages("causact")
 ```
 
-### Development Release (Recommended)
+Then, see [Essential Dependencies](#essential-dependencies) if you want
+to be able to automate sampling using the `numpyro` package.
 
-The forthcoming version uses the `numpyro` package for faster inference
-and easier installation than the current CRAN release. This recommended
-development version can be installed directly from GitHub and is
-particularly advantageous from August 2023 until the subsequent CRAN
-release:
+### Development Release
+
+If you want the most recent development version (not recommended),
+execute the following:
 
 ``` r
 install.packages("remotes")

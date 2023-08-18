@@ -1,5 +1,8 @@
 ---
 output: github_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -16,83 +19,127 @@ knitr::opts_chunk$set(
 ```
 
 <!-- badges: start -->
+
 [![R-CMD-check](https://github.com/flyaflya/causact/workflows/R-CMD-check/badge.svg)](https://github.com/flyaflya/causact/actions)
-[![CRAN status](https://www.r-pkg.org/badges/version/causact)](https://cran.r-project.org/package=causact)
-[![Codecov test coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)](https://app.codecov.io/gh/flyaflya/causact?branch=master)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/causact)](https://cran.r-project.org/package=causact)
+[![Codecov test
+coverage](https://codecov.io/gh/flyaflya/causact/branch/master/graph/badge.svg)](https://app.codecov.io/gh/flyaflya/causact?branch=master)
 [![Lifecycle:Maturing](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)](https://img.shields.io/badge/Lifecycle-Maturing-007EC6)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6949489.svg)](https://doi.org/10.5281/zenodo.6949489)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.04415/status.svg)](https://doi.org/10.21105/joss.04415)
+
 <!-- badges: end -->
 
 # causact
 
-_Accelerate computational Bayesian inference workflows_ in R through interactive modelling, visualization, and inference.  The package leverages directed acyclic graphs (DAGs) to create a unified language language for business stakeholders, statisticians, and programmers. Due to its visual nature and simple model construction, `causact` serves as a great entry-point for newcomers to computational Bayesian inference. 
+*Accelerate computational Bayesian inference workflows* in R through
+interactive modelling, visualization, and inference. The package
+leverages directed acyclic graphs (DAGs) to create a unified language
+language for business stakeholders, statisticians, and programmers. Due
+to its visual nature and simple model construction, `causact` serves as
+a great entry-point for newcomers to computational Bayesian inference.
 
-> The `causact` package offers robust support for both foundational and advanced Bayesian models. While introductory models are well-covered, the utilization of multi-variate distributions such as multi-variate normal, multi-nomial, or dirichlet distributions, may not work as expected. There are ongoing enhancements in the pipeline to facilitate  construction of these more intricate models.
+> The `causact` package offers robust support for both foundational and
+> advanced Bayesian models. While introductory models are well-covered,
+> the utilization of multi-variate distributions such as multi-variate
+> normal, multi-nomial, or dirichlet distributions, may not work as
+> expected. There are ongoing enhancements in the pipeline to facilitate
+> construction of these more intricate models.
 
 ```{r demoGif, out.width = "40%", echo = FALSE, fig.align = "center"}
 knitr::include_graphics("man/figures/introScreenshot.png")
 ```
 
-While proficiency in R is the only requirement for users of this package, it also functions as a introductory probabilistic programming language, seamlessly incorporating the `numpyro` Python package to facilitate Bayesian inference without the need to learn any syntax outside of the package or R.  Furthermore, the package streamlines the process of indexing categorical variables, which often presents a complex syntax hurdle for those new to computational Bayesian methods.
+While proficiency in R is the only requirement for users of this
+package, it also functions as a introductory probabilistic programming
+language, seamlessly incorporating the `numpyro` Python package to
+facilitate Bayesian inference without the need to learn any syntax
+outside of the package or R. Furthermore, the package streamlines the
+process of indexing categorical variables, which often presents a
+complex syntax hurdle for those new to computational Bayesian methods.
 
-For enhanced learning, the `causact` package for Bayesian inference is featured in `A Business Analyst's Introduction to Business Analytics` available at https://www.causact.com/.
+For enhanced learning, the `causact` package for Bayesian inference is
+featured in `A Business Analyst's Introduction to Business Analytics`
+available at <https://www.causact.com/>.
 
-> Feedback and encouragement is appreciated via github issues or Twitter (https://twitter.com/preposterior).
+> Feedback and encouragement is appreciated via github issues or Twitter
+> (<https://twitter.com/preposterior>).
 
 ## Installation Guide
 
 To install the `causact` package, follow the steps outlined below:
 
-### CRAN Release Version
+### CRAN Release Version (Recommended)
 
-For the current stable release, which is tailored to integrate with `greta` package and uses the soon-to-be-superseded `dag_greta()` function to access sampling, employ the following command:
+For the current stable release, which is tailored to integrate with
+Python's `numpyro` package, employ the following command:
 
-```r
+``` r
 install.packages("causact")
 ```
 
-### Development Release (Recommended)
+Then, see [Essential Dependencies] if you want to be able to automate
+sampling using the `numpyro` package.
 
-The forthcoming version uses the `numpyro` package for faster inference and easier installation than the current CRAN release.  This recommended development version can be installed directly from GitHub and is particularly advantageous from August 2023 until the subsequent CRAN release:
+### Development Release
 
-```r
+If you want the most recent development version (not recommended),
+execute the following:
+
+``` r
 install.packages("remotes")
 remotes::install_github("flyaflya/causact")
 ```
 
 ### Essential Dependencies
 
-To harness the full potential of `causact` for DAG visualization and Bayesian posterior analysis, it's vital to ensure proper integration with the `numpyro` package. Given the Python-based nature of `numpyro`, a few essential dependencies must be in place. Execute the following commands after installing `causact`:
+To harness the full potential of `causact` for DAG visualization and
+Bayesian posterior analysis, it's vital to ensure proper integration
+with the `numpyro` package. Given the Python-based nature of `numpyro`,
+a few essential dependencies must be in place. Execute the following
+commands after installing `causact`:
 
-```r
+``` r
 library(causact)
 install_causact_deps()
 ```
 
-> **Note**: If opting for installation on Posit Cloud, temporarily adjust your project's RAM to 4GB during the installation process (remember to APPLY CHANGES). This preemptive measure helps avoid encountering an `Error: Error creating conda environment [exit code 137]`. After installation, feel free to revert the settings to 1GB of RAM.
+> **Note**: If opting for installation on Posit Cloud, temporarily
+> adjust your project's RAM to 4GB during the installation process
+> (remember to APPLY CHANGES). This preemptive measure helps avoid
+> encountering an
+> `Error: Error creating conda environment [exit code 137]`. After
+> installation, feel free to revert the settings to 1GB of RAM.
 
-If prompted, respond with `Y` to any inquiries related to installing miniconda.
+If prompted, respond with `Y` to any inquiries related to installing
+miniconda.
 
 ### Retrograde Compatibility (Not Advised)
 
-In cases where legacy compatibility is paramount and you still rely on the operationality of the `dag_greta()` function, consider installing `v0.4.2` of the `causact` package. However, it's essential to emphasize that this approach is **not recommended** for general usage:
+In cases where legacy compatibility is paramount and you still rely on
+the operationality of the `dag_greta()` function, consider installing
+`v0.4.2` of the `causact` package. However, it's essential to emphasize
+that this approach is **not recommended** for general usage:
 
-```r
+``` r
 ### EXERCISE CAUTION BEFORE EXECUTING THESE LINES
 ### Only proceed if dag_greta() is integral to your existing codebase
 install.packages("remotes")
 remotes::install_github("flyaflya/causact@0.4.2")
 ```
 
-Your judicious choice of installation method will ensure a seamless and effective integration of the `causact` package into your computational toolkit.
+Your judicious choice of installation method will ensure a seamless and
+effective integration of the `causact` package into your computational
+toolkit.
 
-## Usage 
+## Usage
 
-Example taken from https://www.causact.com/graphical-models-tell-joint-distribution-stories.html#graphical-models-tell-joint-distribution-stories with the packages `dag_foo()` functions further described here:
+Example taken from
+<https://www.causact.com/graphical-models-tell-joint-distribution-stories.html#graphical-models-tell-joint-distribution-stories>
+with the packages `dag_foo()` functions further described here:
 
-https://www.causact.com/causact-quick-inference-with-generative-dags.html#causact-quick-inference-with-generative-dags
-
+<https://www.causact.com/causact-quick-inference-with-generative-dags.html#causact-quick-inference-with-generative-dags>
 
 ### Create beautiful model visualizations.
 
@@ -148,7 +195,8 @@ drawsDF = graph %>% dag_numpyro()
 drawsDF  ### see top of data frame
 ```
 
-> **Note**: if you have used older versions of causact, please know that dag_numpyro() is a drop-in replacement for dag_greta().
+> **Note**: if you have used older versions of causact, please know that
+> dag_numpyro() is a drop-in replacement for dag_greta().
 
 ### Get quick view of posterior distribution
 
@@ -162,23 +210,38 @@ drawsDF %>% dagp_plot()
 numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 ```
 
-
 ## Getting Help and Suggesting Improvements
 
-Whether you encounter a clear bug, have a suggestion for improvement, or just have a question, we are thrilled to help you out.  In all cases, please file a [GitHub issue](https://github.com/flyaflya/causact/issues).  If reporting a bug, please include a minimal reproducible example.  
+Whether you encounter a clear bug, have a suggestion for improvement, or
+just have a question, we are thrilled to help you out. In all cases,
+please file a [GitHub
+issue](https://github.com/flyaflya/causact/issues). If reporting a bug,
+please include a minimal reproducible example.
 
 ## Contributing
 
-We welcome help turning `causact` into the most intuitive and fastest method of converting stakeholder narratives about data-generating processes into actionable insight from posterior distributions.  If you want to help us achieve this vision, we welcome your contributions after reading the [new contributor guide](https://github.com/flyaflya/causact/blob/master/.github/contributing.md).  Please note that this project is released with a [Contributor Code of
-Conduct](https://github.com/flyaflya/causact/blob/master/CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+We welcome help turning `causact` into the most intuitive and fastest
+method of converting stakeholder narratives about data-generating
+processes into actionable insight from posterior distributions. If you
+want to help us achieve this vision, we welcome your contributions after
+reading the [new contributor
+guide](https://github.com/flyaflya/causact/blob/master/.github/contributing.md).
+Please note that this project is released with a [Contributor Code of
+Conduct](https://github.com/flyaflya/causact/blob/master/CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.
 
 ## Further Usage
 
-For more info, see `A Business Analyst's Introduction to Business Analytics` available at https://www.causact.com.  You can also check out the package's vignette: `vignette("narrative-to-insight-with-causact")`.  Two additional examples are shown below.
+For more info, see
+`A Business Analyst's Introduction to Business Analytics` available at
+<https://www.causact.com>. You can also check out the package's
+vignette: `vignette("narrative-to-insight-with-causact")`. Two
+additional examples are shown below.
 
 ## Prosocial Chimpanzees Example from Statistical Rethinking
 
-> McElreath, Richard. Statistical rethinking: A Bayesian course with examples in R and Stan. Chapman and Hall/CRC, 2018.
+> McElreath, Richard. Statistical rethinking: A Bayesian course with
+> examples in R and Stan. Chapman and Hall/CRC, 2018.
 
 ```{r chimpsGraph, results ="hide", warning = FALSE, message = FALSE}
 library(tidyverse)
@@ -261,8 +324,9 @@ drawsDF %>% dagp_plot()
 
 ## Eight Schools Example from Bayesian Data Analysis
 
-> Gelman, Andrew, Hal S. Stern, John B. Carlin, David B. Dunson, Aki Vehtari, and Donald B. Rubin. Bayesian data analysis. Chapman and Hall/CRC, 2013.
-
+> Gelman, Andrew, Hal S. Stern, John B. Carlin, David B. Dunson, Aki
+> Vehtari, and Donald B. Rubin. Bayesian data analysis. Chapman and
+> Hall/CRC, 2013.
 
 ```{r eightschoolsGraph, results ="hide", warning = FALSE, message = FALSE}
 library(tidyverse)
@@ -318,4 +382,3 @@ drawsDF %>% dagp_plot()
 ```{r eightschoolsGraphRenderPost, out.width = "100%", echo = FALSE}
 knitr::include_graphics("man/figures/eightschoolsGraphPost-1.png")
 ```
-
