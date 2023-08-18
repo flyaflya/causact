@@ -63,8 +63,7 @@ For enhanced learning, the `causact` package for Bayesian inference is
 featured in `A Business Analyst's Introduction to Business Analytics`
 available at <https://www.causact.com/>.
 
-> Feedback and encouragement is appreciated via github issues or Twitter
-> (<https://twitter.com/preposterior>).
+> Feedback and encouragement is appreciated via github issues.
 
 ## Installation Guide
 

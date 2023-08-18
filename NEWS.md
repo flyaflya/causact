@@ -1,4 +1,11 @@
-# causact (development version)
+# causact 0.5.1
+* Switched inference to Python's `numpyro`
+* `dag_greta()` is now deprecated; `dag_numpyro()` should be used as a drop-in replacement.
+* Added helper function for Python dependencies: `install_causact_deps`.
+* Updated documentation to reflect switch to `numpyro`.
+* Added ability to choose fill of nodes during `dag_render()`.
+* Added `causact` probability distribution functions.  See `?causact::distributions`.
+* Temporarily removed support for the `dim` argument of probability distributions.
 
 # causact 0.4.2
 * Added `vignette("narrative-to-insight-with-causact") to introduce the package's encouraged user workflow.
