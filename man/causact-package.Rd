@@ -4,7 +4,7 @@
 \name{causact-package}
 \alias{causact}
 \alias{causact-package}
-\title{causact: Accelerated Bayesian Analytics with DAGs}
+\title{causact: Fast, Easy, and Visual Bayesian Inference}
 \description{
 Accelerate Bayesian analytics workflows in 'R' through interactive modelling, visualization, and inference. Define probabilistic graphical models using directed acyclic graphs (DAGs) as a unifying language for business stakeholders, statisticians, and programmers. This package relies on interfacing with the 'numpyro' python package.
 }
