@@ -1,4 +1,4 @@
-# causact 0.5.1
+# causact 0.5.2
 * Switched inference to Python's `numpyro`
 * `dag_greta()` is now deprecated; `dag_numpyro()` should be used as a drop-in replacement.
 * Added helper function for Python dependencies: `install_causact_deps`.
