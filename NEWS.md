@@ -1,3 +1,5 @@
+# causact (development version)
+
 # causact 0.5.2
 * Switched inference to Python's `numpyro`
 * `dag_greta()` is now deprecated; `dag_numpyro()` should be used as a drop-in replacement.
