@@ -1,4 +1,6 @@
-# causact (development version)
+# causact 0.5.3
+* Fixed bug where beta distribution was being treated as Laplace distribution.
+* Fixed bug where nested plated were being indexed incorrectly in Python.
 
 # causact 0.5.2
 * Switched inference to Python's `numpyro`
