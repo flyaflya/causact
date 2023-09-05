@@ -733,9 +733,9 @@ getPlateStatements = function(graphWithDim) {
   nodeDF = graphWithDim$nodes_df
   addNonSummarizedPlateStatesDF = dim_DF %>%
     dplyr::filter(dimType == "plate") %>%
-    dplyr::select(nodeID, dimLabel) %>%
+    dplyr::select(dimID, nodeID, dimLabel) %>%
     ## do alphabetical order
-    dplyr::arrange(nodeID, dimLabel) %>%
+    dplyr::arrange(nodeID, desc(dimID)) %>%
     group_by(nodeID) %>%
     dplyr::mutate(dimNum = row_number(),
            plateState = paste0(strrep("\t",dimNum),

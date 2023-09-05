@@ -289,7 +289,7 @@ beta <- function(shape1, shape2, dim = NULL) {
   a_name <- rlang::quo_name(a_quo)
   b_quo <- rlang::enquo(shape2)
   b_name <- rlang::quo_name(b_quo)
-  paste0("dist.Laplace(",a_name,",",b_name,")")
+  paste0("dist.Beta(",a_name,",",b_name,")")
 }
 
 #' @rdname distributions
