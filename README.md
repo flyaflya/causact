@@ -167,16 +167,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 × 4
 #>    theta_Toyota.Corolla theta_Subaru.Outback theta_Kia.Forte theta_Jeep.Wrangler
 #>                   <dbl>                <dbl>           <dbl>               <dbl>
-#>  1                0.186                0.627           0.243               0.801
-#>  2                0.218                0.607           0.234               0.900
-#>  3                0.200                0.627           0.261               0.892
-#>  4                0.231                0.626           0.236               0.792
-#>  5                0.225                0.615           0.278               0.793
-#>  6                0.232                0.624           0.257               0.807
-#>  7                0.202                0.710           0.318               0.791
-#>  8                0.173                0.587           0.258               0.885
-#>  9                0.216                0.592           0.283               0.891
-#> 10                0.180                0.666           0.180               0.805
+#>  1                0.192                0.633           0.210               0.794
+#>  2                0.215                0.602           0.282               0.892
+#>  3                0.200                0.621           0.299               0.890
+#>  4                0.223                0.621           0.213               0.778
+#>  5                0.220                0.611           0.261               0.788
+#>  6                0.228                0.619           0.247               0.811
+#>  7                0.228                0.619           0.247               0.811
+#>  8                0.227                0.635           0.231               0.810
+#>  9                0.222                0.600           0.291               0.888
+#> 10                0.205                0.605           0.236               0.841
 #> # ℹ 3,990 more rows
 ```
 
@@ -228,7 +228,7 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> def graph_model(y,x):
 #>  ## Define random variables and their relationships
 #>  with npo.plate('x_dim',x_dim):
-#>      theta = npo.sample('theta', dist.Laplace(2,2))
+#>      theta = npo.sample('theta', dist.Beta(2,2))
 #> 
 #>  y = npo.sample('y', dist.Bernoulli(theta[x]),obs=y)
 #> 

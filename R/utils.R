@@ -728,14 +728,14 @@ make_unique_No_periods <- function(vec) {
 
 ## getNumpyro plate statements and index labels for nodes
 getPlateStatements = function(graphWithDim) {
-  dimNum <- id <- plateLabelState <- plateState <- selStmnt <- varNameStmnt <- NULL
+  dimNum <- dimID <- id <- plateLabelState <- plateState <- selStmnt <- varNameStmnt <- NULL
   dim_DF = graphWithDim$dim_df
   nodeDF = graphWithDim$nodes_df
   addNonSummarizedPlateStatesDF = dim_DF %>%
     dplyr::filter(dimType == "plate") %>%
     dplyr::select(dimID, nodeID, dimLabel) %>%
     ## do alphabetical order
-    dplyr::arrange(nodeID, desc(dimID)) %>%
+    dplyr::arrange(nodeID, dplyr::desc(dimID)) %>%
     group_by(nodeID) %>%
     dplyr::mutate(dimNum = row_number(),
            plateState = paste0(strrep("\t",dimNum),
