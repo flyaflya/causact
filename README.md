@@ -94,6 +94,21 @@ install_causact_deps()
 If prompted, respond with `Y` to any inquiries related to installing
 miniconda.
 
+> **Note**: The September 11, 2023 release of `reticulate` (`v1.32`) has
+> caused an issue which gives a
+> `TypeError: the first argument must be callable` error when using
+> `dag_numpyro()` on windows. If you experience this, install the dev
+> version of `reticulate` by following the below steps:
+>
+> 1)  Install RTOOLS by using installer at:
+>     <https://cran.r-project.org/bin/windows/Rtools/>
+>
+> 2)  Run this to get the dev version of `reticulate`:
+
+    # install DEV version of reticulate
+    # install.packages("pak") #uncomment as needed
+    pak::pak("rstudio/reticulate")
+
 ### Retrograde Compatibility (Not Advised)
 
 In cases where legacy compatibility is paramount and you still rely on
@@ -105,7 +120,7 @@ that this approach is **not recommended** for general usage:
 ### EXERCISE CAUTION BEFORE EXECUTING THESE LINES
 ### Only proceed if dag_greta() is integral to your existing codebase
 install.packages("remotes")
-remotes::install_github("flyaflya/causact@0.4.2")
+remotes::install_github("flyaflya/causact@v0.4.2")
 ```
 
 Your judicious choice of installation method will ensure a seamless and
