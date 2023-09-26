@@ -104,15 +104,14 @@ library(causact)
 install_causact_deps()
 ```
 
+If prompted, respond with `Y` to any inquiries related to installing miniconda.
+
 > **Note**: If opting for installation on Posit Cloud, temporarily
 > adjust your project's RAM to 4GB during the installation process
 > (remember to APPLY CHANGES). This preemptive measure helps avoid
 > encountering an
 > `Error: Error creating conda environment [exit code 137]`. After
 > installation, feel free to revert the settings to 1GB of RAM.
-
-If prompted, respond with `Y` to any inquiries related to installing
-miniconda.
 
 > **Note**: The September 11, 2023 release of `reticulate` (`v1.32`) has
 > caused an issue which gives a
