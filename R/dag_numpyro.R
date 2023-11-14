@@ -45,7 +45,7 @@ dag_numpyro <- function(graph,
                       mcmc = TRUE,
                       num_warmup = 1000,
                       num_samples = 4000,
-                      seed = 111) {
+                      seed = 1234567) {
 
   ## make sure reticulate autoconfigure is disabled when running this function - I do not think this is needed
   # ac_flag <- Sys.getenv("RETICULATE_AUTOCONFIGURE")
