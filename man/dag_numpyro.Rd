@@ -9,7 +9,7 @@ dag_numpyro(
   mcmc = TRUE,
   num_warmup = 1000,
   num_samples = 4000,
-  seed = 111
+  seed = 1234567
 )
 }
 \arguments{
