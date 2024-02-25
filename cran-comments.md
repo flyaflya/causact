@@ -1,4 +1,4 @@
-This is a patch release to fix a bug with installing python dependencies.
+This is a patch release to fix a bug with installing Python dependencies.
 
 ## Test environments
 * local R installation, R 4.3.2
