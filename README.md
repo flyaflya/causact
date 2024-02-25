@@ -182,16 +182,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 × 4
 #>    theta_Toyota.Corolla theta_Subaru.Outback theta_Kia.Forte theta_Jeep.Wrangler
 #>                   <dbl>                <dbl>           <dbl>               <dbl>
-#>  1                0.192                0.633           0.210               0.794
-#>  2                0.215                0.602           0.282               0.892
-#>  3                0.200                0.621           0.299               0.890
-#>  4                0.223                0.621           0.213               0.778
-#>  5                0.220                0.611           0.261               0.788
-#>  6                0.228                0.619           0.247               0.811
-#>  7                0.228                0.619           0.247               0.811
-#>  8                0.227                0.635           0.231               0.810
-#>  9                0.222                0.600           0.291               0.888
-#> 10                0.205                0.605           0.236               0.841
+#>  1                0.214                0.609           0.199               0.844
+#>  2                0.228                0.563           0.232               0.818
+#>  3                0.217                0.611           0.255               0.848
+#>  4                0.206                0.648           0.261               0.876
+#>  5                0.187                0.624           0.313               0.819
+#>  6                0.166                0.606           0.229               0.848
+#>  7                0.213                0.622           0.234               0.839
+#>  8                0.206                0.588           0.253               0.855
+#>  9                0.211                0.646           0.219               0.855
+#> 10                0.196                0.590           0.271               0.840
 #> # ℹ 3,990 more rows
 ```
 
@@ -237,9 +237,9 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> ## note that above is from JAX numpy package, not numpy.
 #> 
 #> y = np.array(r.carModelDF.getCard)   #DATA
-#> x      = pd.factorize(r.carModelDF.carModel,use_na_sentinel=True)[0]   #DIM
+#> x      = pd.factorize(np.array(r.carModelDF.carModel),use_na_sentinel=True)[0]   #DIM
 #> x_dim  = len(np.unique(x))   #DIM
-#> x_crd  = pd.factorize(r.carModelDF.carModel,use_na_sentinel=True)[1]   #DIM
+#> x_crd  = pd.factorize(np.array(r.carModelDF.carModel),use_na_sentinel=True)[1]   #DIM
 #> def graph_model(y,x):
 #>  ## Define random variables and their relationships
 #>  with npo.plate('x_dim',x_dim):
@@ -250,7 +250,7 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> 
 #> # computationally get posterior
 #> mcmc = MCMC(NUTS(graph_model), num_warmup = 1000, num_samples = 4000)
-#> rng_key = random.PRNGKey(seed = 111)
+#> rng_key = random.PRNGKey(seed = 1234567)
 #> mcmc.run(rng_key,y,x)
 #> drawsDS = az.from_numpyro(mcmc,
 #>  coords = {'x_dim': x_crd},

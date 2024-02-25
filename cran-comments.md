@@ -1,7 +1,7 @@
-This is a patch release to fix two small bugs.
+This is a patch release to fix a bug with installing python dependencies.
 
 ## Test environments
-* local R installation, R 4.3.1
+* local R installation, R 4.3.2
 * ubuntu 16.04 (on travis-ci), R 4.3.1
 * win-builder (devel)
 
