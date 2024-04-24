@@ -13,7 +13,7 @@ A data frame with 260 rows and 2 variables:
 }
 }
 \source{
-\url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
+Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 }
 \usage{
 houseDFDescr

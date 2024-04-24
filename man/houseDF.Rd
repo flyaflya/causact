@@ -48,7 +48,7 @@ A data frame with 1,460 rows and 37 variables:
 }
 }
 \source{
-\url{https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data} Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
+Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 }
 \usage{
 houseDF

@@ -127,7 +127,7 @@
 #'   \item{SaleType}{Type of sale}
 #'   \item{SaleCondition}{Condition of sale}
 #' }
-#' @source <https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data> Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
+#' @source Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 "houseDF"
 
 #' Dataframe of 523 descriptions of data values from "The Ames Housing dataset", compiled by Dean De Cock for use in data science education.
@@ -137,7 +137,7 @@
 #'   \item{varName}{the name and description of a variable stored in the `houseDF` dataset}
 #'   \item{varValueDescr}{The value and accompanying interpretation for values in the `houseDF` dataset}
 #' }
-#' @source <https://www.kaggle.com/c/house-prices-advanced-regression-techniques/data> Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
+#' @source Accessed Jan 22, 2019. Kaggle dataset on "House Prices: Advanced Regression Techniques".
 "houseDFDescr"
 
 #' Dataframe of 1000 (fake) observations of whether certain car buyers were willing to get information on a credit card speciailizing in rewards for adventure travellers.
