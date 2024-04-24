@@ -131,7 +131,7 @@
 "houseDF"
 
 #' Dataframe of 523 descriptions of data values from "The Ames Housing dataset", compiled by Dean De Cock for use in data science education.
-#' Each observation is a possible value from a varaible in the `houseDF` dataset.
+#' Each observation is a possible value from a variable in the `houseDF` dataset.
 #' @format A data frame with 260 rows and 2 variables:
 #' \describe{
 #'   \item{varName}{the name and description of a variable stored in the `houseDF` dataset}

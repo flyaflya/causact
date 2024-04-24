@@ -1,3 +1,6 @@
+# causact 0.5.5
+* patch release to fix installation issues. The default installation workflow now uses `scipy==0.12` to avoid error `cannot import name 'gaussian' from 'scipy.signal'`.
+
 # causact 0.5.4
 * patch release to fix installation issues. The default installation workflow now uses `numpyro==0.13.2` to avoid `ModuleNotFoundError: No module named 'jax.linear_util'`.
 
