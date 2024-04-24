@@ -44,7 +44,7 @@
       # Above code for if successful , continue
     }, error = function(e) {# Display an error message
       packageStartupMessage("An error occurred:", conditionMessage(e))
-      packageStartupMessage(". To make causact's required connection to Python, restart R, then load the causact package with library(causact).\n")
+      packageStartupMessage(". To make causact's required connection to Python, restart R, then install causact's dependencies with causact::install_causact_deps().\n")
     })
   } # end else
 } #end .onAttach function

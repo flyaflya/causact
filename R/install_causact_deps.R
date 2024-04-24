@@ -37,7 +37,8 @@ install_causact_deps <-
     ## guaranteed to work together with python 3.11
     packages = c("numpyro[cpu]==0.13.2",
                  "arviz==0.16.1",
-                 "pandas==2.1.3")
+                 "pandas==2.1.3",
+                 "scipy==1.12")
     python_version = "3.11"
     pip = TRUE
     new_env = TRUE
@@ -89,6 +90,9 @@ install_causact_deps <-
     }, error = function(e) {
       reticulate::install_miniconda()
     })
+
+    #start fresh
+    try(reticulate::conda_remove(envname))
 
     reticulate::py_install(
       packages       = packages,
