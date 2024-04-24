@@ -4,7 +4,7 @@
 \name{houseDFDescr}
 \alias{houseDFDescr}
 \title{Dataframe of 523 descriptions of data values from "The Ames Housing dataset", compiled by Dean De Cock for use in data science education.
-Each observation is a possible value from a varaible in the \code{houseDF} dataset.}
+Each observation is a possible value from a variable in the \code{houseDF} dataset.}
 \format{
 A data frame with 260 rows and 2 variables:
 \describe{
@@ -20,6 +20,6 @@ houseDFDescr
 }
 \description{
 Dataframe of 523 descriptions of data values from "The Ames Housing dataset", compiled by Dean De Cock for use in data science education.
-Each observation is a possible value from a varaible in the \code{houseDF} dataset.
+Each observation is a possible value from a variable in the \code{houseDF} dataset.
 }
 \keyword{datasets}
