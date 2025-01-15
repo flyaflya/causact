@@ -1,3 +1,5 @@
+# causact 0.5.7
+
 # causact 0.5.6
 * patch release to fix numpyro integration issues. The default installation workflow now uses `numpyro==0.16.1` to avoid `TypeError` when using a discrete data distribution, e.g. Bernoulli.
 
