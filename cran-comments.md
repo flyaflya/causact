@@ -1,4 +1,4 @@
-This is a patch release to fix a bug when using Bernoulli distribtion as a data distribution.
+This is a patch release to fix a bug that is in our numpyro dependency.  `install_causact_deps` now installs the more recent `numpyro==0.16.1` and its associated files.
 
 ## Test environments
 * local R installation, R 4.4.2
