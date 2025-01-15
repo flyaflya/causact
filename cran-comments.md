@@ -1,8 +1,8 @@
-This is a patch release to fix a bug with installing Python dependencies due to a bug in scipy package.
+This is a patch release to fix a bug when using Bernoulli distribtion as a data distribution.
 
 ## Test environments
-* local R installation, R 4.3.3
-* ubuntu 16.04 (on travis-ci), R 4.3.3
+* local R installation, R 4.4.2
+* ubuntu 16.04 (on travis-ci), R 4.4.2
 * win-builder (devel)
 
 ## R CMD check results
