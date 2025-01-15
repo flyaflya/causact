@@ -36,7 +36,7 @@ Imports:
     rstudioapi (>= 0.11),
     lifecycle (>= 1.0.2),
     reticulate (>= 1.30)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     covr,

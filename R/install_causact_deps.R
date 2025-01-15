@@ -35,10 +35,10 @@ install_causact_deps <-
     envname = "r-causact"
     ## lock in package versions that are
     ## guaranteed to work together with python 3.11
-    packages = c("numpyro[cpu]==0.13.2",
-                 "arviz==0.16.1",
-                 "pandas==2.1.3",
-                 "scipy==1.12")
+    packages = c("numpyro[cpu]==0.16.1",
+                 "arviz==0.20.0",
+                 "pandas==2.2.2",
+                 "scipy==1.13.1")
     python_version = "3.11"
     pip = TRUE
     new_env = TRUE
