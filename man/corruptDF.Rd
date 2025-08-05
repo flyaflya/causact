@@ -19,7 +19,7 @@ A data frame with 174 rows and 7 variables:
 }
 }
 \source{
-\url{https://www.transparency.org/en/cpi/2017} CPI data available from https://www.transparency.org/en/cpi/2017.  Accessed Feb 24, 2024. Consumer Perception Index 2017 by Transparency International is licensed under CC-BY- ND 4.0.
+CPI data available from https://www.transparency.org/en/cpi/2017. Accessed Feb 24, 2024. Consumer Perception Index 2017 by Transparency International is licensed under CC-BY- ND 4.0.
 
 \url{https://hdr.undp.org/data-center/human-development-index#/indicies/HDI} HDA data accessed on Oct 1, 2018.
 

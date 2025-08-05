@@ -1,5 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/flyaflya/causact/workflows/R-CMD-check/badge.svg)](https://github.com/flyaflya/causact/actions)
@@ -208,6 +209,7 @@ drawsDF %>% dagp_plot()
 
 <img src="man/figures/gretaPost-1.png" alt="Credible interval plots." width="70%" />
 <p class="caption">
+
 Credible interval plots.
 </p>
 
