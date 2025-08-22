@@ -1,7 +1,7 @@
 Package: causact
 Type: Package
 Title: Fast, Easy, and Visual Bayesian Inference
-Version: 0.5.7.9000
+Version: 0.5.8
 Authors@R: c(person("Adam", "Fleischhacker", email = "ajf@udel.edu", role = c("aut", "cre","cph")),
     person("Daniela", "Dapena", role = "ctb"),
     person("Rose", "Nguyen", role = "ctb"),

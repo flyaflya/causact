@@ -1,4 +1,4 @@
-# causact (development version)
+# causact 0.5.8
 
 # causact 0.5.8
 * patch release to support changes to object types in ggplot2.
