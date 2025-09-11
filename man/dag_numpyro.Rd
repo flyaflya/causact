@@ -29,27 +29,3 @@ If \code{mcmc=TRUE}, returns a dataframe of posterior distribution samples corre
 \description{
 Generate a representative sample of the posterior distribution.  The input graph object should be of class \code{causact_graph} and created using \code{dag_create()}.  The specification of a completely consistent joint distribution is left to the user.
 }
-\examples{
-graph = dag_create() \%>\%
-  dag_node("Get Card","y",
-           rhs = bernoulli(theta),
-           data = carModelDF$getCard) \%>\%
-  dag_node(descr = "Card Probability by Car",label = "theta",
-           rhs = beta(2,2),
-           child = "y") \%>\%
-  dag_node("Car Model","x",
-           data = carModelDF$carModel,
-           child = "y") \%>\%
-  dag_plate("Car Model","x",
-            data = carModelDF$carModel,
-            nodeLabels = "theta")
-
-graph \%>\% dag_render()
-numpyroCode = graph \%>\% dag_numpyro(mcmc=FALSE)
-\dontrun{
-## default functionality returns a data frame
-# below requires numpyro installation
-drawsDF = graph \%>\% dag_numpyro()
-drawsDF \%>\% dagp_plot()
-}
-}

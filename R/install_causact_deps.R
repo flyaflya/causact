@@ -1,6 +1,6 @@
-#' Install causact's python dependencies like numpyro, arviz, and xarray.
+#' Install causact's python dependencies like numpyro.
 #'
-#' `install_causact_deps()` installs python, the numpyro and arviz packages, and their
+#' `install_causact_deps()` installs python, numpyro and their
 #' direct dependencies.
 #'
 #' @details You may be prompted to download and install miniconda if reticulate
@@ -35,11 +35,9 @@ install_causact_deps <-
     envname = "r-causact"
     ## lock in package versions that are
     ## guaranteed to work together with python 3.11
-    packages = c("numpyro[cpu]==0.16.1",
-                 "arviz==0.20.0",
-                 "pandas==2.2.2",
-                 "scipy==1.13.1")
-    python_version = "3.11"
+    packages = c("numpyro[cpu]==0.19.0",
+                 "pandas==2.3.2")
+    python_version = "3.13"
     pip = TRUE
     new_env = TRUE
     method = "conda"

@@ -2,12 +2,12 @@
 % Please edit documentation in R/install_causact_deps.R
 \name{install_causact_deps}
 \alias{install_causact_deps}
-\title{Install causact's python dependencies like numpyro, arviz, and xarray.}
+\title{Install causact's python dependencies like numpyro.}
 \usage{
 install_causact_deps()
 }
 \description{
-\code{install_causact_deps()} installs python, the numpyro and arviz packages, and their
+\code{install_causact_deps()} installs python, numpyro and their
 direct dependencies.
 }
 \details{

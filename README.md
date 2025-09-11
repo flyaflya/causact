@@ -228,7 +228,6 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> import numpyro as npo
 #> import numpyro.distributions as dist
 #> import pandas as pd
-#> import arviz as az
 #> from jax import random
 #> from numpyro.infer import MCMC, NUTS
 #> from jax.numpy import transpose as t
@@ -254,19 +253,9 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> mcmc = MCMC(NUTS(graph_model), num_warmup = 1000, num_samples = 4000)
 #> rng_key = random.PRNGKey(seed = 1234567)
 #> mcmc.run(rng_key,y,x)
-#> drawsDS = az.from_numpyro(mcmc,
-#>  coords = {'x_dim': x_crd},
-#>  dims = {'theta': ['x_dim']}
-#>  ).posterior
-#> # prepare xarray dataset for export to R dataframe
-#> dimensions_to_keep = ['chain','draw','x_dim']
-#> drawsDS = drawsDS.squeeze(drop = True ).drop_dims([dim for dim in drawsDS.dims if dim not in dimensions_to_keep])
-#> # unstack plate variables to flatten dataframe as needed
-#> for x_da in drawsDS['x_dim']:
-#>  new_varname = f'theta_{x_da.values}'
-#>  drawsDS = drawsDS.assign(**{new_varname:drawsDS['theta'].sel(x_dim = x_da)})
-#> drawsDS = drawsDS.drop_dims(['x_dim'])
-#> drawsDF = drawsDS.squeeze().to_dataframe()"
+#> samples = mcmc.get_samples(group_by_chain=True) # dict: name -> [chains, draws, ...]
+#>  flat = {k: np.reshape(v, (-1,) + v.shape[2:]) for k, v in samples.items()} 
+#>  drawsDF = pd.DataFrame({k: flat[k].squeeze() for k in flat})
 #> ) ## END PYTHON STRING
 #> drawsDF = reticulate::py$drawsDF
 ```
