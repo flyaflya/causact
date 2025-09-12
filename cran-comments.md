@@ -1,6 +1,7 @@
-This is a very minor patch release to accommodate changes for ggplot2 v4.0.0 to get to CRAN.
+This is a minor release to accommodate breaking changes in Python dependencies, most notable JAX 0.7.1.
 
 ## Test environments
+
 * local R installation, R 4.5.1
 * R-hub: ubuntu-gcc-release (Ubuntu 20.04.1 LTS, R-release, GCC), R 4.5.1
 * win-builder (devel)

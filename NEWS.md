@@ -1,24 +1,35 @@
 # causact (development version)
 
-# causact 0.5.8
+# causact 0.6.0
+
+* Updated `dag_numpyro()` to address compatibility issues with `JAX 0.7.1`, resolving the error:  
+  `ImportError: cannot import name 'pjit_p' from 'jax.experimental.pjit'`.
+* Removed the dependency on Python’s `arviz` package to improve long-term compatibility across Python environments. The `arviz` dependency has introduced bugs in past releases and remains unstable in its current version.
+* Revised `dag_plotp()` to suppress warning messages triggered by recent updates to `ggplot2`.
+
 
 # causact 0.5.8
 * patch release to support changes to object types in ggplot2.
 
 # causact 0.5.6
+
 * patch release to fix numpyro integration issues. The default installation workflow now uses `numpyro==0.16.1` to avoid `TypeError` when using a discrete data distribution, e.g. Bernoulli.
 
 # causact 0.5.5
+
 * patch release to fix installation issues. The default installation workflow now uses `scipy==0.12` to avoid error `cannot import name 'gaussian' from 'scipy.signal'`.
 
 # causact 0.5.4
+
 * patch release to fix installation issues. The default installation workflow now uses `numpyro==0.13.2` to avoid `ModuleNotFoundError: No module named 'jax.linear_util'`.
 
 # causact 0.5.3
+
 * Fixed bug where beta distribution was being treated as Laplace distribution.
 * Fixed bug where nested plated were being indexed incorrectly in Python.
 
 # causact 0.5.2
+
 * Switched inference to Python's `numpyro`
 * `dag_greta()` is now deprecated; `dag_numpyro()` should be used as a drop-in replacement.
 * Added helper function for Python dependencies: `install_causact_deps`.
@@ -28,10 +39,12 @@
 * Temporarily removed support for the `dim` argument of probability distributions.
 
 # causact 0.4.2
+
 * Added `vignette("narrative-to-insight-with-causact") to introduce the package's encouraged user workflow.
 * Allow `greta::variable()` to be used for flat priors.
 
 # causact 0.4.1
+
 * Fixed bugs introduced by changes in `tidyr::replace_na()`.
 * Fixed bug related to rendering generative DAGs where two variables were both on multiple plates.
 

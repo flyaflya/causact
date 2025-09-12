@@ -183,16 +183,16 @@ drawsDF  ### see top of data frame
 #> # A tibble: 4,000 × 4
 #>    theta_Toyota.Corolla theta_Subaru.Outback theta_Kia.Forte theta_Jeep.Wrangler
 #>                   <dbl>                <dbl>           <dbl>               <dbl>
-#>  1                0.196                0.617           0.293               0.853
-#>  2                0.188                0.643           0.214               0.867
-#>  3                0.182                0.641           0.215               0.862
-#>  4                0.202                0.658           0.245               0.882
-#>  5                0.191                0.652           0.293               0.854
-#>  6                0.166                0.594           0.236               0.844
-#>  7                0.214                0.626           0.230               0.843
-#>  8                0.207                0.579           0.249               0.854
-#>  9                0.189                0.601           0.271               0.831
-#> 10                0.219                0.641           0.219               0.865
+#>  1                0.215                0.582           0.226               0.839
+#>  2                0.194                0.643           0.264               0.853
+#>  3                0.216                0.602           0.243               0.831
+#>  4                0.217                0.647           0.177               0.843
+#>  5                0.186                0.580           0.309               0.853
+#>  6                0.230                0.633           0.237               0.846
+#>  7                0.217                0.619           0.263               0.859
+#>  8                0.205                0.692           0.274               0.862
+#>  9                0.191                0.693           0.332               0.847
+#> 10                0.188                0.655           0.174               0.851
 #> # ℹ 3,990 more rows
 ```
 
@@ -253,9 +253,55 @@ numpyroCode = graph %>% dag_numpyro(mcmc = FALSE)
 #> mcmc = MCMC(NUTS(graph_model), num_warmup = 1000, num_samples = 4000)
 #> rng_key = random.PRNGKey(seed = 1234567)
 #> mcmc.run(rng_key,y,x)
-#> samples = mcmc.get_samples(group_by_chain=True) # dict: name -> [chains, draws, ...]
-#>  flat = {k: np.reshape(v, (-1,) + v.shape[2:]) for k, v in samples.items()} 
-#>  drawsDF = pd.DataFrame({k: flat[k].squeeze() for k in flat})
+#> axis_labels = {'x_dim': x_crd}
+#> rv_to_axes = {'theta': ['x_dim']}
+#> drop_names = set()
+#> samples = mcmc.get_samples(group_by_chain=True)  # dict: name -> [chains, draws, *axes]
+#> import numpy as np, pandas as pd, string
+#> # Flatten (chains*draws) and expand RVs using rv_to_axes + axis_labels
+#> flat = {name: np.reshape(val, (-1,) + val.shape[2:]) for name, val in list(samples.items())}
+#> out = {}
+#> allowed = set(string.ascii_letters + string.digits + '._')
+#> def sanitize_label(s):
+#>     s = str(s).strip().replace(' ', '.')          # spaces -> dots
+#>     s = ''.join((ch if ch in allowed else '.') for ch in s)
+#>     # collapse repeated dots without regex
+#>     while '..' in s:
+#>         s = s.replace('..', '.')
+#>     s = s.strip('.')
+#>     return s if s else '1'
+#> 
+#> for name, arr in list(flat.items()):
+#>     # Drop deterministic RVs entirely
+#>     if name in drop_names:
+#>         continue
+#>     axes = rv_to_axes.get(name, [])  # [] if not present
+#>     # If scalar per draw, keep as a single column
+#>     if arr.ndim == 1:
+#>         out[name] = arr
+#>         continue
+#>     # Otherwise (vector/matrix/...): expand to separate columns
+#>     trailing = arr.shape[1:]
+#>     arr2 = arr.reshape(arr.shape[0], int(np.prod(trailing)))
+#>     for j in range(arr2.shape[1]):
+#>         idx = np.unravel_index(j, trailing)
+#>         parts = []
+#>         for axis, i in enumerate(idx):
+#>             if axis < len(axes):
+#>                 axis_name = axes[axis]
+#>                 labels = axis_labels.get(axis_name)
+#>                 if labels is not None:
+#>                     labs = np.asarray(labels).astype(str)
+#>                     lab = labs[i] if i < labs.shape[0] else str(i + 1)
+#>                     parts.append(sanitize_label(lab))
+#>                 else:
+#>                     parts.append(str(i + 1))
+#>             else:
+#>                 parts.append(str(i + 1))
+#>         # No brackets; join labels with '_' so tibble won't append trailing dots
+#>         col = name if not parts else name + '_' + '_'.join(parts)
+#>         out[col] = arr2[:, j]
+#> drawsDF = pd.DataFrame(out)"
 #> ) ## END PYTHON STRING
 #> drawsDF = reticulate::py$drawsDF
 ```
