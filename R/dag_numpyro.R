@@ -333,11 +333,22 @@ from jax.numpy import (exp, log, log1p, expm1, abs, mean,
   drawsStatement <- "samples = mcmc.get_samples(group_by_chain=True)  # dict: name -> [chains, draws, *axes]"
 
   ## Build labeled DataFrame; drop deterministic RVs; 1-based fallback indices
+  ## Column naming: <rv>_<label1>[_<label2>...]; labels: spaces→'.', only [A-Za-z0-9._], collapse repeated dots, no trailing '.'
   drawsDFStatement <- paste(
-    "import numpy as np, pandas as pd",
+    "import numpy as np, pandas as pd, string",
     "# Flatten (chains*draws) and expand RVs using rv_to_axes + axis_labels",
     "flat = {name: np.reshape(val, (-1,) + val.shape[2:]) for name, val in list(samples.items())}",
     "out = {}",
+    "allowed = set(string.ascii_letters + string.digits + '._')",
+    "def sanitize_label(s):",
+    "    s = str(s).strip().replace(' ', '.')          # spaces -> dots",
+    "    s = ''.join((ch if ch in allowed else '.') for ch in s)",
+    "    # collapse repeated dots without regex",
+    "    while '..' in s:",
+    "        s = s.replace('..', '.')",
+    "    s = s.strip('.')",
+    "    return s if s else '1'",
+    "",
     "for name, arr in list(flat.items()):",
     "    # Drop deterministic RVs entirely",
     "    if name in drop_names:",
@@ -352,23 +363,27 @@ from jax.numpy import (exp, log, log1p, expm1, abs, mean,
     "    arr2 = arr.reshape(arr.shape[0], int(np.prod(trailing)))",
     "    for j in range(arr2.shape[1]):",
     "        idx = np.unravel_index(j, trailing)",
-    "        name_parts = []",
+    "        parts = []",
     "        for axis, i in enumerate(idx):",
     "            if axis < len(axes):",
     "                axis_name = axes[axis]",
     "                labels = axis_labels.get(axis_name)",
     "                if labels is not None:",
     "                    labs = np.asarray(labels).astype(str)",
-    "                    name_parts.append(labs[i] if i < labs.shape[0] else str(i + 1))",  # 1-based fallback
+    "                    lab = labs[i] if i < labs.shape[0] else str(i + 1)",
+    "                    parts.append(sanitize_label(lab))",
     "                else:",
-    "                    name_parts.append(str(i + 1))",  # 1-based fallback when mapped but unlabeled",
+    "                    parts.append(str(i + 1))",  # 1-based fallback when mapped but unlabeled",
     "            else:",
-    "                name_parts.append(str(i + 1))",  # 1-based fallback for unmapped extra axis",
-    "        col = f'{name}[{','.join(name_parts)}]'",
+    "                parts.append(str(i + 1))",      # 1-based fallback for extra axis",
+    "        # No brackets; join labels with '_' so tibble won't append trailing dots",
+    "        col = name if not parts else name + '_' + '_'.join(parts)",
     "        out[col] = arr2[:, j]",
     "drawsDF = pd.DataFrame(out)",
     sep = "\n"
   )
+
+
 
   ## Aggregate and execute
   codeStatements = c(
